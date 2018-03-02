@@ -1,0 +1,139 @@
+package babroval.storage.frames;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import babroval.storage.mysql.TransToMysql;
+
+public class ElectroFrameStorage extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private JPanel panel;
+	private JScrollPane scroll;
+	private JLabel labelTermRent, imageLabel;
+	private JTextField tfTermRent;
+	private JButton select;
+	private TransToMysql db;
+	private TableStorage tableCars;
+	private int user_id;
+
+	public ElectroFrameStorage(TransToMysql db, int user_id) {
+		this.db = db;
+		this.user_id = user_id;
+		setSize(500, 450);
+		setTitle("OrderFrame");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		initComponents();
+		action();
+		setVisible(true);
+		setResizable(false);
+
+	}
+
+	private void initComponents() {
+
+		panel = new JPanel(null);
+
+		ResultSet rsCars;
+		try {
+			rsCars = db.query("SELECT car_id, name_car, color, price_per_day FROM cars WHERE availability=1");
+			tableCars = new TableStorage(rsCars);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(panel, "Data Base", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		scroll = new JScrollPane(tableCars);
+		labelTermRent = new JLabel("Select car and term of rent in days");
+		tfTermRent = new JTextField("1");
+		select = new JButton("Select");
+		imageLabel = new JLabel();
+		scroll.setBounds(20, 20, 450, 100);
+		labelTermRent.setBounds(40, 150, 200, 20);
+		tfTermRent.setBounds(240, 150, 50, 20);
+		select.setBounds(365, 150, 100, 20);
+
+		panel.add(scroll);
+		panel.add(labelTermRent);
+		panel.add(tfTermRent);
+		panel.add(select);
+		add(panel);
+	}
+
+	private void action() {
+
+		tableCars.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				panel.remove(imageLabel);
+				ImageIcon image = new ImageIcon("D:\\images\\"
+						+ Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(), 0).toString()) + ".jpg");
+				imageLabel.setIcon(image);
+				imageLabel.setBounds(20, 200, 300, 200);
+				panel.add(imageLabel);
+				panel.updateUI();
+			}
+		});
+
+		select.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					ResultSet rsCars = db.query("SELECT reject_description,  damage_description " + "FROM orders "
+							+ "WHERE user_id=" + user_id + " AND reject_description<>'no reject'");
+
+					if (rsCars.next()) {
+						JOptionPane.showMessageDialog(panel,
+								"Your order is rejected. The reason is " + rsCars.getString(2), "Not Accepted",
+								JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+					} else {
+						int totalCoast = Integer.valueOf(tfTermRent.getText())
+								* Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(), 3).toString());
+//						OrdersStorageDao daoOrder = new OrdersStorageDao(db);
+						// daoOrder.insert(new Orders(
+						// Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(),
+						// 0).toString()),
+						// user_id,
+						// Integer.valueOf(tfTermRent.getText()),
+						// "no pay",
+						// totalCoast,
+						// "no reject",
+						// "no damage"));
+
+						JOptionPane.showMessageDialog(panel, "Total coast is " + totalCoast, "Accepted",
+								JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+					}
+				} catch (SQLException ex) {
+					JOptionPane.showMessageDialog(panel, "Select error", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					JOptionPane.showMessageDialog(panel, "Please,select the car", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "Data Base", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
+			}
+		});
+	}
+
+}
