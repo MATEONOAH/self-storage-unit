@@ -31,17 +31,6 @@ public class StartFrameStorage extends JFrame {
 		action();
 		setVisible(true);
 		setResizable(false);
-		
-		TransToMysql db;
-		try {
-			db = new TransToMysql(tfUrl.getText() + "/" + WorkDBase.NAME_DB, tfLogin.getText(),
-					tfPass.getText());
-			new LoginFrameStorage(db);
-			dispose();
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(panel, "Data Base connect error", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-		
 	}
 
 	public JTextField getTfUrl() {
