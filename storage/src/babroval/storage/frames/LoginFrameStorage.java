@@ -12,13 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import babroval.storage.mysql.TransToMysql;
-
 public class LoginFrameStorage extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
@@ -30,11 +25,7 @@ public class LoginFrameStorage extends JFrame {
 	private JComboBox<Object> comboOrder;
 	private String[] en = { "select", "rent payment", "electricity", "taxes" };
 	
-
-	private TransToMysql db;
-
-	public LoginFrameStorage(TransToMysql db) {
-		this.db = db;
+	public LoginFrameStorage() {
 		setSize(260, 220);
 		setTitle("LoginFrame");
 		setLocationRelativeTo(null);
@@ -72,7 +63,7 @@ public class LoginFrameStorage extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!tfLogin.getText().equals(" ")) {
 					if (comboOrder.getSelectedIndex() == 1) {
-						new OrderFrameStorage(db);
+						new OrderFrameStorage();
 						dispose();
 					}
 					if (comboOrder.getSelectedIndex() == 2) {
@@ -98,7 +89,7 @@ public class LoginFrameStorage extends JFrame {
 						res += pass[i];
 					}
 					if (res.equals("")) {
-						new AdminFrameStorage(db);
+						new AdminFrameStorage();
 						dispose();
 					} else {
 						JOptionPane.showMessageDialog(panel, "Incorrect Password", "Error", JOptionPane.ERROR_MESSAGE);

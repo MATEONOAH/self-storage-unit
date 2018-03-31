@@ -4,8 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,13 +29,10 @@ import babroval.storage.dao.OrdersStorageDao;
 import babroval.storage.dao.UsersStorageDao;
 import babroval.storage.entity.Orders;
 import babroval.storage.entity.Users;
-import babroval.storage.mysql.TransToMysql;
+import babroval.storage.mysql.ConnectionPool;
 
 public class AdminFrameStorage extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
@@ -59,7 +58,6 @@ public class AdminFrameStorage extends JFrame {
 	private ButtonGroup group;
 	private JComboBox<String> comboYear;
 	private JButton notPaid;
-	private TransToMysql db;
 	private TableStorage tableUsers;
 	private JMenuBar menuBar;
 	private JMenuItem itemWrite, itemAbout, itemExit;
@@ -67,8 +65,7 @@ public class AdminFrameStorage extends JFrame {
 	private JFileChooser chooser;
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
 
-	public AdminFrameStorage(TransToMysql db) {
-		this.db = db;
+	public AdminFrameStorage() {
 		setSize(995, 550);
 		setTitle("AdminFrame");
 		setLocationRelativeTo(null);
@@ -101,15 +98,19 @@ public class AdminFrameStorage extends JFrame {
 		comboOrder = new JComboBox<Object>(en);
 		labelComboNum = new JLabel("Rent payment of storage number :");
 		comboNum = new JComboBox<String>();
-		try {
-			ResultSet rs;
+
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+
 			comboNum.addItem("");
-			rs = db.query("SELECT * FROM users");
+
 			while (rs.next()) {
 				comboNum.addItem(rs.getString(2));
 			}
 			tableUsers = new TableStorage(rs);
-		} catch (Exception e) {
+
+		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "Data Base Error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -192,6 +193,7 @@ public class AdminFrameStorage extends JFrame {
 	}
 
 	private void action() {
+		
 		itemWrite.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -209,10 +211,9 @@ public class AdminFrameStorage extends JFrame {
 						allRow = allRow + "\n";
 					}
 
-					try {
-						FileWriter fw = new FileWriter(chooser.getSelectedFile());
+					try (FileWriter fw = new FileWriter(chooser.getSelectedFile())) {
+
 						fw.write(allRow);
-						fw.close();
 						JOptionPane.showMessageDialog(panel, "Saved");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(panel, "Save error");
@@ -220,6 +221,7 @@ public class AdminFrameStorage extends JFrame {
 				}
 			}
 		});
+
 		itemAbout.addActionListener(new ActionListener() {
 
 			@Override
@@ -227,6 +229,7 @@ public class AdminFrameStorage extends JFrame {
 				JOptionPane.showMessageDialog(panel, "Storage");
 			}
 		});
+
 		itemExit.addActionListener(new ActionListener() {
 
 			@Override
@@ -234,6 +237,7 @@ public class AdminFrameStorage extends JFrame {
 				System.exit(0);
 			}
 		});
+
 		comboRead.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -281,6 +285,7 @@ public class AdminFrameStorage extends JFrame {
 				}
 			}
 		});
+
 		comboNum.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -294,10 +299,12 @@ public class AdminFrameStorage extends JFrame {
 				editPrihodOrder.setEnabled(false);
 				panel.remove(scroll);
 
-				try {
+				int temp = 0;
 
-					int temp = 0;
-					ResultSet rs = db.query("SELECT * FROM users");
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						Statement st = cn.createStatement();
+						ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+
 					comboNum.addItem("");
 					while (rs.next()) {
 						String i = rs.getString(2);
@@ -307,18 +314,25 @@ public class AdminFrameStorage extends JFrame {
 							break;
 						}
 					}
-					rs = db.query(
-							"SELECT orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
-									+ " FROM orders WHERE orders.storage_id='" + temp
-									+ "' AND orders.date!=0 ORDER BY orders.date ASC");
-					tableUsers = new TableStorage(rs);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(panel, "Database Error", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						Statement st = cn.createStatement();
+						ResultSet rs = st.executeQuery(
+								"SELECT orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
+										+ " FROM orders WHERE orders.storage_id='" + temp
+										+ "' AND orders.date!=0 ORDER BY orders.date ASC")) {
+
+					tableUsers = new TableStorage(rs);
 					scroll = new JScrollPane(tableUsers);
 					scroll.setBounds(20, 40, 950, 390);
 					panel.add(scroll);
 					panel.updateUI();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(panel, "Data Base Query", "Error", JOptionPane.ERROR_MESSAGE);
+
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(panel, "Database Error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -332,6 +346,7 @@ public class AdminFrameStorage extends JFrame {
 						"SELECT number_storage, name, person_info FROM users WHERE number_storage!=0 ORDER BY name ASC");
 			}
 		});
+
 		notPaid.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -339,40 +354,44 @@ public class AdminFrameStorage extends JFrame {
 				editPrihodOrder.setEnabled(false);
 
 				panel.remove(scroll);
-				try {
-					String quarter = "";
-					if (quart1.isSelected()) {
-						quarter = "quarter1";
-					}
-					if (quart2.isSelected()) {
-						quarter = "quarter2";
-					}
-					if (quart3.isSelected()) {
-						quarter = "quarter3";
-					}
-					if (quart4.isSelected()) {
-						quarter = "quarter4";
-					}
-					if (quarter.equals("")) {
-						throw new NumberFormatException("ex");
-					}
 
-					ResultSet rs;
-					rs = db.query("SELECT users.number_storage, name, person_info FROM users WHERE  users.year="
-							+ comboYear.getSelectedItem() + " AND users." + quarter + "=''");
+				String quarter = "";
+				if (quart1.isSelected()) {
+					quarter = "quarter1";
+				}
+				if (quart2.isSelected()) {
+					quarter = "quarter2";
+				}
+				if (quart3.isSelected()) {
+					quarter = "quarter3";
+				}
+				if (quart4.isSelected()) {
+					quarter = "quarter4";
+				}
+				if (quarter.equals("")) {
+					throw new NumberFormatException("ex");
+				}
+
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						Statement st = cn.createStatement();
+						ResultSet rs = st.executeQuery(
+								"SELECT users.number_storage, name, person_info FROM users WHERE  users.year="
+										+ comboYear.getSelectedItem() + " AND users." + quarter + "=''")) {
+
 					tableUsers = new TableStorage(rs);
 					scroll = new JScrollPane(tableUsers);
 					scroll.setBounds(20, 40, 950, 390);
 					panel.add(scroll);
 					panel.updateUI();
+
 				} catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(panel, "Specify quarter", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e1) {
-					System.out.println(e1);
+				} catch (Exception ex2) {
 					JOptionPane.showMessageDialog(panel, "Data Base Query", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+
 		combo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -426,6 +445,7 @@ public class AdminFrameStorage extends JFrame {
 
 			}
 		});
+
 		add.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -435,21 +455,23 @@ public class AdminFrameStorage extends JFrame {
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
 
-						UsersStorageDao daoUser = new UsersStorageDao(db);
+						UsersStorageDao daoUser = new UsersStorageDao();
 						daoUser.insert(new Users(
 								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "",
 								"", "", "", "", "", "", ""));
 						JOptionPane.showMessageDialog(panel, "Storage has been added");
 						RefreshTableUsers();
 					}
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+
 		delete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
 				try {
 					String quarter1 = "";
 					String quarter2 = "";
@@ -466,54 +488,82 @@ public class AdminFrameStorage extends JFrame {
 								throw new ArrayIndexOutOfBoundsException("ex");
 							}
 
-							ResultSet rs = db
-									.query("SELECT MAX(orders.order_id) FROM orders WHERE orders.summ!=0 AND orders.order_id!="
-											+ Integer.valueOf(
-													tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString())
-											+ " AND orders.storage_id="
-											+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString());
-							while (rs.next()) {
-								temp = rs.getString(1);
-     						}
-
-							rs = db.query("SELECT orders.quarter1 FROM orders WHERE orders.order_id=" + temp);
-							while (rs.next()) {
-								String j = rs.getString(1);
-								if (j == null) {
-									j = "";
+							try (Connection cn = ConnectionPool.getPool().getConnection();
+									Statement st = cn.createStatement();
+									ResultSet rs = st.executeQuery("SELECT MAX(orders.order_id)"
+											+ " FROM orders WHERE orders.summ!=0 AND orders.order_id!="
+											+ Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString())
+											+ " AND orders.storage_id=" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString())) {
+								
+								while (rs.next()) {
+									temp = rs.getString(1);
 								}
-								quarter1 = j;
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 							}
 
-							rs = db.query("SELECT orders.quarter2 FROM orders WHERE orders.order_id=" + temp);
-							while (rs.next()) {
-								String j = rs.getString(1);
-								if (j == null) {
-									j = "";
+							try (Connection cn = ConnectionPool.getPool().getConnection();
+									Statement st = cn.createStatement();
+									ResultSet rs = st.executeQuery("SELECT orders.quarter1 FROM orders WHERE orders.order_id=" + temp)) {
+								while (rs.next()) {
+									String j = rs.getString(1);
+									if (j == null) {
+										j = "";
+									}
+									quarter1 = j;
 								}
-								quarter2 = j;
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+							}
+							
+							try (Connection cn = ConnectionPool.getPool().getConnection();
+									Statement st = cn.createStatement();
+									ResultSet rs = st.executeQuery("SELECT orders.quarter2"
+											+ " FROM orders WHERE orders.order_id=" + temp)) {
+								
+								while (rs.next()) {
+									String j = rs.getString(1);
+									if (j == null) {
+										j = "";
+									}
+									quarter2 = j;
+								}
+					    	} catch (SQLException e) {
+					    		JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+
+							try (Connection cn = ConnectionPool.getPool().getConnection();
+									Statement st = cn.createStatement();
+									ResultSet rs = st.executeQuery("SELECT orders.quarter3 FROM orders WHERE orders.order_id=" + temp)) {
+								
+								while (rs.next()) {
+									String j = rs.getString(1);
+									if (j == null) {
+										j = "";
+									}
+
+									quarter3 = j;
+								}
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
 							}
 
-							rs = db.query("SELECT orders.quarter3 FROM orders WHERE orders.order_id=" + temp);
-							while (rs.next()) {
-								String j = rs.getString(1);
-								if (j == null) {
-									j = "";
+								try (Connection cn = ConnectionPool.getPool().getConnection();
+										Statement st = cn.createStatement();
+										ResultSet rs = st.executeQuery(
+										"SELECT orders.quarter4 FROM orders WHERE orders.order_id=" + temp)) {
+								while (rs.next()) {
+									String j = rs.getString(1);
+									if (j == null) {
+										j = "";
+									}
+									quarter4 = j;
 								}
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 
-								quarter3 = j;
-							}
-
-							rs = db.query("SELECT orders.quarter4 FROM orders WHERE orders.order_id=" + temp);
-							while (rs.next()) {
-								String j = rs.getString(1);
-								if (j == null) {
-									j = "";
-								}
-								quarter4 = j;
-							}
-
-							UsersStorageDao daoUser = new UsersStorageDao(db);
+							UsersStorageDao daoUser = new UsersStorageDao();
 							daoUser.deleteQuarters(new Users(
 									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
 									quarter1, quarter2, quarter3, quarter4));
@@ -528,7 +578,7 @@ public class AdminFrameStorage extends JFrame {
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 10).toString());
 
-							OrdersStorageDao daoOrder = new OrdersStorageDao(db);
+							OrdersStorageDao daoOrder = new OrdersStorageDao();
 							daoOrder.update(new Orders(
 									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
@@ -539,15 +589,15 @@ public class AdminFrameStorage extends JFrame {
 						}
 					}
 				} catch (ArrayIndexOutOfBoundsException ex) {
-					JOptionPane.showMessageDialog(panel, "Rent payment has not been selected or payment has been already deleted", "Error",
+					JOptionPane.showMessageDialog(panel,
+							"Rent payment has not been selected or payment has been already deleted", "Error",
 							JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(panel, "Database error", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+				} catch (Exception ex2) {
+					throw new RuntimeException(ex2);
 				}
 			}
 		});
+		
 		edit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -556,7 +606,7 @@ public class AdminFrameStorage extends JFrame {
 					Date dNow = new Date();
 					SimpleDateFormat ft = new SimpleDateFormat("yyyy");
 					String t = ft.format(dNow);
-					UsersStorageDao daoUser = new UsersStorageDao(db);
+					UsersStorageDao daoUser = new UsersStorageDao();
 					daoUser.update(
 							new Users(Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 									tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString(),
@@ -567,29 +617,31 @@ public class AdminFrameStorage extends JFrame {
 									tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString(),
 									tableUsers.getValueAt(tableUsers.getSelectedRow(), 7).toString(), t));
 
-					// creating new empty order
-					OrdersStorageDao daoOrder = new OrdersStorageDao(db);
+					// create new empty order
+					OrdersStorageDao daoOrder = new OrdersStorageDao();
 					daoOrder.insert(new Orders(
 							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "", 0,
 							"", "", "", "", t, "new"));
 
 					RefreshTableUsers();
 					JOptionPane.showMessageDialog(panel, "Owner has been saved");
-				} catch (ArrayIndexOutOfBoundsException ex) {
+				} catch (ArrayIndexOutOfBoundsException e) {
 					JOptionPane.showMessageDialog(panel, "Select storage", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException ex) {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "Database", "Error", JOptionPane.ERROR_MESSAGE);
+						throw new RuntimeException(e);
 				}
 			}
 
 		});
+		
 		editPrihodOrder.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					// updating info
-					OrdersStorageDao daoOrder = new OrdersStorageDao(db);
+					OrdersStorageDao daoOrder = new OrdersStorageDao();
 					daoOrder.updateInfo(new Orders(
 							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 							tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString()));
@@ -597,15 +649,14 @@ public class AdminFrameStorage extends JFrame {
 							"SELECT orders.order_id, users.number_storage, orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
 									+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND orders.date!=0 ORDER BY orders.date ASC");
 					JOptionPane.showMessageDialog(panel, "Receipt order has been saved");
+				
 				} catch (ArrayIndexOutOfBoundsException ex) {
 					JOptionPane.showMessageDialog(panel, "Select receipt order", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException ex) {
-					System.out.println(ex);
-					JOptionPane.showMessageDialog(panel, "Database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
 		});
+		
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -614,7 +665,7 @@ public class AdminFrameStorage extends JFrame {
 				combo.setSelectedIndex(0);
 
 				if (comboOrder.getSelectedIndex() == 1) {
-					new OrderFrameStorage(db);
+					new OrderFrameStorage();
 					dispose();
 				}
 				if (comboOrder.getSelectedIndex() == 2) {
@@ -628,11 +679,16 @@ public class AdminFrameStorage extends JFrame {
 	}
 
 	private void RefreshTableOrders() {
-		try {
-			panel.remove(scroll);
-			ResultSet rs = db
-					.query("SELECT orders.order_id, orders.storage_id, users.number_storage, orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
-							+ " FROM users, orders WHERE orders.storage_id=users.storage_id ORDER BY orders.order_id ASC");
+
+		panel.remove(scroll);
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(
+						"SELECT orders.order_id, orders.storage_id, users.number_storage, orders.date, orders.summ,"
+								+ " orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4,"
+								+ " orders.year, orders.info FROM users, orders"
+								+ " WHERE orders.storage_id=users.storage_id ORDER BY orders.order_id ASC")) {
+			
 			tableUsers = new TableStorage(rs);
 
 			// for hiding key column;
@@ -648,44 +704,50 @@ public class AdminFrameStorage extends JFrame {
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
 			panel.updateUI();
-		} catch (Exception e) {
+
+		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void RefreshTableUsers() {
-		try {
-			panel.remove(scroll);
-			ResultSet rs = db.query(
-					"SELECT storage_id, number_storage, name, person_info, users.quarter1, users.quarter2, users.quarter3, users.quarter4, users.year FROM users ORDER BY storage_id ASC");
+
+		panel.remove(scroll);
+
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT storage_id, number_storage, name, person_info,"
+						+ " users.quarter1, users.quarter2, users.quarter3, users.quarter4,"
+						+ " users.year FROM users ORDER BY storage_id ASC")) {
+
 			tableUsers = new TableStorage(rs);
 
-			// for hiding key column ¹0;
+			// hide key column ¹0;
 			tableUsers.getColumn("storage_id").setMaxWidth(0);
 			tableUsers.getColumn("storage_id").setMinWidth(0);
 			tableUsers.getColumn("storage_id").setPreferredWidth(0);
 
-			// for hiding key column ¹4;
+			// hide key column ¹4;
 			tableUsers.getColumn("quarter I").setMaxWidth(0);
 			tableUsers.getColumn("quarter I").setMinWidth(0);
 			tableUsers.getColumn("quarter I").setPreferredWidth(0);
 
-			// for hiding key column ¹5;
+			// hide key column ¹5;
 			tableUsers.getColumn("quarter II").setMaxWidth(0);
 			tableUsers.getColumn("quarter II").setMinWidth(0);
 			tableUsers.getColumn("quarter II").setPreferredWidth(0);
 
-			// for hiding key column ¹6;
+			// hide key column ¹6;
 			tableUsers.getColumn("quarter III").setMaxWidth(0);
 			tableUsers.getColumn("quarter III").setMinWidth(0);
 			tableUsers.getColumn("quarter III").setPreferredWidth(0);
 
-			// for hiding key column ¹7;
+			// hide key column ¹7;
 			tableUsers.getColumn("quarter IV").setMaxWidth(0);
 			tableUsers.getColumn("quarter IV").setMinWidth(0);
 			tableUsers.getColumn("quarter IV").setPreferredWidth(0);
 
-			// for hiding key column ¹8;
+			// hide key column ¹8;
 			tableUsers.getColumn("year").setMaxWidth(0);
 			tableUsers.getColumn("year").setMinWidth(0);
 			tableUsers.getColumn("year").setPreferredWidth(0);
@@ -694,20 +756,23 @@ public class AdminFrameStorage extends JFrame {
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
 			panel.updateUI();
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	protected void RefreshTableOrdersNotEdit(String sort) {
-		try {
-			panel.remove(scroll);
 
-			ResultSet rs = db.query(sort);
+		panel.remove(scroll);
+
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(sort)) {
 
 			tableUsers = new TableStorage(rs);
 
-			// for hiding key column;
+			// hide key column;
 			tableUsers.getColumn("order_id").setMaxWidth(0);
 			tableUsers.getColumn("order_id").setMinWidth(0);
 			tableUsers.getColumn("order_id").setPreferredWidth(0);
@@ -716,17 +781,20 @@ public class AdminFrameStorage extends JFrame {
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
 			panel.updateUI();
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	protected void RefreshTableUsersNotEdit(String sort) {
-		try {
-			panel.remove(scroll);
-			ResultSet rs = db.query(sort);
-			tableUsers = new TableStorage(rs);
 
+		panel.remove(scroll);
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(sort)) {
+
+			tableUsers = new TableStorage(rs);
 			scroll = new JScrollPane(tableUsers);
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
@@ -737,10 +805,12 @@ public class AdminFrameStorage extends JFrame {
 	}
 
 	protected void RefreshTableElectroNotEdit(String sort) {
-		try {
-			panel.remove(scroll);
 
-			ResultSet rs = db.query(sort);
+		panel.remove(scroll);
+
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(sort)) {
 
 			tableUsers = new TableStorage(rs);
 
@@ -748,7 +818,8 @@ public class AdminFrameStorage extends JFrame {
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
 			panel.updateUI();
-		} catch (Exception e) {
+
+		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}

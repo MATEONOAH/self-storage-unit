@@ -2,6 +2,8 @@ package babroval.storage.frames;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import babroval.storage.mysql.TransToMysql;
+import babroval.storage.mysql.ConnectionPool;
 import babroval.storage.mysql.WorkDBase;
 
 public class StartFrameStorage extends JFrame {
@@ -101,16 +103,17 @@ public class StartFrameStorage extends JFrame {
 		connect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TransToMysql db;
-				try {
-					db = new TransToMysql(tfUrl.getText() + "/" + WorkDBase.NAME_DB, tfLogin.getText(),
-							tfPass.getText());
-					new LoginFrameStorage(db);
+				try (Connection cn = ConnectionPool.getPool().getConnection(tfUrl.getText(), tfLogin.getText(), tfPass.getText())) {
+					
+					new LoginFrameStorage();
 					dispose();
-				} catch (Exception ex) {
+				} catch (SQLException ex) {
 					JOptionPane.showMessageDialog(panel, "Data Base connect error", "Error", JOptionPane.ERROR_MESSAGE);
+
 				}
 			}
 		});
+		
 	}
+	
 }

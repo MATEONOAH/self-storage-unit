@@ -4,8 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,12 +18,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import babroval.storage.mysql.TransToMysql;
+import babroval.storage.mysql.ConnectionPool;
 
 public class ElectroFrameStorage extends JFrame {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
@@ -29,12 +29,10 @@ public class ElectroFrameStorage extends JFrame {
 	private JLabel labelTermRent, imageLabel;
 	private JTextField tfTermRent;
 	private JButton select;
-	private TransToMysql db;
 	private TableStorage tableCars;
 	private int user_id;
 
-	public ElectroFrameStorage(TransToMysql db, int user_id) {
-		this.db = db;
+	public ElectroFrameStorage(int user_id) {
 		this.user_id = user_id;
 		setSize(500, 450);
 		setTitle("OrderFrame");
@@ -51,12 +49,14 @@ public class ElectroFrameStorage extends JFrame {
 
 		panel = new JPanel(null);
 
-		ResultSet rsCars;
-		try {
-			rsCars = db.query("SELECT car_id, name_car, color, price_per_day FROM cars WHERE availability=1");
-			tableCars = new TableStorage(rsCars);
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "Data Base", "Error",
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				 Statement st = cn.createStatement(); 
+				 ResultSet rs = st.executeQuery("SELECT car_id, name_car, color, price_per_day FROM cars WHERE availability=1")) {
+			
+			tableCars = new TableStorage(rs);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(panel, "database", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 		scroll = new JScrollPane(tableCars);
@@ -96,13 +96,14 @@ public class ElectroFrameStorage extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				try {
-					ResultSet rsCars = db.query("SELECT reject_description,  damage_description " + "FROM orders "
-							+ "WHERE user_id=" + user_id + " AND reject_description<>'no reject'");
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						 Statement st = cn.createStatement(); 
+						 ResultSet rs = st.executeQuery("SELECT reject_description,  damage_description " + "FROM orders "
+							+ "WHERE user_id=" + user_id + " AND reject_description<>'no reject'")) {
 
-					if (rsCars.next()) {
+					if (rs.next()) {
 						JOptionPane.showMessageDialog(panel,
-								"Your order is rejected. The reason is " + rsCars.getString(2), "Not Accepted",
+								"Your order is rejected. The reason is " + rs.getString(2), "Not Accepted",
 								JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					} else {
@@ -125,9 +126,9 @@ public class ElectroFrameStorage extends JFrame {
 					}
 				} catch (SQLException ex) {
 					JOptionPane.showMessageDialog(panel, "Select error", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (ArrayIndexOutOfBoundsException e) {
+				} catch (ArrayIndexOutOfBoundsException e1) {
 					JOptionPane.showMessageDialog(panel, "Please,select the car", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
+				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(panel, "Data Base", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
