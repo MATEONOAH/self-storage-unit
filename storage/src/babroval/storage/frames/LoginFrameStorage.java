@@ -23,7 +23,7 @@ public class LoginFrameStorage extends JFrame {
 	private JPasswordField tfPass;
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "select", "rent payment", "electricity", "taxes" };
+	private String[] en = { "select", "rent payment", "electricity" };
 	
 	public LoginFrameStorage() {
 		setSize(260, 220);
@@ -58,6 +58,7 @@ public class LoginFrameStorage extends JFrame {
 	}
 
 	private void action() {
+		
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -73,12 +74,12 @@ public class LoginFrameStorage extends JFrame {
 
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "Incorrect Login", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+		
 		enter.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
@@ -92,12 +93,11 @@ public class LoginFrameStorage extends JFrame {
 						new AdminFrameStorage();
 						dispose();
 					} else {
-						JOptionPane.showMessageDialog(panel, "Incorrect Password", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(panel, "incorrect password", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "Incorrect Login", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-
 			}
 		});
 

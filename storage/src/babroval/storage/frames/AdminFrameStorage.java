@@ -37,9 +37,9 @@ public class AdminFrameStorage extends JFrame {
 
 	private JPanel panel;
 	private JComboBox<Object> combo;
-	private String[] es = { "edit", "rent payment", "electricity", "taxes", "owners" };
+	private String[] es = { "edit", "rent payment", "electricity", "owners" };
 	private JComboBox<Object> comboRead;
-	private String[] read = { "select", "rent payment", "electricity", "taxes", "owners" };
+	private String[] read = { "select", "rent payment", "electricity", "owners" };
 	private JLabel labelComboNum;
 	private JComboBox<String> comboNum;
 	private JScrollPane scroll;
@@ -48,7 +48,7 @@ public class AdminFrameStorage extends JFrame {
 	private JButton edit;
 	private JButton editPrihodOrder;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "enter", "rent payment", "electricity", "taxes" };
+	private String[] en = { "enter", "rent payment", "electricity" };
 	private JButton sortFamily;
 	private JLabel labelQuarts;
 	private JCheckBox quart1;
@@ -111,7 +111,7 @@ public class AdminFrameStorage extends JFrame {
 			tableUsers = new TableStorage(rs);
 
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "Data Base Error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		scroll = new JScrollPane(tableUsers);
@@ -216,7 +216,7 @@ public class AdminFrameStorage extends JFrame {
 						fw.write(allRow);
 						JOptionPane.showMessageDialog(panel, "Saved");
 					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(panel, "Save error");
+						JOptionPane.showMessageDialog(panel, "save error");
 					}
 				}
 			}
@@ -315,7 +315,7 @@ public class AdminFrameStorage extends JFrame {
 						}
 					}
 				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "Database Error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 
 				try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -332,7 +332,7 @@ public class AdminFrameStorage extends JFrame {
 					panel.updateUI();
 
 				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "Database Error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -369,7 +369,7 @@ public class AdminFrameStorage extends JFrame {
 					quarter = "quarter4";
 				}
 				if (quarter.equals("")) {
-					throw new NumberFormatException("ex");
+					throw new NumberFormatException();
 				}
 
 				try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -385,9 +385,9 @@ public class AdminFrameStorage extends JFrame {
 					panel.updateUI();
 
 				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(panel, "Specify quarter", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "specify quarter", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception ex2) {
-					JOptionPane.showMessageDialog(panel, "Data Base Query", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database Query", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -626,9 +626,9 @@ public class AdminFrameStorage extends JFrame {
 					RefreshTableUsers();
 					JOptionPane.showMessageDialog(panel, "Owner has been saved");
 				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(panel, "Select storage", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "select storage", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "Database", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database", "Error", JOptionPane.ERROR_MESSAGE);
 						throw new RuntimeException(e);
 				}
 			}
@@ -651,7 +651,7 @@ public class AdminFrameStorage extends JFrame {
 					JOptionPane.showMessageDialog(panel, "Receipt order has been saved");
 				
 				} catch (ArrayIndexOutOfBoundsException ex) {
-					JOptionPane.showMessageDialog(panel, "Select receipt order", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "select receipt order", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -706,7 +706,7 @@ public class AdminFrameStorage extends JFrame {
 			panel.updateUI();
 
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -758,7 +758,7 @@ public class AdminFrameStorage extends JFrame {
 			panel.updateUI();
 
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -783,7 +783,7 @@ public class AdminFrameStorage extends JFrame {
 			panel.updateUI();
 
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -800,7 +800,7 @@ public class AdminFrameStorage extends JFrame {
 			panel.add(scroll);
 			panel.updateUI();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -820,7 +820,7 @@ public class AdminFrameStorage extends JFrame {
 			panel.updateUI();
 
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "Update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

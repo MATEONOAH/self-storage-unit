@@ -47,7 +47,7 @@ class OrderFrameStorage extends JFrame {
 	private JTextField tfInf;
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "select", "electricity", "taxes", "admin" };
+	private String[] en = { "select", "electricity", "admin" };
 
 	public OrderFrameStorage() {
 		setSize(295, 300);
@@ -83,7 +83,7 @@ class OrderFrameStorage extends JFrame {
 				comboNum.addItem(rs.getString(2));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "Data Base Error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		labelSumm = new JLabel("Enter amount");
@@ -137,6 +137,7 @@ class OrderFrameStorage extends JFrame {
 				numUpdateOrderFrame();
 			}
 		});
+		
 		enter.addActionListener(new ActionListener() {
 
 			@Override
@@ -205,10 +206,11 @@ class OrderFrameStorage extends JFrame {
 					JOptionPane.showMessageDialog(panel, "Select storage, quarters and enter the right payment",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(panel, "Data Base Error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+		
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -217,8 +219,6 @@ class OrderFrameStorage extends JFrame {
 				}
 				if (comboOrder.getSelectedIndex() == 2) {
 
-				}
-				if (comboOrder.getSelectedIndex() == 3) {
 					new LoginFrameStorage();
 					dispose();
 				}
@@ -241,7 +241,7 @@ class OrderFrameStorage extends JFrame {
 				}
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "Data Base error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		panel.updateUI();
 	}
