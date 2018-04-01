@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,6 +18,7 @@ import babroval.storage.mysql.WorkDBase;
 
 public class StartFrameStorage extends JFrame {
 
+	
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
@@ -78,10 +80,10 @@ public class StartFrameStorage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					WorkDBase.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
-					JOptionPane.showMessageDialog(panel, "Database create succsesfull", "Message",
+					JOptionPane.showMessageDialog(panel, "Database create successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(panel, "Database create error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database create error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -91,10 +93,10 @@ public class StartFrameStorage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					WorkDBase.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
-					JOptionPane.showMessageDialog(panel, "Data Base delete succsesfull", "Message",
+					JOptionPane.showMessageDialog(panel, "Database delete successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(panel, "Data Base delete error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database delete error", "Error", JOptionPane.ERROR_MESSAGE);
 				
 				}
 			}
@@ -103,12 +105,16 @@ public class StartFrameStorage extends JFrame {
 		connect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try (Connection cn = ConnectionPool.getPool().getConnection(tfUrl.getText(), tfLogin.getText(), tfPass.getText())) {
-					
+				
+				try (Connection cn = ConnectionPool.getPool().getConnection(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					 Statement st = cn.createStatement())
+				{
+					st.executeUpdate("USE " + ConnectionPool.NAME_DB);
 					new LoginFrameStorage();
 					dispose();
+				
 				} catch (SQLException ex) {
-					JOptionPane.showMessageDialog(panel, "Data Base connect error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database connect error", "Error", JOptionPane.ERROR_MESSAGE);
 
 				}
 			}

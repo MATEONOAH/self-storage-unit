@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 public class ConnectionPool {
 
+	
 	public static final String NAME_DB = "storage";
 
 	private static final String DB_DRIVER_NAME = "com.mysql.jdbc.Driver";
@@ -44,7 +45,7 @@ public class ConnectionPool {
 			Connection cn = DriverManager.getConnection(url, user, password);
 			return cn;
 		
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
