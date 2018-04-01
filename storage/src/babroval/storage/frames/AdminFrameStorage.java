@@ -722,32 +722,32 @@ public class AdminFrameStorage extends JFrame {
 
 			tableUsers = new TableStorage(rs);
 
-			// hide key column ¹0;
+			// hide key column 0;
 			tableUsers.getColumn("storage_id").setMaxWidth(0);
 			tableUsers.getColumn("storage_id").setMinWidth(0);
 			tableUsers.getColumn("storage_id").setPreferredWidth(0);
 
-			// hide key column ¹4;
+			// hide key column 4;
 			tableUsers.getColumn("quarter I").setMaxWidth(0);
 			tableUsers.getColumn("quarter I").setMinWidth(0);
 			tableUsers.getColumn("quarter I").setPreferredWidth(0);
 
-			// hide key column ¹5;
+			// hide key column 5;
 			tableUsers.getColumn("quarter II").setMaxWidth(0);
 			tableUsers.getColumn("quarter II").setMinWidth(0);
 			tableUsers.getColumn("quarter II").setPreferredWidth(0);
 
-			// hide key column ¹6;
+			// hide key column 6;
 			tableUsers.getColumn("quarter III").setMaxWidth(0);
 			tableUsers.getColumn("quarter III").setMinWidth(0);
 			tableUsers.getColumn("quarter III").setPreferredWidth(0);
 
-			// hide key column ¹7;
+			// hide key column 7;
 			tableUsers.getColumn("quarter IV").setMaxWidth(0);
 			tableUsers.getColumn("quarter IV").setMinWidth(0);
 			tableUsers.getColumn("quarter IV").setPreferredWidth(0);
 
-			// hide key column ¹8;
+			// hide key column 8;
 			tableUsers.getColumn("year").setMaxWidth(0);
 			tableUsers.getColumn("year").setMinWidth(0);
 			tableUsers.getColumn("year").setPreferredWidth(0);
