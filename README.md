@@ -4,7 +4,7 @@ Self-Storage Unit
 =================
 A small Java desktop project for finance manage of self-storage unit. 
  
-[![Build Status(https://travis-ci.org/babroval/self-storage-unit.svg?branch=master)](https://travis-ci.org/babroval/self-storage-unit)
+[![Build Status](https://travis-ci.org/babroval/self-storage-unit.svg?branch=master)](https://travis-ci.org/babroval/self-storage-unit)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/babroval/self-storage-unit/blob/master/LICENSE)
 ```
 		try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -20,9 +20,11 @@ A small Java desktop project for finance manage of self-storage unit.
 			panel.add(scroll);
 			panel.updateUI();
 		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(panel, "specify quarter", "Error", 											JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "specify quarter", "Error",
+				JOptionPane.ERROR_MESSAGE);
 		} catch (Exception ex) {
-					JOptionPane.showMessageDialog(panel, "database Query", "Error", 													JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database Query", "Error",
+						JOptionPane.ERROR_MESSAGE);
 		}
 ```
 
