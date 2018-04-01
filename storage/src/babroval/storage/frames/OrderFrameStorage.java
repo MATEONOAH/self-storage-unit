@@ -194,6 +194,7 @@ class OrderFrameStorage extends JFrame {
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message", JOptionPane.INFORMATION_MESSAGE);
 
 					comboNum.setSelectedIndex(0);
+					tfName.setText("");
 					tfSumm.setText("");
 					tfInf.setText("");
 					quart1.setSelected(false);
