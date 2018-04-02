@@ -1,53 +1,29 @@
 package babroval.storage.frames;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.awt.event.*;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-import babroval.storage.dao.OrdersStorageDao;
-import babroval.storage.dao.UsersStorageDao;
-import babroval.storage.entity.Orders;
-import babroval.storage.entity.Users;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.dao.*;
+import babroval.storage.entity.*;
+import babroval.storage.mysql.*;
 
 class OrderFrameStorage extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber;
-	private JComboBox<String> comboNum;
-	private JLabel labelD;
-	private JTextField fieldDate;
-	private JTextField tfName;
-	private JLabel labelSumm;
-	private JTextField tfSumm;
-	private JLabel labelQuarts;
-	private JCheckBox quart1;
-	private JCheckBox quart2;
-	private JCheckBox quart3;
-	private JCheckBox quart4;
-	boolean quartSelect = false;
-	private JComboBox<String> comboYear;
-	private JLabel labelInf;
-	private JTextField tfInf;
-	private JButton enter;
+	private JLabel labelNumber, labelD, labelQuarts, labelSumm, labelInf;
+	private JComboBox<String> comboNum, comboYear;
 	private JComboBox<Object> comboOrder;
+	private JTextField fieldDate, tfName, tfSumm, tfInf;
+	private JCheckBox quart1, quart2, quart3, quart4;
+	private JButton enter;
 	private String[] en = { "select", "electricity", "admin" };
+	boolean quartSelect = false;
 
 	public OrderFrameStorage() {
 		setSize(295, 300);
@@ -73,13 +49,13 @@ class OrderFrameStorage extends JFrame {
 		fieldDate = new JTextField(ft.format(dNow));
 
 		tfName = new JTextField(20);
-		
+
 		try (Connection cn = ConnectionPool.getPool().getConnection();
-			 Statement st = cn.createStatement();
-			 ResultSet rs = st.executeQuery("SELECT * FROM users"))	{
-			
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+
 			comboNum.addItem("");
-    		while (rs.next()) {
+			while (rs.next()) {
 				comboNum.addItem(rs.getString(2));
 			}
 		} catch (SQLException e) {
@@ -107,7 +83,7 @@ class OrderFrameStorage extends JFrame {
 		tfInf.setText("");
 		enter = new JButton("Enter");
 		comboOrder = new JComboBox<Object>(en);
-		
+
 		panel.add(labelNumber);
 		panel.add(comboNum);
 		panel.add(labelD);
@@ -134,10 +110,11 @@ class OrderFrameStorage extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+
 				numUpdateOrderFrame();
 			}
 		});
-		
+
 		enter.addActionListener(new ActionListener() {
 
 			@Override
@@ -178,11 +155,11 @@ class OrderFrameStorage extends JFrame {
 						quarter4 = "IV";
 						quartSelect = true;
 					}
-					
+
 					if (!quartSelect || comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
-						throw new NumberFormatException("ex");
+						throw new NumberFormatException("e");
 					}
-					
+
 					OrdersStorageDao daoOrder = new OrdersStorageDao();
 					daoOrder.insert(new Orders(comboNum.getSelectedIndex(), fieldDate.getText(),
 							Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
@@ -191,7 +168,8 @@ class OrderFrameStorage extends JFrame {
 					UsersStorageDao daoUser = new UsersStorageDao();
 					daoUser.updateQuarters(new Users(comboNum.getSelectedIndex(), quarter1, quarter2, quarter3,
 							quarter4, (String) comboYear.getSelectedItem()));
-					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
 
 					comboNum.setSelectedIndex(0);
 					tfName.setText("");
@@ -211,7 +189,7 @@ class OrderFrameStorage extends JFrame {
 				}
 			}
 		});
-		
+
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -220,7 +198,12 @@ class OrderFrameStorage extends JFrame {
 				}
 				if (comboOrder.getSelectedIndex() == 2) {
 
-					new LoginFrameStorage();
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new LoginFrameStorage();
+						}
+					});
+
 					dispose();
 				}
 			}
@@ -229,13 +212,13 @@ class OrderFrameStorage extends JFrame {
 
 	private void numUpdateOrderFrame() {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
-			 Statement st = cn.createStatement(); 
-			 ResultSet rs = st.executeQuery("SELECT * FROM users"))	{
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
 
 			while (rs.next()) {
 				String i = rs.getString(2);
 				String j = (String) comboNum.getSelectedItem();
-				
+
 				if (i.equals(j)) {
 					tfName.setText(rs.getString(3));
 					break;
@@ -246,5 +229,5 @@ class OrderFrameStorage extends JFrame {
 		}
 		panel.updateUI();
 	}
-	 
+
 }

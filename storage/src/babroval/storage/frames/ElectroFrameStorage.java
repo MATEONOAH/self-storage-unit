@@ -50,15 +50,16 @@ public class ElectroFrameStorage extends JFrame {
 		panel = new JPanel(null);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
-				 Statement st = cn.createStatement(); 
-				 ResultSet rs = st.executeQuery("SELECT car_id, name_car, color, price_per_day FROM cars WHERE availability=1")) {
-			
+				Statement st = cn.createStatement();
+				ResultSet rs = st
+						.executeQuery("SELECT car_id, name_car, color, price_per_day"
+										+ " FROM cars WHERE availability=1")) {
+
 			tableCars = new TableStorage(rs);
-			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		
 		scroll = new JScrollPane(tableCars);
 		labelTermRent = new JLabel("Select car and term of rent in days");
 		tfTermRent = new JTextField("1");
@@ -97,40 +98,31 @@ public class ElectroFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try (Connection cn = ConnectionPool.getPool().getConnection();
-						 Statement st = cn.createStatement(); 
-						 ResultSet rs = st.executeQuery("SELECT reject_description,  damage_description " + "FROM orders "
-							+ "WHERE user_id=" + user_id + " AND reject_description<>'no reject'")) {
+						Statement st = cn.createStatement();
+						ResultSet rs = st
+								.executeQuery("SELECT reject_description,  damage_description " 
+										+ "FROM orders WHERE user_id=" 
+										+ user_id 
+										+ " AND reject_description<>'no reject'")) {
 
 					if (rs.next()) {
-						JOptionPane.showMessageDialog(panel,
-								"Your order is rejected. The reason is " + rs.getString(2), "Not Accepted",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(panel, "Your order is rejected. The reason is " + rs.getString(2),
+								"Not Accepted", JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					} else {
 						int totalCoast = Integer.valueOf(tfTermRent.getText())
 								* Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(), 3).toString());
-//						OrdersStorageDao daoOrder = new OrdersStorageDao(db);
-						// daoOrder.insert(new Orders(
-						// Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(),
-						// 0).toString()),
-						// user_id,
-						// Integer.valueOf(tfTermRent.getText()),
-						// "no pay",
-						// totalCoast,
-						// "no reject",
-						// "no damage"));
 
 						JOptionPane.showMessageDialog(panel, "Total coast is " + totalCoast, "Accepted",
 								JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					}
-				} catch (SQLException ex) {
+				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(panel, "Select error", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (ArrayIndexOutOfBoundsException e1) {
+				} catch (ArrayIndexOutOfBoundsException e) {
 					JOptionPane.showMessageDialog(panel, "Please,select the car", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(panel, "Data Base", "Error",
-							JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "Database", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}

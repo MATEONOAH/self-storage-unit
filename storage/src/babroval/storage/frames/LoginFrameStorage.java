@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class LoginFrameStorage extends JFrame {
 
@@ -24,7 +25,7 @@ public class LoginFrameStorage extends JFrame {
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
 	private String[] en = { "select", "rent payment", "electricity" };
-	
+
 	public LoginFrameStorage() {
 		setSize(260, 220);
 		setTitle("LoginFrame");
@@ -46,7 +47,6 @@ public class LoginFrameStorage extends JFrame {
 		enter = new JButton("Admin");
 		comboOrder = new JComboBox<Object>(en);
 
-
 		panel.add(labelLogin);
 		panel.add(tfLogin);
 		panel.add(labelPass);
@@ -58,13 +58,19 @@ public class LoginFrameStorage extends JFrame {
 	}
 
 	private void action() {
-		
+
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (!tfLogin.getText().equals(" ")) {
 					if (comboOrder.getSelectedIndex() == 1) {
-						new OrderFrameStorage();
+
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								new OrderFrameStorage();
+							}
+						});
+
 						dispose();
 					}
 					if (comboOrder.getSelectedIndex() == 2) {
@@ -78,7 +84,7 @@ public class LoginFrameStorage extends JFrame {
 				}
 			}
 		});
-		
+
 		enter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -90,7 +96,13 @@ public class LoginFrameStorage extends JFrame {
 						res += pass[i];
 					}
 					if (res.equals("")) {
-						new AdminFrameStorage();
+
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								new AdminFrameStorage();
+							}
+						});
+
 						dispose();
 					} else {
 						JOptionPane.showMessageDialog(panel, "incorrect password", "Error", JOptionPane.ERROR_MESSAGE);

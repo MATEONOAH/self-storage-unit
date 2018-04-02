@@ -32,8 +32,8 @@ class TableStorage extends JTable {
 			}
 			setModel(dtm);
 			setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
-		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(panel, "Query Data Base", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(panel, "Query Database", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

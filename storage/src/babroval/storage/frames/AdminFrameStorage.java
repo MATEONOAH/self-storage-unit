@@ -36,33 +36,21 @@ public class AdminFrameStorage extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JComboBox<Object> combo;
-	private String[] es = { "edit", "rent payment", "electricity", "owners" };
-	private JComboBox<Object> comboRead;
-	private String[] read = { "select", "rent payment", "electricity", "owners" };
-	private JLabel labelComboNum;
-	private JComboBox<String> comboNum;
+	private JComboBox<Object> combo, comboRead, comboOrder;
+	private JLabel labelComboNum, labelQuarts;
+	private JComboBox<String> comboNum, comboYear;
 	private JScrollPane scroll;
-	private JButton add;
-	private JButton delete;
-	private JButton edit;
-	private JButton editPrihodOrder;
-	private JComboBox<Object> comboOrder;
+	private JButton add, delete, edit, editPrihodOrder, sortFamily, notPaid;
 	private String[] en = { "enter", "rent payment", "electricity" };
-	private JButton sortFamily;
-	private JLabel labelQuarts;
-	private JCheckBox quart1;
-	private JCheckBox quart2;
-	private JCheckBox quart3;
-	private JCheckBox quart4;
+	private JCheckBox quart1, quart2, quart3, quart4;
 	private ButtonGroup group;
-	private JComboBox<String> comboYear;
-	private JButton notPaid;
 	private TableStorage tableUsers;
 	private JMenuBar menuBar;
 	private JMenuItem itemWrite, itemAbout, itemExit;
 	private JMenu file, about;
 	private JFileChooser chooser;
+	private String[] es = { "edit", "rent payment", "electricity", "owners" };
+	private String[] read = { "select", "rent payment", "electricity", "owners" };
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
 
 	public AdminFrameStorage() {
@@ -187,7 +175,6 @@ public class AdminFrameStorage extends JFrame {
 		panel.add(delete);
 		panel.add(editPrihodOrder);
 		panel.add(comboOrder);
-		// panel.add(scroll);
 
 		add(panel);
 	}
