@@ -40,7 +40,7 @@ public class LoginFrameStorage extends JFrame {
 
 		panel = new JPanel();
 		labelLogin = new JLabel("Login");
-		labelPass = new JLabel("Pass");
+		labelPass = new JLabel("Password");
 		tfLogin = new JTextField(20);
 		tfPass = new JPasswordField(20);
 		enter = new JButton("Admin");

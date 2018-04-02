@@ -69,7 +69,7 @@ class OrderFrameStorage extends JFrame {
 		labelD = new JLabel("Date ");
 
 		Date dNow = new Date();
-		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
 		fieldDate = new JTextField(ft.format(dNow));
 
 		tfName = new JTextField(20);
