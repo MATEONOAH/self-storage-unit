@@ -133,7 +133,7 @@ class OrderFrameStorage extends JFrame {
 		comboNum.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent ae) {
 				numUpdateOrderFrame();
 			}
 		});
@@ -141,7 +141,7 @@ class OrderFrameStorage extends JFrame {
 		enter.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent ae) throws NumberFormatException {
+			public void actionPerformed(ActionEvent ae) {
 				try {
 					if (tfInf.getText().equals("")) {
 						tfInf.setText("");
@@ -203,10 +203,10 @@ class OrderFrameStorage extends JFrame {
 					quart4.setSelected(false);
 					quartSelect = false;
 
-				} catch (NumberFormatException ex) {
+				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "Select storage, quarters and enter the right payment",
 							"Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception ex) {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -214,7 +214,7 @@ class OrderFrameStorage extends JFrame {
 		
 		comboOrder.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent ae) {
 				if (comboOrder.getSelectedIndex() == 1) {
 
 				}
