@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import babroval.storage.mysql.ConnectionPool;
-import babroval.storage.mysql.WorkDBase;
+import babroval.storage.mysql.InitDBase;
 
 public class StartFrameStorage extends JFrame {
 
@@ -79,7 +79,7 @@ public class StartFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					WorkDBase.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDBase.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					JOptionPane.showMessageDialog(panel, "Database create successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception ex) {
@@ -92,7 +92,7 @@ public class StartFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					WorkDBase.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDBase.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					JOptionPane.showMessageDialog(panel, "Database delete successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception ex) {

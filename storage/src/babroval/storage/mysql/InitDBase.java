@@ -11,7 +11,7 @@ import babroval.storage.entity.Electro;
 import babroval.storage.entity.Orders;
 import babroval.storage.entity.Users;
 
-public class WorkDBase {
+public class InitDBase {
 
 	public static void createDB(String url, String user, String password) {
 		
@@ -70,11 +70,11 @@ public class WorkDBase {
 		daoUser.insert(new Users("2", "CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102", "+","II", "III", "IV", "2015"));
 
 		OrdersStorageDao daoOrder = new OrdersStorageDao();
-		daoOrder.insert(new Orders(2, "18-11-2017", 400000, "I","II","","","2015", "45325"));
-		daoOrder.insert(new Orders(4, "19-11-2017", 200000, "I","", "", "", "2015","67567"));
-		daoOrder.insert(new Orders(2, "20-11-2017", 200000, "+", "+", "III", "","2015", "34556"));
-		daoOrder.insert(new Orders(4, "29-11-2017", 800000, "+","II", "III", "IV", "2015", "78574"));
-		daoOrder.insert(new Orders(3, "30-11-2017", 400000, "I", "", "", "" ,"2015", "353465"));
+		daoOrder.insert(new Orders(2, "18-11-2017", 400000, "I","II","","","2018", "45325"));
+		daoOrder.insert(new Orders(4, "19-11-2017", 200000, "I","", "", "", "2018","67567"));
+		daoOrder.insert(new Orders(2, "20-11-2017", 200000, "+", "+", "III", "","2018", "34556"));
+		daoOrder.insert(new Orders(4, "29-11-2017", 800000, "+","II", "III", "IV", "2018", "78574"));
+		daoOrder.insert(new Orders(3, "30-11-2017", 400000, "I", "", "", "" ,"2018", "353465"));
 		
 		ElectroStorageDao daoElectro = new ElectroStorageDao();
 		daoElectro.insert(new Electro(2, "18-11-2017", 45600, 45700, 100, 1000, "1.2", 100000, "56456"));
