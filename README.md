@@ -2,7 +2,7 @@
 
 Self-Storage Unit
 =================
-A small Java desktop project for finance manage of self-storage unit. 
+A small Java desktop project for finance managing of the self-storage unit. 
  
 [![Build Status](https://travis-ci.org/babroval/self-storage-unit.svg?branch=master)](https://travis-ci.org/babroval/self-storage-unit)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/babroval/self-storage-unit/blob/master/LICENSE)
