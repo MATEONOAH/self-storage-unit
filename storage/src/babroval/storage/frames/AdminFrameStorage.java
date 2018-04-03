@@ -85,7 +85,7 @@ public class AdminFrameStorage extends JFrame {
 		combo = new JComboBox<Object>(es);
 		comboRead = new JComboBox<Object>(read);
 		comboOrder = new JComboBox<Object>(en);
-		labelComboNum = new JLabel("Rent payment of storage number :");
+		labelComboNum = new JLabel("Rent payment for storage:");
 		comboNum = new JComboBox<String>();
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -137,8 +137,8 @@ public class AdminFrameStorage extends JFrame {
 		sortFamily.setVisible(false);
 
 		comboRead.setBounds(30, 10, 120, 20);
-		labelComboNum.setBounds(200, 10, 130, 20);
-		comboNum.setBounds(317, 10, 70, 20);
+		labelComboNum.setBounds(200, 10, 150, 20);
+		comboNum.setBounds(352, 10, 70, 20);
 		sortFamily.setBounds(430, 10, 140, 20);
 		quart1.setBounds(602, 10, 30, 20);
 		quart2.setBounds(630, 10, 32, 20);
