@@ -24,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.OrdersStorageDao;
 import babroval.storage.dao.UsersStorageDao;
@@ -652,7 +653,13 @@ public class AdminFrameStorage extends JFrame {
 				combo.setSelectedIndex(0);
 
 				if (comboOrder.getSelectedIndex() == 1) {
-					new OrderFrameStorage();
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new OrderFrameStorage();
+						}
+					});
+					
 					dispose();
 				}
 				if (comboOrder.getSelectedIndex() == 2) {
