@@ -258,12 +258,6 @@ public class AdminFrameStorage extends JFrame {
 									+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND electro.date!=0 ORDER BY electro.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
-					sortFamily.setVisible(false);
-					editPrihodOrder.setEnabled(false);
-					panel.remove(scroll);
-					panel.updateUI();
-				}
-				if (comboRead.getSelectedIndex() == 4) {
 
 					sortFamily.setVisible(true);
 					editPrihodOrder.setEnabled(false);
@@ -415,15 +409,6 @@ public class AdminFrameStorage extends JFrame {
 					panel.updateUI();
 				}
 				if (combo.getSelectedIndex() == 3) {
-					add.setEnabled(false);
-					edit.setEnabled(false);
-					delete.setEnabled(true);
-					editPrihodOrder.setEnabled(false);
-
-					panel.remove(scroll);
-					panel.updateUI();
-				}
-				if (combo.getSelectedIndex() == 4) {
 					add.setEnabled(true);
 					edit.setEnabled(true);
 					delete.setEnabled(false);
@@ -722,24 +707,24 @@ public class AdminFrameStorage extends JFrame {
 			tableUsers.getColumn("storage_id").setPreferredWidth(0);
 
 			// hide key column 4;
-			tableUsers.getColumn("quarter I").setMaxWidth(0);
-			tableUsers.getColumn("quarter I").setMinWidth(0);
-			tableUsers.getColumn("quarter I").setPreferredWidth(0);
+			tableUsers.getColumn("quarter1").setMaxWidth(0);
+			tableUsers.getColumn("quarter1").setMinWidth(0);
+			tableUsers.getColumn("quarter1").setPreferredWidth(0);
 
 			// hide key column 5;
-			tableUsers.getColumn("quarter II").setMaxWidth(0);
-			tableUsers.getColumn("quarter II").setMinWidth(0);
-			tableUsers.getColumn("quarter II").setPreferredWidth(0);
+			tableUsers.getColumn("quarter2").setMaxWidth(0);
+			tableUsers.getColumn("quarter2").setMinWidth(0);
+			tableUsers.getColumn("quarter2").setPreferredWidth(0);
 
 			// hide key column 6;
-			tableUsers.getColumn("quarter III").setMaxWidth(0);
-			tableUsers.getColumn("quarter III").setMinWidth(0);
-			tableUsers.getColumn("quarter III").setPreferredWidth(0);
+			tableUsers.getColumn("quarter3").setMaxWidth(0);
+			tableUsers.getColumn("quarter3").setMinWidth(0);
+			tableUsers.getColumn("quarter3").setPreferredWidth(0);
 
 			// hide key column 7;
-			tableUsers.getColumn("quarter IV").setMaxWidth(0);
-			tableUsers.getColumn("quarter IV").setMinWidth(0);
-			tableUsers.getColumn("quarter IV").setPreferredWidth(0);
+			tableUsers.getColumn("quarter4").setMaxWidth(0);
+			tableUsers.getColumn("quarter4").setMinWidth(0);
+			tableUsers.getColumn("quarter4").setPreferredWidth(0);
 
 			// hide key column 8;
 			tableUsers.getColumn("year").setMaxWidth(0);
