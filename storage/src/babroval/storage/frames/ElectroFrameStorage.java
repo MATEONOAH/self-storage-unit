@@ -8,16 +8,26 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.ElectroStorageDao;
+import babroval.storage.dao.OrdersStorageDao;
+import babroval.storage.dao.UsersStorageDao;
+import babroval.storage.entity.Orders;
+import babroval.storage.entity.Users;
 import babroval.storage.mysql.ConnectionPool;
 
 public class ElectroFrameStorage extends JFrame {
@@ -25,108 +35,163 @@ public class ElectroFrameStorage extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JScrollPane scroll;
-	private JLabel labelTermRent, imageLabel;
-	private JTextField tfTermRent;
-	private JButton select;
-	private TableStorage tableCars;
-	private int user_id;
+	private JLabel labelNumber, labelD, labelIndicationLastPaid, labelIndication, labelInf;
+	private JComboBox<String> comboNum;
+	private JComboBox<Object> comboOrder;
+	private JTextField fieldDate, tfName, tfIndication, tfIndicationLast, tfInf;
+	private JButton enter;
+	private String[] en = { "select", "rent", "admin" };
 
-	public ElectroFrameStorage(int user_id) {
-		this.user_id = user_id;
-		setSize(500, 450);
-		setTitle("OrderFrame");
+	public ElectroFrameStorage() {
+		setSize(350, 300);
+		setTitle("Electric power payment form");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
 		action();
 		setVisible(true);
 		setResizable(false);
-
 	}
 
 	private void initComponents() {
 
-		panel = new JPanel(null);
+		panel = new JPanel();
+
+		labelNumber = new JLabel("Number of storage");
+		comboNum = new JComboBox<String>();
+		labelD = new JLabel("Date ");
+
+		Date dNow = new Date();
+		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
+		fieldDate = new JTextField(ft.format(dNow));
+
+		tfName = new JTextField(20);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st
-						.executeQuery("SELECT car_id, name_car, color, price_per_day"
-										+ " FROM cars WHERE availability=1")) {
+				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
 
-			tableCars = new TableStorage(rs);
+			comboNum.addItem("");
+			while (rs.next()) {
+				comboNum.addItem(rs.getString(2));
+			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}
-		
-		scroll = new JScrollPane(tableCars);
-		labelTermRent = new JLabel("Select car and term of rent in days");
-		tfTermRent = new JTextField("1");
-		select = new JButton("Select");
-		imageLabel = new JLabel();
-		scroll.setBounds(20, 20, 450, 100);
-		labelTermRent.setBounds(40, 150, 200, 20);
-		tfTermRent.setBounds(240, 150, 50, 20);
-		select.setBounds(365, 150, 100, 20);
 
-		panel.add(scroll);
-		panel.add(labelTermRent);
-		panel.add(tfTermRent);
-		panel.add(select);
+		labelIndication = new JLabel("Enter electric power indication");
+		tfIndication = new JTextField(20);
+		tfIndication.setText("");
+
+		labelIndicationLastPaid = new JLabel("Electric power indication last paid");
+		tfIndicationLast = new JTextField(20);
+		
+		labelInf = new JLabel("Number of receipt order");
+		tfInf = new JTextField(20);
+		tfInf.setText("");
+		enter = new JButton("Enter");
+		comboOrder = new JComboBox<Object>(en);
+
+		panel.add(labelNumber);
+		panel.add(comboNum);
+		panel.add(labelD);
+		panel.add(fieldDate);
+		panel.add(tfName);
+		panel.add(labelIndication);
+		panel.add(tfIndication);
+		panel.add(labelIndicationLastPaid);
+		panel.add(tfIndicationLast);
+		panel.add(labelInf);
+		panel.add(tfInf);
+		panel.add(enter);
+		panel.add(comboOrder);
+
 		add(panel);
 	}
 
 	private void action() {
-
-		tableCars.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				panel.remove(imageLabel);
-				ImageIcon image = new ImageIcon("D:\\images\\"
-						+ Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(), 0).toString()) + ".jpg");
-				imageLabel.setIcon(image);
-				imageLabel.setBounds(20, 200, 300, 200);
-				panel.add(imageLabel);
-				panel.updateUI();
-			}
-		});
-
-		select.addActionListener(new ActionListener() {
+		comboNum.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st
-								.executeQuery("SELECT reject_description,  damage_description " 
-										+ "FROM orders WHERE user_id=" 
-										+ user_id 
-										+ " AND reject_description<>'no reject'")) {
 
-					if (rs.next()) {
-						JOptionPane.showMessageDialog(panel, "Your order is rejected. The reason is " + rs.getString(2),
-								"Not Accepted", JOptionPane.INFORMATION_MESSAGE);
-						dispose();
-					} else {
-						int totalCoast = Integer.valueOf(tfTermRent.getText())
-								* Integer.valueOf(tableCars.getValueAt(tableCars.getSelectedRow(), 3).toString());
-
-						JOptionPane.showMessageDialog(panel, "Total coast is " + totalCoast, "Accepted",
-								JOptionPane.INFORMATION_MESSAGE);
-						dispose();
-					}
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "Select error", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(panel, "Please,select the car", "Error", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "Database", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-
+				numUpdateElectroFrame();
 			}
 		});
+
+		enter.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					if (tfInf.getText().equals("")) {
+						tfInf.setText("");
+					}
+					if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
+						throw new NumberFormatException("e");
+					}
+					
+					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
+
+					comboNum.setSelectedIndex(0);
+					tfName.setText("");
+					tfIndication.setText("");
+					tfIndicationLast.setText("");
+					tfInf.setText("");
+
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication",
+							"error", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+
+		comboOrder.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (comboOrder.getSelectedIndex() == 1) {
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new OrderFrameStorage();
+						}
+					});
+					dispose();
+				}
+				if (comboOrder.getSelectedIndex() == 2) {
+
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new LoginFrameStorage();
+						}
+					});
+					dispose();
+				}
+			}
+		});
+	}
+
+	private void numUpdateElectroFrame() {
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+
+			while (rs.next()) {
+				String i = rs.getString(2);
+				String j = (String) comboNum.getSelectedItem();
+
+				if (i.equals(j)) {
+					tfName.setText(rs.getString(3));
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+		}
+		panel.updateUI();
 	}
 
 }

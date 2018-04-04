@@ -54,7 +54,6 @@ public class InitDBase {
 						+ "new_num INT,"
 						+ "kw_h INT," 
 						+ "tariff INT,"
-						+ "coef VARCHAR(10),"
 						+ "summ INT," 
 						+ "info VARCHAR(100),"
 						+ "FOREIGN KEY(storage_id) REFERENCES users(storage_id))");
@@ -77,11 +76,11 @@ public class InitDBase {
 		daoOrder.insert(new Orders(3, "30-11-2017", 400000, "I", "", "", "" ,"2018", "353465"));
 		
 		ElectroStorageDao daoElectro = new ElectroStorageDao();
-		daoElectro.insert(new Electro(2, "18-11-2017", 45600, 45700, 100, 1000, "1.2", 100000, "56456"));
-		daoElectro.insert(new Electro(4, "19-11-2017", 34300, 34500, 200, 1000, "1.2", 200000, "45763"));
-		daoElectro.insert(new Electro(2, "20-11-2017", 57800, 57900, 100, 1000, "1.4", 100000, "74535"));
-		daoElectro.insert(new Electro(4, "21-11-2017", 43400, 43600, 200, 1000, "1.2", 200000, "34567"));
-		daoElectro.insert(new Electro(3, "31-11-2017", 44200, 44600, 400, 1000, "1.5", 400000, "73457"));
+		daoElectro.insert(new Electro(2, "18-11-2017", 45600, 45700, 100, 1000, 100000, "56456"));
+		daoElectro.insert(new Electro(4, "19-11-2017", 34300, 34500, 200, 1000, 200000, "45763"));
+		daoElectro.insert(new Electro(2, "20-11-2017", 57800, 57900, 100, 1000, 100000, "74535"));
+		daoElectro.insert(new Electro(4, "21-11-2017", 43400, 43600, 200, 1000, 200000, "34567"));
+		daoElectro.insert(new Electro(3, "31-11-2017", 44200, 44600, 400, 1000, 400000, "73457"));
 		
 	}
 

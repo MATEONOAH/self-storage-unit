@@ -70,14 +70,16 @@ public class LoginFrameStorage extends JFrame {
 								new OrderFrameStorage();
 							}
 						});
-
 						dispose();
 					}
 					if (comboOrder.getSelectedIndex() == 2) {
-
-					}
-					if (comboOrder.getSelectedIndex() == 3) {
-
+						
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								new ElectroFrameStorage();
+							}
+						});
+						dispose();
 					}
 				} else {
 					JOptionPane.showMessageDialog(panel, "incorrect login", "Error", JOptionPane.ERROR_MESSAGE);

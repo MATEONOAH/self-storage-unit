@@ -9,18 +9,13 @@ public class Electro {
 	private int new_num;
 	private int kw_h;
 	private int tariff;
-	private String coef;
 	private int summ;
 	private String info;
 
 	public Electro() {
 	}
-
-	public Electro(int electro_id) {
-		this.electro_id = electro_id;
-	}
-
-	public Electro(int storage_id, String date, int last_num, int new_num, int kw_h, int tariff, String coef, int summ,
+	
+	public Electro(int storage_id, String date, int last_num, int new_num, int kw_h, int tariff, int summ,
 			String info) {
 		this.storage_id = storage_id;
 		this.date = date;
@@ -28,21 +23,6 @@ public class Electro {
 		this.new_num = new_num;
 		this.kw_h = kw_h;
 		this.tariff = tariff;
-		this.coef = coef;
-		this.summ = summ;
-		this.info = info;
-	}
-
-	public Electro(int electro_id, int storage_id, String date, int last_num, int new_num, int kw_h, int tariff,
-			String coef, int summ, String info) {
-		this.electro_id = electro_id;
-		this.storage_id = storage_id;
-		this.date = date;
-		this.last_num = last_num;
-		this.new_num = new_num;
-		this.kw_h = kw_h;
-		this.tariff = tariff;
-		this.coef = coef;
 		this.summ = summ;
 		this.info = info;
 	}
@@ -103,14 +83,6 @@ public class Electro {
 		this.tariff = tariff;
 	}
 
-	public String getCoef() {
-		return coef;
-	}
-
-	public void setCoef(String coef) {
-		this.coef = coef;
-	}
-
 	public int getSumm() {
 		return summ;
 	}
@@ -127,4 +99,64 @@ public class Electro {
 		this.info = info;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + electro_id;
+		result = prime * result + ((info == null) ? 0 : info.hashCode());
+		result = prime * result + kw_h;
+		result = prime * result + last_num;
+		result = prime * result + new_num;
+		result = prime * result + storage_id;
+		result = prime * result + summ;
+		result = prime * result + tariff;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Electro other = (Electro) obj;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (electro_id != other.electro_id)
+			return false;
+		if (info == null) {
+			if (other.info != null)
+				return false;
+		} else if (!info.equals(other.info))
+			return false;
+		if (kw_h != other.kw_h)
+			return false;
+		if (last_num != other.last_num)
+			return false;
+		if (new_num != other.new_num)
+			return false;
+		if (storage_id != other.storage_id)
+			return false;
+		if (summ != other.summ)
+			return false;
+		if (tariff != other.tariff)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Electro [electro_id=" + electro_id + ", storage_id=" + storage_id + ", date=" + date + ", last_num="
+				+ last_num + ", new_num=" + new_num + ", kw_h=" + kw_h + ", tariff=" + tariff + ", summ=" + summ
+				+ ", info=" + info + "]";
+	}
+
+	
 }

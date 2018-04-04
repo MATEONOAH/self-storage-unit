@@ -254,7 +254,7 @@ public class AdminFrameStorage extends JFrame {
 					sortFamily.setVisible(false);
 					editPrihodOrder.setEnabled(false);
 					RefreshTableElectroNotEdit(
-							"SELECT users.number_storage, electro.date, electro.last_num, electro.new_num, electro.kw_h, electro.tariff, electro.coef, electro.summ, electro.info"
+							"SELECT users.number_storage, electro.date, electro.last_num, electro.new_num, electro.kw_h, electro.tariff, electro.summ, electro.info"
 									+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND electro.date!=0 ORDER BY electro.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
@@ -644,17 +644,21 @@ public class AdminFrameStorage extends JFrame {
 							new OrderFrameStorage();
 						}
 					});
-					
 					dispose();
 				}
+
 				if (comboOrder.getSelectedIndex() == 2) {
-
-				}
-				if (comboOrder.getSelectedIndex() == 3) {
-
+						
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								new ElectroFrameStorage();
+							}
+						});
+						dispose();
 				}
 			}
 		});
+		
 	}
 
 	private void RefreshTableOrders() {

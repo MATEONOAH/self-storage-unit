@@ -59,7 +59,7 @@ class OrderFrameStorage extends JFrame {
 				comboNum.addItem(rs.getString(2));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database Error", "error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		labelSumm = new JLabel("Enter amount");
@@ -194,8 +194,15 @@ class OrderFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				if (comboOrder.getSelectedIndex() == 1) {
-
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new ElectroFrameStorage();
+						}
+					});
+					dispose();
 				}
+				
 				if (comboOrder.getSelectedIndex() == 2) {
 
 					SwingUtilities.invokeLater(new Runnable() {
@@ -203,7 +210,6 @@ class OrderFrameStorage extends JFrame {
 							new LoginFrameStorage();
 						}
 					});
-
 					dispose();
 				}
 			}
