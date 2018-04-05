@@ -5,11 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -61,7 +62,7 @@ public class ElectroFrameStorage extends JFrame {
 		comboNum = new JComboBox<String>();
 		labelD = new JLabel("Date ");
 
-		Date dNow = new Date();
+		java.util.Date dNow = new java.util.Date();
 		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
 		fieldDate = new JTextField(ft.format(dNow));
 
@@ -177,17 +178,29 @@ public class ElectroFrameStorage extends JFrame {
 	private void numUpdateElectroFrame() {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name, electro.last_num, electro.date FROM users, electro"
+						+ " WHERE electro.storage_id=users.storage_id")) {
 
+			Date temp = Date.valueOf("2000-11-01");
+			
 			while (rs.next()) {
-				String i = rs.getString(2);
+				String i = rs.getString(1);
 				String j = (String) comboNum.getSelectedItem();
-
+				
 				if (i.equals(j)) {
-					tfName.setText(rs.getString(3));
-					break;
+				
+					Date d = rs.getDate(4);
+
+					if (d.compareTo(temp)>0) {
+						tfName.setText(rs.getString(2));
+						tfIndicationLast.setText(rs.getString(3));
+						break;
+					}else {
+						temp = d;
+					}
 				}
 			}
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}

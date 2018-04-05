@@ -20,7 +20,7 @@ public class ElectroStorageDao implements InterfaceStorageDao<Electro> {
 						+ " (storage_id, date, last_num, new_num, kw_h, tariff, summ, info) values (?,?,?,?,?,?,?,?)")) {
 
 			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getDate());
+			ps.setDate(2, ob.getDate());
 			ps.setInt(3, ob.getLast_num());
 			ps.setInt(4, ob.getNew_num());
 			ps.setInt(5, ob.getKw_h());
@@ -42,7 +42,7 @@ public class ElectroStorageDao implements InterfaceStorageDao<Electro> {
 						+ " where electro_id = " + ob.getElectro_id())) {
 
 			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getDate());
+			ps.setDate(2, ob.getDate());
 			ps.setInt(3, ob.getLast_num());
 			ps.setInt(4, ob.getNew_num());
 			ps.setInt(5, ob.getKw_h());

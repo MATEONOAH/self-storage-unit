@@ -49,7 +49,7 @@ public class InitDBase {
 				st.executeUpdate("CREATE TABLE electro (" 
 						+ "electro_id INT PRIMARY KEY AUTO_INCREMENT," 
 						+ "storage_id INT,"
-						+ "date VARCHAR(20)," 
+						+ "date DATE," 
 						+ "last_num INT,"
 						+ "new_num INT,"
 						+ "kw_h INT," 
@@ -69,18 +69,18 @@ public class InitDBase {
 		daoUser.insert(new Users("2", "CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102", "+","II", "III", "IV", "2015"));
 
 		OrdersStorageDao daoOrder = new OrdersStorageDao();
-		daoOrder.insert(new Orders(2, "18-11-2017", 400000, "I","II","","","2018", "45325"));
-		daoOrder.insert(new Orders(4, "19-11-2017", 200000, "I","", "", "", "2018","67567"));
-		daoOrder.insert(new Orders(2, "20-11-2017", 200000, "+", "+", "III", "","2018", "34556"));
-		daoOrder.insert(new Orders(4, "29-11-2017", 800000, "+","II", "III", "IV", "2018", "78574"));
-		daoOrder.insert(new Orders(3, "30-11-2017", 400000, "I", "", "", "" ,"2018", "353465"));
+		daoOrder.insert(new Orders(2, "2017-11-18", 400000, "I","II","","","2018", "45325"));
+		daoOrder.insert(new Orders(4, "2017-11-19", 200000, "I","", "", "", "2018","67567"));
+		daoOrder.insert(new Orders(2, "2017-11-20", 200000, "+", "+", "III", "","2018", "34556"));
+		daoOrder.insert(new Orders(4, "2017-11-29", 800000, "+","II", "III", "IV", "2018", "78574"));
+		daoOrder.insert(new Orders(3, "2017-11-30", 400000, "I", "", "", "" ,"2018", "353465"));
 		
 		ElectroStorageDao daoElectro = new ElectroStorageDao();
-		daoElectro.insert(new Electro(2, "18-11-2017", 45600, 45700, 100, 1000, 100000, "56456"));
-		daoElectro.insert(new Electro(4, "19-11-2017", 34300, 34500, 200, 1000, 200000, "45763"));
-		daoElectro.insert(new Electro(2, "20-11-2017", 57800, 57900, 100, 1000, 100000, "74535"));
-		daoElectro.insert(new Electro(4, "21-11-2017", 43400, 43600, 200, 1000, 200000, "34567"));
-		daoElectro.insert(new Electro(3, "31-11-2017", 44200, 44600, 400, 1000, 400000, "73457"));
+		daoElectro.insert(new Electro(2, "2017-11-18", 45600, 45700, 100, 1000, 100000, "56456"));
+		daoElectro.insert(new Electro(4, "2017-11-19", 34300, 34500, 200, 1000, 200000, "45763"));
+		daoElectro.insert(new Electro(2, "2017-11-20", 57800, 57900, 100, 1000, 100000, "74535"));
+		daoElectro.insert(new Electro(4, "2017-11-21", 43400, 43600, 200, 1000, 200000, "34567"));
+		daoElectro.insert(new Electro(3, "2017-11-31", 44200, 44600, 400, 1000, 400000, "73457"));
 		
 	}
 

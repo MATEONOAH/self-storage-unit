@@ -1,10 +1,12 @@
 package babroval.storage.entity;
 
+import java.sql.Date;
+
 public class Electro {
 
 	private int electro_id;
 	private int storage_id;
-	private String date;
+	private Date date;
 	private int last_num;
 	private int new_num;
 	private int kw_h;
@@ -15,7 +17,7 @@ public class Electro {
 	public Electro() {
 	}
 	
-	public Electro(int storage_id, String date, int last_num, int new_num, int kw_h, int tariff, int summ,
+	public Electro(int storage_id, Date date, int last_num, int new_num, int kw_h, int tariff, int summ,
 			String info) {
 		this.storage_id = storage_id;
 		this.date = date;
@@ -43,11 +45,11 @@ public class Electro {
 		this.storage_id = storage_id;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
