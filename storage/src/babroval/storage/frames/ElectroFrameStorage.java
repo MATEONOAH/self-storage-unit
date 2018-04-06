@@ -2,8 +2,6 @@ package babroval.storage.frames;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -11,24 +9,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 
-
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.ElectroStorageDao;
-import babroval.storage.dao.OrdersStorageDao;
-import babroval.storage.dao.UsersStorageDao;
-import babroval.storage.entity.Orders;
-import babroval.storage.entity.Users;
 import babroval.storage.mysql.ConnectionPool;
 
 public class ElectroFrameStorage extends JFrame {
@@ -86,7 +75,7 @@ public class ElectroFrameStorage extends JFrame {
 
 		labelIndicationLastPaid = new JLabel("Electric power indication last paid");
 		tfIndicationLast = new JTextField(20);
-		
+
 		labelInf = new JLabel("Number of receipt order");
 		tfInf = new JTextField(20);
 		tfInf.setText("");
@@ -131,7 +120,7 @@ public class ElectroFrameStorage extends JFrame {
 					if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
 						throw new NumberFormatException("e");
 					}
-					
+
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 
@@ -142,8 +131,8 @@ public class ElectroFrameStorage extends JFrame {
 					tfInf.setText("");
 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication",
-							"error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication", "error",
+							JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -154,7 +143,7 @@ public class ElectroFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				if (comboOrder.getSelectedIndex() == 1) {
-					
+
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							new OrderFrameStorage();
@@ -178,29 +167,32 @@ public class ElectroFrameStorage extends JFrame {
 	private void numUpdateElectroFrame() {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name, electro.last_num, electro.date FROM users, electro"
-						+ " WHERE electro.storage_id=users.storage_id")) {
+				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name, electro.last_num, electro.date"
+						+ " FROM users, electro" + " WHERE electro.storage_id=users.storage_id")) {
 
-			Date temp = Date.valueOf("2000-11-01");
-			
+			Date temp = Date.valueOf("2000-01-01");
+
 			while (rs.next()) {
 				String i = rs.getString(1);
 				String j = (String) comboNum.getSelectedItem();
-				
+
 				if (i.equals(j)) {
-				
+
 					Date d = rs.getDate(4);
 
-					if (d.compareTo(temp)>0) {
+					if (d.compareTo(temp) < 0) {
+						continue;
+					} else {
 						tfName.setText(rs.getString(2));
 						tfIndicationLast.setText(rs.getString(3));
-						break;
-					}else {
 						temp = d;
 					}
 				}
 			}
-			
+			if (temp.equals(Date.valueOf("2000-01-01"))) {
+				tfName.setText("");
+				tfIndicationLast.setText("");
+			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}

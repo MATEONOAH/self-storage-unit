@@ -1,8 +1,11 @@
 package babroval.storage.mysql;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import babroval.storage.dao.ElectroStorageDao;
 import babroval.storage.dao.OrdersStorageDao;
@@ -76,11 +79,11 @@ public class InitDBase {
 		daoOrder.insert(new Orders(3, "2017-11-30", 400000, "I", "", "", "" ,"2018", "353465"));
 		
 		ElectroStorageDao daoElectro = new ElectroStorageDao();
-		daoElectro.insert(new Electro(2, "2017-11-18", 45600, 45700, 100, 1000, 100000, "56456"));
-		daoElectro.insert(new Electro(4, "2017-11-19", 34300, 34500, 200, 1000, 200000, "45763"));
-		daoElectro.insert(new Electro(2, "2017-11-20", 57800, 57900, 100, 1000, 100000, "74535"));
-		daoElectro.insert(new Electro(4, "2017-11-21", 43400, 43600, 200, 1000, 200000, "34567"));
-		daoElectro.insert(new Electro(3, "2017-11-31", 44200, 44600, 400, 1000, 400000, "73457"));
+		daoElectro.insert(new Electro(2, stringToDate("18-11-2017"), 45600, 45700, 100, 1000, 100000, "56456"));
+		daoElectro.insert(new Electro(4, stringToDate("19-11-2017"), 34300, 34500, 200, 1000, 200000, "45763"));
+		daoElectro.insert(new Electro(2, stringToDate("20-11-2017"), 57800, 57900, 100, 1000, 100000, "74535"));
+		daoElectro.insert(new Electro(4, stringToDate("21-11-2017"), 43400, 43600, 200, 1000, 200000, "34567"));
+		daoElectro.insert(new Electro(3, stringToDate("31-11-2017"), 44200, 44600, 400, 1000, 400000, "73457"));
 		
 	}
 
@@ -94,6 +97,19 @@ public class InitDBase {
 		} catch (SQLException e) {
 				throw new RuntimeException(e);
 		}
+	}
+	
+	private static Date stringToDate(String strDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		java.util.Date date;
+		try {
+			date = sdf.parse(strDate);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		java.sql.Date sqlStrDate = new java.sql.Date(date.getTime());
+		return sqlStrDate;
+		
 	}
 
 }
