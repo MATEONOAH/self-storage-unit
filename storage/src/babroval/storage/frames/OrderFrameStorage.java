@@ -3,7 +3,7 @@ package babroval.storage.frames;
 import java.awt.event.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 
 import javax.swing.*;
 
@@ -44,7 +44,7 @@ class OrderFrameStorage extends JFrame {
 		comboNum = new JComboBox<String>();
 		labelD = new JLabel("Date ");
 
-		Date dNow = new Date();
+		Date dNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
 		fieldDate = new JTextField(ft.format(dNow));
 
@@ -161,7 +161,7 @@ class OrderFrameStorage extends JFrame {
 					}
 
 					OrdersStorageDao daoOrder = new OrdersStorageDao();
-					daoOrder.insert(new Orders(comboNum.getSelectedIndex(), fieldDate.getText(),
+					daoOrder.insert(new Orders(comboNum.getSelectedIndex(), InitDBase.stringToDate(fieldDate.getText()),
 							Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
 							(String) comboYear.getSelectedItem(), tfInf.getText()));
 

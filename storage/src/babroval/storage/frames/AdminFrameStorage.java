@@ -552,10 +552,10 @@ public class AdminFrameStorage extends JFrame {
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 10).toString());
 
 							OrdersStorageDao daoOrder = new OrdersStorageDao();
-							daoOrder.update(new Orders(
-									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
-									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
-									"0", 0, "", "", "", "", buff));
+//							daoOrder.update(new Orders(
+//									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
+//									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
+//									"0", 0, "", "", "", "", buff));
 
 							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
 							RefreshTableOrders();
@@ -591,10 +591,10 @@ public class AdminFrameStorage extends JFrame {
 									tableUsers.getValueAt(tableUsers.getSelectedRow(), 7).toString(), t));
 
 					// create new empty order
-					OrdersStorageDao daoOrder = new OrdersStorageDao();
-					daoOrder.insert(new Orders(
-							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "", 0,
-							"", "", "", "", t, "new"));
+//					OrdersStorageDao daoOrder = new OrdersStorageDao();
+//					daoOrder.insert(new Orders(
+//							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "", 0,
+//							"", "", "", "", t, "new"));
 
 					RefreshTableUsers();
 					JOptionPane.showMessageDialog(panel, "Owner has been saved");

@@ -1,9 +1,11 @@
 package babroval.storage.entity;
 
+import java.sql.Date;
+
 public class Orders {
 	private int order_id;
 	private int storage_id;
-	private String date;
+	private Date date;
 	private int summ;
 	private String quarter1;
 	private String quarter2;
@@ -32,7 +34,7 @@ public class Orders {
 		this.info = info;
 	}
 
-	public Orders(int storage_id, String date, int summ, String quarter1, String quarter2, String quarter3,
+	public Orders(int storage_id, Date date, int summ, String quarter1, String quarter2, String quarter3,
 			String quarter4, String year, String info) {
 		this.storage_id = storage_id;
 		this.date = date;
@@ -45,7 +47,7 @@ public class Orders {
 		this.info = info;
 	}
 
-	public Orders(int order_id, int storage_id, String date, int summ, String quarter1, String quarter2, String quarter3,
+	public Orders(int order_id, int storage_id, Date date, int summ, String quarter1, String quarter2, String quarter3,
 			String quarter4, String info) {
 		super();
 		this.order_id = order_id;
@@ -59,7 +61,7 @@ public class Orders {
 		this.info = info;
 	}
 
-	public Orders(String date, int summ, String quarter1, String quarter2, String quarter3, String quarter4,
+	public Orders(Date date, int summ, String quarter1, String quarter2, String quarter3, String quarter4,
 			String year, String info) {
 		this.date = date;
 		this.summ = summ;
@@ -71,7 +73,7 @@ public class Orders {
 		this.info = info;
 	}
 
-	public Orders(int order_id, int storage_id, String date, int summ, String quarter1, String quarter2, String quarter3,
+	public Orders(int order_id, int storage_id, Date date, int summ, String quarter1, String quarter2, String quarter3,
 			String quarter4, String year, String info) {
 		this.order_id = order_id;
 		this.storage_id = storage_id;
@@ -101,11 +103,11 @@ public class Orders {
 		this.storage_id = storage_id;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 

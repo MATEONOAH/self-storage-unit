@@ -20,7 +20,7 @@ public class OrdersStorageDao implements InterfaceStorageDao<Orders> {
 						+ " (storage_id, date, summ, quarter1, quarter2, quarter3, quarter4, year, info) values (?,?,?,?,?,?,?,?,?)")) {
 
 			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getDate());
+			ps.setDate(2, ob.getDate());
 			ps.setInt(3, ob.getSumm());
 			ps.setString(4, ob.getQuarter1());
 			ps.setString(5, ob.getQuarter2());
@@ -43,7 +43,7 @@ public class OrdersStorageDao implements InterfaceStorageDao<Orders> {
 						+ " where order_id = " + ob.getOrder_id())) {
 
 			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getDate());
+			ps.setDate(2, ob.getDate());
 			ps.setInt(3, ob.getSumm());
 			ps.setString(4, ob.getQuarter1());
 			ps.setString(5, ob.getQuarter2());
