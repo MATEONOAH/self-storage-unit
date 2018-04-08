@@ -24,7 +24,7 @@ public class LoginFrameStorage extends JFrame {
 	private JPasswordField tfPass;
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "select", "rent payment", "electricity" };
+	private String[] en = { "select", "rent", "electricity" };
 
 	public LoginFrameStorage() {
 		setSize(260, 220);
@@ -82,7 +82,7 @@ public class LoginFrameStorage extends JFrame {
 						dispose();
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -107,10 +107,10 @@ public class LoginFrameStorage extends JFrame {
 
 						dispose();
 					} else {
-						JOptionPane.showMessageDialog(panel, "incorrect password", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(panel, "incorrect password", "error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});

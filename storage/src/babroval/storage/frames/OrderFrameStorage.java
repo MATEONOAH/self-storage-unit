@@ -217,21 +217,20 @@ class OrderFrameStorage extends JFrame {
 	}
 
 	private void numUpdateOrderFrame() {
+		
+		tfName.setText("");
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name"
+						+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND users.number_storage='"
+						+ comboNum.getSelectedItem() + "'")) {
 
-			while (rs.next()) {
-				String i = rs.getString(2);
-				String j = (String) comboNum.getSelectedItem();
-
-				if (i.equals(j)) {
-					tfName.setText(rs.getString(3));
-					break;
-				}
+				while (rs.next()) {
+			
+					tfName.setText(rs.getString(2));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}
 		panel.updateUI();
 	}

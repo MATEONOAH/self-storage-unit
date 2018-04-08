@@ -42,7 +42,8 @@ public class ConnectionPool {
 		this.password = password;
 
 		try {
-			Connection cn = DriverManager.getConnection(url, user, password);
+			Connection cn = DriverManager.getConnection(url + "?autoReconnect=true&useSSL=false",
+														user, password);
 			return cn;
 		
 		} catch (Exception e) {
@@ -52,7 +53,8 @@ public class ConnectionPool {
 
 	public Connection getConnection() {
 		try {
-			Connection cn = DriverManager.getConnection(url + "/" + NAME_DB, user, password);
+			Connection cn = DriverManager.getConnection(url + "/" + NAME_DB + "?autoReconnect=true&useSSL=false",
+														user, password);
 			return cn;
 			
 		} catch (SQLException e) {

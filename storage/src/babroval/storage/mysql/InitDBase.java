@@ -111,9 +111,9 @@ public class InitDBase {
 					System.out.print(rs.getString(i) + "\t");
 				}
 			}
+			System.out.println();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
