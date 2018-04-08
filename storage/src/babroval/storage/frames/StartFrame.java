@@ -15,9 +15,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.mysql.ConnectionPool;
-import babroval.storage.mysql.InitDBase;
+import babroval.storage.mysql.InitDB;
 
-public class StartFrameStorage extends JFrame {
+public class StartFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class StartFrameStorage extends JFrame {
 	private JTextField tfUrl, tfLogin, tfPass;
 	private JButton create, delete, connect;
 
-	public StartFrameStorage() {
+	public StartFrame() {
 		setSize(260, 220);
 		setTitle("Storage");
 		setLocationRelativeTo(null);
@@ -79,7 +79,7 @@ public class StartFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					InitDBase.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDB.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					
 					JOptionPane.showMessageDialog(panel, "Database create successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -94,7 +94,7 @@ public class StartFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					InitDBase.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDB.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					
 					JOptionPane.showMessageDialog(panel, "Database delete successful", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -117,7 +117,7 @@ public class StartFrameStorage extends JFrame {
 					
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginFrameStorage();
+							new LoginFrame();
 						}
 					});
 					

@@ -4,29 +4,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import babroval.storage.entity.Electro;
+import babroval.storage.entity.Electric;
 import babroval.storage.mysql.ConnectionPool;
 
-public class ElectroStorageDao implements InterfaceStorageDao<Electro> {
 
-	public ElectroStorageDao() {
+public class ElectricDao implements Dao<Electric> {
+
+	public ElectricDao() {
 	}
 	
 	@Override
-	public void insert(Electro ob) {
+	public void insert(Electric ob) {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("insert into "
 						+ ob.getClass().getSimpleName()
-						+ " (storage_id, date, last_num, new_num, kw_h, tariff, summ, info) values (?,?,?,?,?,?,?,?)")) {
+						+ " (storage_id, date, meter_paid, summ, info) values (?,?,?,?,?)")) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
-			ps.setInt(3, ob.getLast_num());
-			ps.setInt(4, ob.getNew_num());
-			ps.setInt(5, ob.getKw_h());
-			ps.setInt(6, ob.getTariff());
-			ps.setInt(7, ob.getSumm());
-			ps.setString(8, ob.getInfo());
+			ps.setInt(3, ob.getMeter_paid());
+			ps.setInt(4, ob.getSumm());
+			ps.setString(5, ob.getInfo());
 			ps.execute();
 
 		} catch (SQLException e) {
@@ -35,24 +33,22 @@ public class ElectroStorageDao implements InterfaceStorageDao<Electro> {
 	}
 
 	@Override
-	public void update(Electro ob) {
+	public void update(Electric ob) {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("update " + ob.getClass().getSimpleName()
-						+ " set storage_id=?, date=?, last_num=?, new_num=?, kw_h=?, tariff=?, summ=?, info=?"
-						+ " where electro_id = " + ob.getElectro_id())) {
+						+ " set storage_id=?, date=?, meter_paid=?, summ=?, info=?"
+						+ " where electric_id = " + ob.getElectric_id())) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
-			ps.setInt(3, ob.getLast_num());
-			ps.setInt(4, ob.getNew_num());
-			ps.setInt(5, ob.getKw_h());
-			ps.setInt(6, ob.getTariff());
-			ps.setInt(7, ob.getSumm());
-			ps.setString(8, ob.getInfo());
+			ps.setInt(3, ob.getMeter_paid());
+			ps.setInt(4, ob.getSumm());
+			ps.setString(5, ob.getInfo());
 			ps.execute();
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
 }

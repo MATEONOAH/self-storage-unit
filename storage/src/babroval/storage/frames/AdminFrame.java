@@ -26,13 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.OrdersStorageDao;
-import babroval.storage.dao.UsersStorageDao;
-import babroval.storage.entity.Orders;
-import babroval.storage.entity.Users;
+import babroval.storage.dao.RentDao;
+import babroval.storage.dao.UserDao;
+import babroval.storage.entity.Rent;
+import babroval.storage.entity.User;
 import babroval.storage.mysql.ConnectionPool;
 
-public class AdminFrameStorage extends JFrame {
+public class AdminFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,7 +54,7 @@ public class AdminFrameStorage extends JFrame {
 	private String[] read = { "select", "rent payment", "electricity", "owners" };
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
 
-	public AdminFrameStorage() {
+	public AdminFrame() {
 		setSize(995, 550);
 		setTitle("AdminFrame");
 		setLocationRelativeTo(null);
@@ -428,10 +428,10 @@ public class AdminFrameStorage extends JFrame {
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
 
-						UsersStorageDao daoUser = new UsersStorageDao();
-						daoUser.insert(new Users(
-								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "",
-								"", "", "", "", "", "", ""));
+//						UserDao daoUser = new UserDao();
+//						daoUser.insert(new User(
+//								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()), "",
+//								"", "", "", "", "", "", ""));
 						JOptionPane.showMessageDialog(panel, "Storage has been added");
 						RefreshTableUsers();
 					}
@@ -536,10 +536,10 @@ public class AdminFrameStorage extends JFrame {
 						JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 
-							UsersStorageDao daoUser = new UsersStorageDao();
-							daoUser.deleteQuarters(new Users(
-									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
-									quarter1, quarter2, quarter3, quarter4));
+//							UserDao daoUser = new UserDao();
+//							daoUser.deleteQuarters(new User(
+//									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
+//									quarter1, quarter2, quarter3, quarter4));
 
 							buff = (tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
@@ -551,7 +551,7 @@ public class AdminFrameStorage extends JFrame {
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 10).toString());
 
-							OrdersStorageDao daoOrder = new OrdersStorageDao();
+							RentDao daoOrder = new RentDao();
 //							daoOrder.update(new Orders(
 //									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 //									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()),
@@ -579,16 +579,16 @@ public class AdminFrameStorage extends JFrame {
 					Date dNow = new Date();
 					SimpleDateFormat ft = new SimpleDateFormat("yyyy");
 					String t = ft.format(dNow);
-					UsersStorageDao daoUser = new UsersStorageDao();
-					daoUser.update(
-							new Users(Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString(),
-									tableUsers.getValueAt(tableUsers.getSelectedRow(), 7).toString(), t));
+//					UserDao daoUser = new UserDao();
+//					daoUser.update(
+//							new User(Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString(),
+//									tableUsers.getValueAt(tableUsers.getSelectedRow(), 7).toString(), t));
 
 					// create new empty order
 //					OrdersStorageDao daoOrder = new OrdersStorageDao();
@@ -614,10 +614,10 @@ public class AdminFrameStorage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					// updating info
-					OrdersStorageDao daoOrder = new OrdersStorageDao();
-					daoOrder.updateInfo(new Orders(
-							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
-							tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString()));
+//					RentDao daoOrder = new RentDao();
+//					daoOrder.updateInfo(new Rent(
+//							Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
+//							tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString()));
 					RefreshTableOrdersNotEdit(
 							"SELECT orders.order_id, users.number_storage, orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
 									+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND orders.date!=0 ORDER BY orders.date ASC");
@@ -641,7 +641,7 @@ public class AdminFrameStorage extends JFrame {
 					
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new OrderFrameStorage();
+							new RentFrame();
 						}
 					});
 					dispose();
@@ -651,7 +651,7 @@ public class AdminFrameStorage extends JFrame {
 						
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new ElectroFrameStorage();
+								new ElectricFrame();
 							}
 						});
 						dispose();

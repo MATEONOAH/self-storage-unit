@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
 
 import babroval.storage.mysql.ConnectionPool;
 
-public class ElectroFrameStorage extends JFrame {
+public class ElectricFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,7 +32,7 @@ public class ElectroFrameStorage extends JFrame {
 	private JButton enter;
 	private String[] en = { "select", "rent", "admin" };
 
-	public ElectroFrameStorage() {
+	public ElectricFrame() {
 		setSize(350, 300);
 		setTitle("Electric power payment form");
 		setLocationRelativeTo(null);
@@ -146,7 +146,7 @@ public class ElectroFrameStorage extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new OrderFrameStorage();
+							new RentFrame();
 						}
 					});
 					dispose();
@@ -155,7 +155,7 @@ public class ElectroFrameStorage extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginFrameStorage();
+							new LoginFrame();
 						}
 					});
 					dispose();
@@ -168,8 +168,7 @@ public class ElectroFrameStorage extends JFrame {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
 				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name, MAX(electro.new_num)"
-						+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND users.number_storage='"
-						+ comboNum.getSelectedItem() + "'")) {
+						+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND users.number_storage='"+ comboNum.getSelectedItem() + "'")) {
 
 			    while (rs.next()) {
 				

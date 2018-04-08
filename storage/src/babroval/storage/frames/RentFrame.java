@@ -11,7 +11,7 @@ import babroval.storage.dao.*;
 import babroval.storage.entity.*;
 import babroval.storage.mysql.*;
 
-class OrderFrameStorage extends JFrame {
+class RentFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ class OrderFrameStorage extends JFrame {
 	private String[] en = { "select", "electricity", "admin" };
 	boolean quartSelect = false;
 
-	public OrderFrameStorage() {
+	public RentFrame() {
 		setSize(295, 300);
 		setTitle("OrderFrame");
 		setLocationRelativeTo(null);
@@ -52,14 +52,14 @@ class OrderFrameStorage extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+				ResultSet rs = st.executeQuery("SELECT storage.number FROM storage")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
-				comboNum.addItem(rs.getString(2));
+				comboNum.addItem(rs.getString(1));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database Error", "error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		labelSumm = new JLabel("Enter amount");
@@ -160,14 +160,11 @@ class OrderFrameStorage extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					OrdersStorageDao daoOrder = new OrdersStorageDao();
-					daoOrder.insert(new Orders(comboNum.getSelectedIndex(), InitDBase.stringToDate(fieldDate.getText()),
-							Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
-							(String) comboYear.getSelectedItem(), tfInf.getText()));
+//					RentDao daoOrder = new RentDao();
+//					daoOrder.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(fieldDate.getText()),
+//							Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
+//							(String) comboYear.getSelectedItem(), tfInf.getText()));
 
-					UsersStorageDao daoUser = new UsersStorageDao();
-					daoUser.updateQuarters(new Users(comboNum.getSelectedIndex(), quarter1, quarter2, quarter3,
-							quarter4, (String) comboYear.getSelectedItem()));
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 
@@ -194,20 +191,20 @@ class OrderFrameStorage extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				if (comboOrder.getSelectedIndex() == 1) {
-					
+
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ElectroFrameStorage();
+							new ElectricFrame();
 						}
 					});
 					dispose();
 				}
-				
+
 				if (comboOrder.getSelectedIndex() == 2) {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginFrameStorage();
+							new LoginFrame();
 						}
 					});
 					dispose();
@@ -217,17 +214,44 @@ class OrderFrameStorage extends JFrame {
 	}
 
 	private void numUpdateOrderFrame() {
-		
+
 		tfName.setText("");
+		quart1.setEnabled(true);
+		quart1.setSelected(false);
+		quart2.setEnabled(true);
+		quart2.setSelected(false);
+		quart3.setEnabled(true);
+		quart3.setSelected(false);
+		quart4.setEnabled(true);
+		quart4.setSelected(false);
+		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name"
-						+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND users.number_storage='"
-						+ comboNum.getSelectedItem() + "'")) {
+				ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
+											+ " WHERE storage.number='" + comboNum.getSelectedItem() 
+											+ "' AND rent.storage_id=storage.storage_id"
+											+ " AND user.storage_id=storage.storage_id")) {
 
-				while (rs.next()) {
-			
-					tfName.setText(rs.getString(2));
+			while (rs.next()) {
+				tfName.setText(rs.getString(1));
+				
+				String str = rs.getString(2);
+				int i = Integer.valueOf(str.substring(0,4));
+				String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
+				comboYear = new JComboBox<String>(year);
+				comboYear.setSelectedIndex(1);
+				
+				i = Integer.valueOf(str.substring(5,7));
+    			switch (i) {
+					case 10:quart4.setEnabled(false);
+							quart4.setSelected(true);
+					case 7: quart3.setEnabled(false);
+							quart3.setSelected(true);
+					case 4: quart2.setEnabled(false);
+							quart2.setSelected(true);
+					case 1: quart1.setEnabled(false);
+							quart1.setSelected(true);
+				}
 			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);

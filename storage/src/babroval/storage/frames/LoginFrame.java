@@ -13,7 +13,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class LoginFrameStorage extends JFrame {
+public class LoginFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class LoginFrameStorage extends JFrame {
 	private JComboBox<Object> comboOrder;
 	private String[] en = { "select", "rent", "electricity" };
 
-	public LoginFrameStorage() {
+	public LoginFrame() {
 		setSize(260, 220);
 		setTitle("LoginFrame");
 		setLocationRelativeTo(null);
@@ -67,7 +67,7 @@ public class LoginFrameStorage extends JFrame {
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new OrderFrameStorage();
+								new RentFrame();
 							}
 						});
 						dispose();
@@ -76,7 +76,7 @@ public class LoginFrameStorage extends JFrame {
 						
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new ElectroFrameStorage();
+								new ElectricFrame();
 							}
 						});
 						dispose();
@@ -101,7 +101,7 @@ public class LoginFrameStorage extends JFrame {
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new AdminFrameStorage();
+								new AdminFrame();
 							}
 						});
 
