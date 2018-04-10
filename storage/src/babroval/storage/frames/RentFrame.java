@@ -1,15 +1,25 @@
 package babroval.storage.frames;
 
-import java.awt.event.*;
-import java.sql.*;
-import java.text.SimpleDateFormat;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.*;
-import babroval.storage.entity.*;
-import babroval.storage.mysql.*;
+import babroval.storage.mysql.ConnectionPool;
 
 class RentFrame extends JFrame {
 
@@ -17,7 +27,8 @@ class RentFrame extends JFrame {
 
 	private JPanel panel;
 	private JLabel labelNumber, labelD, labelQuarts, labelSumm, labelInf;
-	private JComboBox<String> comboNum, comboYear;
+	private JComboBox<String> comboNum;
+	private JComboBox<Integer> comboYear;
 	private JComboBox<Object> comboOrder;
 	private JTextField fieldDate, tfName, tfSumm, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
@@ -72,11 +83,7 @@ class RentFrame extends JFrame {
 		quart3 = new JCheckBox("III");
 		quart4 = new JCheckBox("IV");
 
-		ft = new SimpleDateFormat("yyyy");
-		int i = Integer.parseInt(ft.format(dNow));
-		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
-		comboYear = new JComboBox<String>(year);
-		comboYear.setSelectedIndex(1);
+		comboYear = new JComboBox<Integer>();
 
 		labelInf = new JLabel("Number of receipt order");
 		tfInf = new JTextField(20);
@@ -110,7 +117,15 @@ class RentFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				comboYear.removeAllItems();
+				numUpdateOrderFrame();
+			}
+		});
 
+		comboYear.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
 				numUpdateOrderFrame();
 			}
 		});
@@ -160,10 +175,11 @@ class RentFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-//					RentDao daoOrder = new RentDao();
-//					daoOrder.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(fieldDate.getText()),
-//							Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
-//							(String) comboYear.getSelectedItem(), tfInf.getText()));
+					// RentDao daoOrder = new RentDao();
+					// daoOrder.insert(new Rent(comboNum.getSelectedIndex(),
+					// InitDB.stringToDate(fieldDate.getText()),
+					// Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
+					// (String) comboYear.getSelectedItem(), tfInf.getText()));
 
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -215,46 +231,75 @@ class RentFrame extends JFrame {
 
 	private void numUpdateOrderFrame() {
 
-		tfName.setText("");
-		quart1.setEnabled(true);
-		quart1.setSelected(false);
-		quart2.setEnabled(true);
-		quart2.setSelected(false);
-		quart3.setEnabled(true);
-		quart3.setSelected(false);
-		quart4.setEnabled(true);
-		quart4.setSelected(false);
-		
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
-											+ " WHERE storage.number='" + comboNum.getSelectedItem() 
-											+ "' AND rent.storage_id=storage.storage_id"
-											+ " AND user.storage_id=storage.storage_id")) {
+		if (comboYear.getSelectedIndex() == 0) {
+			quart1.setEnabled(false);
+			quart1.setSelected(true);
+			quart2.setEnabled(false);
+			quart2.setSelected(true);
+			quart3.setEnabled(false);
+			quart3.setSelected(true);
+			quart4.setEnabled(false);
+			quart4.setSelected(true);
+		} else if (comboYear.getSelectedIndex() == 2) {
+			quart1.setEnabled(true);
+			quart1.setSelected(false);
+			quart2.setEnabled(true);
+			quart2.setSelected(false);
+			quart3.setEnabled(true);
+			quart3.setSelected(false);
+			quart4.setEnabled(true);
+			quart4.setSelected(false);
+		} else {
+			tfName.setText("");
+			quart1.setEnabled(true);
+			quart1.setSelected(false);
+			quart2.setEnabled(true);
+			quart2.setSelected(false);
+			quart3.setEnabled(true);
+			quart3.setSelected(false);
+			quart4.setEnabled(true);
+			quart4.setSelected(false);
 
-			while (rs.next()) {
-				tfName.setText(rs.getString(1));
-				
-				String str = rs.getString(2);
-				int i = Integer.valueOf(str.substring(0,4));
-				String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
-				comboYear = new JComboBox<String>(year);
-				comboYear.setSelectedIndex(1);
-				
-				i = Integer.valueOf(str.substring(5,7));
-    			switch (i) {
-					case 10:quart4.setEnabled(false);
-							quart4.setSelected(true);
-					case 7: quart3.setEnabled(false);
-							quart3.setSelected(true);
-					case 4: quart2.setEnabled(false);
-							quart2.setSelected(true);
-					case 1: quart1.setEnabled(false);
-							quart1.setSelected(true);
+			try (Connection cn = ConnectionPool.getPool().getConnection();
+					Statement st = cn.createStatement();
+					ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
+							+ " WHERE storage.number='" + comboNum.getSelectedItem()
+							+ "' AND rent.storage_id=storage.storage_id" + " AND user.storage_id=storage.storage_id")) {
+
+				while (rs.next()) {
+
+					tfName.setText(rs.getString(1));
+
+					String str = rs.getString(2);
+					int year_paid = Integer.valueOf(str.substring(0, 4));
+
+					comboYear.removeAllItems();
+					comboYear.addItem(year_paid - 1);
+					comboYear.addItem(year_paid);
+					comboYear.addItem(year_paid + 1);
+
+					comboYear.setSelectedIndex(1);
+
+					int first_month_quarter_paid = Integer.valueOf(str.substring(5, 7));
+					switch (first_month_quarter_paid) {
+					case 10:
+						quart4.setEnabled(false);
+						quart4.setSelected(true);
+					case 7:
+						quart3.setEnabled(false);
+						quart3.setSelected(true);
+					case 4:
+						quart2.setEnabled(false);
+						quart2.setSelected(true);
+					case 1:
+						quart1.setEnabled(false);
+						quart1.setSelected(true);
+					}
 				}
+
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 		}
 		panel.updateUI();
 	}
