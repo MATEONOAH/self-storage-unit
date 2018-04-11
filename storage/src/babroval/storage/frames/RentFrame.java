@@ -19,7 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.RentDao;
+import babroval.storage.entity.Rent;
 import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.mysql.InitDB;
 
 class RentFrame extends JFrame {
 
@@ -34,10 +37,9 @@ class RentFrame extends JFrame {
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private JButton enter;
 	private String[] en = { "select", "electricity", "admin" };
-	boolean quartSelect = false;
 
 	public RentFrame() {
-		setSize(295, 300);
+		setSize(280, 260);
 		setTitle("OrderFrame");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -138,48 +140,27 @@ class RentFrame extends JFrame {
 					if (tfInf.getText().equals("")) {
 						tfInf.setText("");
 					}
-					String quarter1 = "";
-					String quarter2 = "";
-					String quarter3 = "";
-					String quarter4 = "";
-					if (quart1.isSelected()) {
-						quarter1 = "I";
-						quartSelect = true;
-					}
-					if (quart2.isSelected()) {
-						if (!quart1.isSelected()) {
-							quarter1 = "+";
-						}
-						quarter2 = "II";
-						quartSelect = true;
-					}
-					if (quart3.isSelected()) {
-						if (!quart2.isSelected()) {
-							quarter1 = "+";
-							quarter2 = "+";
-						}
-						quarter3 = "III";
-						quartSelect = true;
-					}
-					if (quart4.isSelected()) {
-						if (!quart3.isSelected()) {
-							quarter1 = "+";
-							quarter2 = "+";
-							quarter3 = "+";
-						}
-						quarter4 = "IV";
-						quartSelect = true;
-					}
 
-					if (!quartSelect || comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
+					String quarter = ""; // first month of year quarter
+
+					if (quart4.isEnabled() && quart4.isSelected())
+						quarter = "10";
+					else if (quart3.isEnabled() && quart3.isSelected())
+						quarter = "07";
+					else if (quart2.isEnabled() && quart2.isSelected())
+						quarter = "04";
+					else if (quart1.isEnabled() && quart1.isSelected())
+						quarter = "01";
+
+					if (quarter.equals("") || comboNum.getSelectedIndex() == 0
+							|| comboNum.getSelectedItem().equals("")) {
 						throw new NumberFormatException("e");
 					}
 
-					// RentDao daoOrder = new RentDao();
-					// daoOrder.insert(new Rent(comboNum.getSelectedIndex(),
-					// InitDB.stringToDate(fieldDate.getText()),
-					// Integer.valueOf(tfSumm.getText()), quarter1, quarter2, quarter3, quarter4,
-					// (String) comboYear.getSelectedItem(), tfInf.getText()));
+					RentDao daoRent = new RentDao();
+					daoRent.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(fieldDate.getText()),
+							InitDB.stringToDate("01-" + quarter + "-" + comboYear.getSelectedItem()),
+							Integer.valueOf(tfSumm.getText()), tfInf.getText()));
 
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -192,13 +173,12 @@ class RentFrame extends JFrame {
 					quart2.setSelected(false);
 					quart3.setSelected(false);
 					quart4.setSelected(false);
-					quartSelect = false;
 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "Select storage, quarters and enter the right payment",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "select storage, quarters and enter the right payment",
+							"error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -229,9 +209,23 @@ class RentFrame extends JFrame {
 		});
 	}
 
+
 	private void numUpdateOrderFrame() {
 
-		if (comboYear.getSelectedIndex() == 0) {
+		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
+			comboNum.setSelectedIndex(0);
+			tfName.setText("");
+			tfSumm.setText("");
+			tfInf.setText("");
+			quart1.setEnabled(false);
+			quart1.setSelected(false);
+			quart2.setEnabled(false);
+			quart2.setSelected(false);
+			quart3.setEnabled(false);
+			quart3.setSelected(false);
+			quart4.setEnabled(false);
+			quart4.setSelected(false);
+		} else if (comboYear.getSelectedIndex() == 0) {
 			quart1.setEnabled(false);
 			quart1.setSelected(true);
 			quart2.setEnabled(false);
@@ -296,7 +290,6 @@ class RentFrame extends JFrame {
 						quart1.setSelected(true);
 					}
 				}
-
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
 			}
