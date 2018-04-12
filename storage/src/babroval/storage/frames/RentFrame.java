@@ -29,9 +29,8 @@ class RentFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelD, labelQuarts, labelSumm, labelInf;
+	private JLabel labelNumber, labelD, labelQuarts, labelSumm, labelYear, labelInf;
 	private JComboBox<String> comboNum;
-	private JComboBox<Integer> comboYear;
 	private JComboBox<Object> comboOrder;
 	private JTextField fieldDate, tfName, tfSumm, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
@@ -85,7 +84,7 @@ class RentFrame extends JFrame {
 		quart3 = new JCheckBox("III");
 		quart4 = new JCheckBox("IV");
 
-		comboYear = new JComboBox<Integer>();
+		labelYear = new JLabel("Year");
 
 		labelInf = new JLabel("Number of receipt order");
 		tfInf = new JTextField(20);
@@ -105,7 +104,7 @@ class RentFrame extends JFrame {
 		panel.add(quart2);
 		panel.add(quart3);
 		panel.add(quart4);
-		panel.add(comboYear);
+		panel.add(labelYear);
 		panel.add(labelInf);
 		panel.add(tfInf);
 		panel.add(enter);
@@ -119,15 +118,7 @@ class RentFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				comboYear.removeAllItems();
-				numUpdateOrderFrame();
-			}
-		});
 
-		comboYear.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
 				numUpdateOrderFrame();
 			}
 		});
@@ -143,14 +134,14 @@ class RentFrame extends JFrame {
 
 					String quarter = ""; // first month of year quarter
 
-					if (quart4.isEnabled() && quart4.isSelected())
-						quarter = "10";
-					else if (quart3.isEnabled() && quart3.isSelected())
-						quarter = "07";
+					if (quart1.isEnabled() && quart1.isSelected())
+						quarter = "01";
 					else if (quart2.isEnabled() && quart2.isSelected())
 						quarter = "04";
-					else if (quart1.isEnabled() && quart1.isSelected())
-						quarter = "01";
+					else if (quart3.isEnabled() && quart3.isSelected())
+						quarter = "07";
+					else if (quart4.isEnabled() && quart4.isSelected())
+						quarter = "10";
 
 					if (quarter.equals("") || comboNum.getSelectedIndex() == 0
 							|| comboNum.getSelectedItem().equals("")) {
@@ -159,7 +150,7 @@ class RentFrame extends JFrame {
 
 					RentDao daoRent = new RentDao();
 					daoRent.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(fieldDate.getText()),
-							InitDB.stringToDate("01-" + quarter + "-" + comboYear.getSelectedItem()),
+							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
 							Integer.valueOf(tfSumm.getText()), tfInf.getText()));
 
 					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
@@ -173,6 +164,7 @@ class RentFrame extends JFrame {
 					quart2.setSelected(false);
 					quart3.setSelected(false);
 					quart4.setSelected(false);
+					labelYear.setText("Year");
 
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "select storage, quarters and enter the right payment",
@@ -209,7 +201,6 @@ class RentFrame extends JFrame {
 		});
 	}
 
-
 	private void numUpdateOrderFrame() {
 
 		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
@@ -217,6 +208,7 @@ class RentFrame extends JFrame {
 			tfName.setText("");
 			tfSumm.setText("");
 			tfInf.setText("");
+			labelYear.setText("Year");
 			quart1.setEnabled(false);
 			quart1.setSelected(false);
 			quart2.setEnabled(false);
@@ -224,34 +216,17 @@ class RentFrame extends JFrame {
 			quart3.setEnabled(false);
 			quart3.setSelected(false);
 			quart4.setEnabled(false);
-			quart4.setSelected(false);
-		} else if (comboYear.getSelectedIndex() == 0) {
-			quart1.setEnabled(false);
-			quart1.setSelected(true);
-			quart2.setEnabled(false);
-			quart2.setSelected(true);
-			quart3.setEnabled(false);
-			quart3.setSelected(true);
-			quart4.setEnabled(false);
-			quart4.setSelected(true);
-		} else if (comboYear.getSelectedIndex() == 2) {
-			quart1.setEnabled(true);
-			quart1.setSelected(false);
-			quart2.setEnabled(true);
-			quart2.setSelected(false);
-			quart3.setEnabled(true);
-			quart3.setSelected(false);
-			quart4.setEnabled(true);
 			quart4.setSelected(false);
 		} else {
 			tfName.setText("");
-			quart1.setEnabled(true);
+			labelYear.setText("Year");
+			quart1.setEnabled(false);
 			quart1.setSelected(false);
-			quart2.setEnabled(true);
+			quart2.setEnabled(false);
 			quart2.setSelected(false);
-			quart3.setEnabled(true);
+			quart3.setEnabled(false);
 			quart3.setSelected(false);
-			quart4.setEnabled(true);
+			quart4.setEnabled(false);
 			quart4.setSelected(false);
 
 			try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -265,30 +240,42 @@ class RentFrame extends JFrame {
 					tfName.setText(rs.getString(1));
 
 					String str = rs.getString(2);
-					int year_paid = Integer.valueOf(str.substring(0, 4));
+					Integer year = Integer.valueOf(str.substring(0, 4));
+					Integer quarter = Integer.valueOf(str.substring(5, 7));
 
-					comboYear.removeAllItems();
-					comboYear.addItem(year_paid - 1);
-					comboYear.addItem(year_paid);
-					comboYear.addItem(year_paid + 1);
-
-					comboYear.setSelectedIndex(1);
-
-					int first_month_quarter_paid = Integer.valueOf(str.substring(5, 7));
-					switch (first_month_quarter_paid) {
-					case 10:
-						quart4.setEnabled(false);
-						quart4.setSelected(true);
-					case 7:
-						quart3.setEnabled(false);
-						quart3.setSelected(true);
-					case 4:
-						quart2.setEnabled(false);
-						quart2.setSelected(true);
+					switch (quarter) {
 					case 1:
 						quart1.setEnabled(false);
 						quart1.setSelected(true);
+						quart2.setEnabled(true);
+						quart2.setSelected(false);
+						break;
+					case 4:
+						quart1.setEnabled(false);
+						quart1.setSelected(true);
+						quart2.setEnabled(false);
+						quart2.setSelected(true);
+						quart3.setEnabled(true);
+						quart3.setSelected(false);
+						break;
+					case 7:
+						quart1.setEnabled(false);
+						quart1.setSelected(true);
+						quart2.setEnabled(false);
+						quart2.setSelected(true);
+						quart3.setEnabled(false);
+						quart3.setSelected(true);
+						quart4.setEnabled(true);
+						quart4.setSelected(false);
+						break;
+					case 10:
+						year++;
+						quart1.setEnabled(true);
+						quart1.setSelected(false);
+						break;
 					}
+					labelYear.setText(String.valueOf(year));
+
 				}
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
