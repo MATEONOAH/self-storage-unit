@@ -29,17 +29,17 @@ class RentFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelD, labelQuarts, labelSumm, labelYear, labelInf;
+	private JLabel labelNumber, labelDate, labelQuarter, labelSumm, labelYear, labelInf;
 	private JComboBox<String> comboNum;
-	private JComboBox<Object> comboOrder;
-	private JTextField fieldDate, tfName, tfSumm, tfInf;
+	private JComboBox<Object> comboSelect;
+	private JTextField tfDate, tfName, tfSumm, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private JButton enter;
-	private String[] en = { "select", "electricity", "admin" };
+	private String[] select = { "select", "electricity", "admin" };
 
 	public RentFrame() {
 		setSize(280, 260);
-		setTitle("OrderFrame");
+		setTitle("RentFrame");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
@@ -54,13 +54,14 @@ class RentFrame extends JFrame {
 
 		labelNumber = new JLabel("Number of storage");
 		comboNum = new JComboBox<String>();
-		labelD = new JLabel("Date ");
+		labelDate = new JLabel("Date ");
 
-		Date dNow = new Date(System.currentTimeMillis());
+		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
-		fieldDate = new JTextField(ft.format(dNow));
+		tfDate = new JTextField(ft.format(dateNow));
 
 		tfName = new JTextField(20);
+		tfName.setEnabled(false);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -76,30 +77,31 @@ class RentFrame extends JFrame {
 
 		labelSumm = new JLabel("Enter amount");
 		tfSumm = new JTextField(20);
-		tfSumm.setText("");
 
-		labelQuarts = new JLabel("Quarter");
+		labelQuarter = new JLabel("Quarter");
 		quart1 = new JCheckBox("I");
 		quart2 = new JCheckBox("II");
 		quart3 = new JCheckBox("III");
 		quart4 = new JCheckBox("IV");
 
-		labelYear = new JLabel("Year");
+		labelYear = new JLabel("of Year");
 
 		labelInf = new JLabel("Number of receipt order");
 		tfInf = new JTextField(20);
-		tfInf.setText("");
+
 		enter = new JButton("Enter");
-		comboOrder = new JComboBox<Object>(en);
+		comboSelect = new JComboBox<Object>(select);
+
+		resetFrame();
 
 		panel.add(labelNumber);
 		panel.add(comboNum);
-		panel.add(labelD);
-		panel.add(fieldDate);
+		panel.add(labelDate);
+		panel.add(tfDate);
 		panel.add(tfName);
 		panel.add(labelSumm);
 		panel.add(tfSumm);
-		panel.add(labelQuarts);
+		panel.add(labelQuarter);
 		panel.add(quart1);
 		panel.add(quart2);
 		panel.add(quart3);
@@ -108,7 +110,7 @@ class RentFrame extends JFrame {
 		panel.add(labelInf);
 		panel.add(tfInf);
 		panel.add(enter);
-		panel.add(comboOrder);
+		panel.add(comboSelect);
 
 		add(panel);
 	}
@@ -119,7 +121,7 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
-				numUpdateOrderFrame();
+				updateFrame();
 			}
 		});
 
@@ -149,7 +151,7 @@ class RentFrame extends JFrame {
 					}
 
 					RentDao daoRent = new RentDao();
-					daoRent.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(fieldDate.getText()),
+					daoRent.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(tfDate.getText()),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
 							Integer.valueOf(tfSumm.getText()), tfInf.getText()));
 
@@ -157,28 +159,23 @@ class RentFrame extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 
 					comboNum.setSelectedIndex(0);
-					tfName.setText("");
-					tfSumm.setText("");
-					tfInf.setText("");
-					quart1.setSelected(false);
-					quart2.setSelected(false);
-					quart3.setSelected(false);
-					quart4.setSelected(false);
-					labelYear.setText("Year");
+					resetFrame();
 
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "select storage, quarters and enter the right payment",
 							"error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+					comboNum.setSelectedIndex(0);
+					resetFrame();
 				}
 			}
 		});
 
-		comboOrder.addActionListener(new ActionListener() {
+		comboSelect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				if (comboOrder.getSelectedIndex() == 1) {
+				if (comboSelect.getSelectedIndex() == 1) {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -188,7 +185,7 @@ class RentFrame extends JFrame {
 					dispose();
 				}
 
-				if (comboOrder.getSelectedIndex() == 2) {
+				if (comboSelect.getSelectedIndex() == 2) {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -201,33 +198,13 @@ class RentFrame extends JFrame {
 		});
 	}
 
-	private void numUpdateOrderFrame() {
+	private void updateFrame() {
 
 		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
 			comboNum.setSelectedIndex(0);
-			tfName.setText("");
-			tfSumm.setText("");
-			tfInf.setText("");
-			labelYear.setText("Year");
-			quart1.setEnabled(false);
-			quart1.setSelected(false);
-			quart2.setEnabled(false);
-			quart2.setSelected(false);
-			quart3.setEnabled(false);
-			quart3.setSelected(false);
-			quart4.setEnabled(false);
-			quart4.setSelected(false);
+			resetFrame();
 		} else {
-			tfName.setText("");
-			labelYear.setText("Year");
-			quart1.setEnabled(false);
-			quart1.setSelected(false);
-			quart2.setEnabled(false);
-			quart2.setSelected(false);
-			quart3.setEnabled(false);
-			quart3.setSelected(false);
-			quart4.setEnabled(false);
-			quart4.setSelected(false);
+			resetFrame();
 
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
@@ -282,6 +259,22 @@ class RentFrame extends JFrame {
 			}
 		}
 		panel.updateUI();
+	}
+
+	private void resetFrame() {
+
+		tfName.setText("");
+		tfSumm.setText("");
+		quart1.setEnabled(false);
+		quart1.setSelected(false);
+		quart2.setEnabled(false);
+		quart2.setSelected(false);
+		quart3.setEnabled(false);
+		quart3.setSelected(false);
+		quart4.setEnabled(false);
+		quart4.setSelected(false);
+		labelYear.setText("of Year");
+		tfInf.setText("");
 	}
 
 }
