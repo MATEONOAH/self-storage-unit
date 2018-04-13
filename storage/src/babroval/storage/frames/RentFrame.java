@@ -29,17 +29,17 @@ class RentFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelDate, labelQuarter, labelSumm, labelYear, labelInf;
-	private JComboBox<String> comboNum;
-	private JComboBox<Object> comboSelect;
+	private JLabel labelNumber, labelDate, labelQuarter, 
+				   labelSumm, labelYear, labelInf;
+	private JComboBox<String> comboNum, comboSelect;
 	private JTextField tfDate, tfName, tfSumm, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private JButton enter;
-	private String[] select = { "select", "electricity", "admin" };
+	private String[] select = { "select payment", "Electricity", "Main View" };
 
 	public RentFrame() {
-		setSize(280, 260);
-		setTitle("RentFrame");
+		setSize(280, 265);
+		setTitle("Rent payment");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
@@ -72,7 +72,7 @@ class RentFrame extends JFrame {
 				comboNum.addItem(rs.getString(1));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 
 		labelSumm = new JLabel("Enter amount");
@@ -90,8 +90,8 @@ class RentFrame extends JFrame {
 		tfInf = new JTextField(20);
 
 		enter = new JButton("Enter");
-		comboSelect = new JComboBox<Object>(select);
-
+		
+		comboSelect = new JComboBox<String>(select);
 		resetFrame();
 
 		panel.add(labelNumber);
@@ -126,46 +126,40 @@ class RentFrame extends JFrame {
 		});
 
 		enter.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					if (tfInf.getText().equals("")) {
 						tfInf.setText("");
 					}
-
 					String quarter = ""; // first month of year quarter
 
-					if (quart1.isEnabled() && quart1.isSelected())
-						quarter = "01";
-					else if (quart2.isEnabled() && quart2.isSelected())
-						quarter = "04";
-					else if (quart3.isEnabled() && quart3.isSelected())
-						quarter = "07";
-					else if (quart4.isEnabled() && quart4.isSelected())
-						quarter = "10";
+					if (quart1.isEnabled() && quart1.isSelected()) quarter = "01";
+					else if (quart2.isEnabled() && quart2.isSelected())	quarter = "04";
+					else if (quart3.isEnabled() && quart3.isSelected())	quarter = "07";
+					else if (quart4.isEnabled() && quart4.isSelected())	quarter = "10";
 
 					if (quarter.equals("") || comboNum.getSelectedIndex() == 0
-							|| comboNum.getSelectedItem().equals("")) {
+							               || comboNum.getSelectedItem().equals("")) {
 						throw new NumberFormatException("e");
 					}
-
 					RentDao daoRent = new RentDao();
-					daoRent.insert(new Rent(comboNum.getSelectedIndex(), InitDB.stringToDate(tfDate.getText()),
+					daoRent.insert(new Rent(comboNum.getSelectedIndex(),
+							InitDB.stringToDate(tfDate.getText()),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
 							Integer.valueOf(tfSumm.getText()), tfInf.getText()));
-
-					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
+					
+					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
-
 					comboNum.setSelectedIndex(0);
 					resetFrame();
-
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "select storage, quarters and enter the right payment",
-							"error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel,
+							"select storage, quarters and enter the right payment",	"",
+							JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, 
+							"database fault", "", JOptionPane.ERROR_MESSAGE);
 					comboNum.setSelectedIndex(0);
 					resetFrame();
 				}
@@ -255,7 +249,7 @@ class RentFrame extends JFrame {
 
 				}
 			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		panel.updateUI();

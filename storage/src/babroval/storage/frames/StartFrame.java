@@ -53,7 +53,7 @@ public class StartFrame extends JFrame {
 		panel = new JPanel();
 		labelUrl = new JLabel("URL");
 		labelLogin = new JLabel("Login");
-		labelPass = new JLabel("Pass");
+		labelPass = new JLabel("Password");
 		tfUrl = new JTextField("jdbc:mysql://localhost", 20);
 		tfLogin = new JTextField("root", 20);
 		tfPass = new JTextField("root", 20);
@@ -81,11 +81,11 @@ public class StartFrame extends JFrame {
 				try {
 					InitDB.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					
-					JOptionPane.showMessageDialog(panel, "Database create successful", "Message",
+					JOptionPane.showMessageDialog(panel, "The database has been successfully created", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database create error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "the database has not been successfully created", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -96,11 +96,11 @@ public class StartFrame extends JFrame {
 				try {
 					InitDB.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
 					
-					JOptionPane.showMessageDialog(panel, "Database delete successful", "Message",
+					JOptionPane.showMessageDialog(panel, "The database has been successfully deleted", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 				
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database delete error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "the database has not been successfully deleted", "", JOptionPane.ERROR_MESSAGE);
 
 				}
 			}
@@ -124,7 +124,7 @@ public class StartFrame extends JFrame {
 					dispose();
 					
 				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "database connect error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "no database connection", "", JOptionPane.ERROR_MESSAGE);
 
 				}
 			}

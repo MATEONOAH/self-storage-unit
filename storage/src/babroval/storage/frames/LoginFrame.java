@@ -24,11 +24,11 @@ public class LoginFrame extends JFrame {
 	private JPasswordField tfPass;
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "select", "rent", "electricity" };
+	private String[] en = { "select payment", "Rent", "Electricity" };
 
 	public LoginFrame() {
-		setSize(260, 220);
-		setTitle("LoginFrame");
+		setSize(260, 175);
+		setTitle("Login");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
@@ -44,7 +44,7 @@ public class LoginFrame extends JFrame {
 		labelPass = new JLabel("Password");
 		tfLogin = new JTextField(20);
 		tfPass = new JPasswordField(20);
-		enter = new JButton("Admin");
+		enter = new JButton("Main view");
 		comboOrder = new JComboBox<Object>(en);
 
 		panel.add(labelLogin);
@@ -82,7 +82,7 @@ public class LoginFrame extends JFrame {
 						dispose();
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -107,10 +107,10 @@ public class LoginFrame extends JFrame {
 
 						dispose();
 					} else {
-						JOptionPane.showMessageDialog(panel, "incorrect password", "error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(panel, "incorrect password", "", JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "incorrect login", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
