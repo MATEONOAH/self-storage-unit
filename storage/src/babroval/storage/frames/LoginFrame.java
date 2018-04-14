@@ -24,7 +24,7 @@ public class LoginFrame extends JFrame {
 	private JPasswordField tfPass;
 	private JButton enter;
 	private JComboBox<Object> comboOrder;
-	private String[] en = { "select payment", "Rent", "Electricity" };
+	private String[] en = { "select payment:", "RENT", "ELECTRICITY" };
 
 	public LoginFrame() {
 		setSize(260, 175);
@@ -44,7 +44,7 @@ public class LoginFrame extends JFrame {
 		labelPass = new JLabel("Password");
 		tfLogin = new JTextField(20);
 		tfPass = new JPasswordField(20);
-		enter = new JButton("Main view");
+		enter = new JButton("MAIN VIEW");
 		comboOrder = new JComboBox<Object>(en);
 
 		panel.add(labelLogin);

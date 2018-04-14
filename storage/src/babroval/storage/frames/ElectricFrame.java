@@ -25,16 +25,15 @@ public class ElectricFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelD, labelIndicationLastPaid, labelIndication, labelInf;
-	private JComboBox<String> comboNum;
-	private JComboBox<Object> comboOrder;
-	private JTextField fieldDate, tfName, tfIndication, tfIndicationLast, tfInf;
+	private JLabel labelNumber, labelDate, labelName, labelIndicationLastPaid, labelIndication, labelInf;
+	private JComboBox<String> comboNum, comboSelect;
+	private JTextField fieldDate, fieldName, fieldIndication, fieldIndicationLastPaid, fieldInf;
 	private JButton enter;
-	private String[] en = { "select", "rent", "admin" };
+	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
 
 	public ElectricFrame() {
-		setSize(350, 300);
-		setTitle("Electric power payment form");
+		setSize(300, 300);
+		setTitle("Electricity payment");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
@@ -47,54 +46,59 @@ public class ElectricFrame extends JFrame {
 
 		panel = new JPanel();
 
-		labelNumber = new JLabel("Number of storage");
+		labelNumber = new JLabel("Number of storage:");
 		comboNum = new JComboBox<String>();
-		labelD = new JLabel("Date ");
+		labelDate = new JLabel("Date:");
 
 		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		fieldDate = new JTextField(sdf.format(dateNow));
 
-		tfName = new JTextField(20);
+		labelName = new JLabel("Name of tenant:");
+		fieldName = new JTextField(20);
+		fieldName.setEnabled(false);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+				ResultSet rs = st.executeQuery("SELECT storage.number FROM storage")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
-				comboNum.addItem(rs.getString(2));
+				comboNum.addItem(rs.getString(1));
 			}
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 
-		labelIndication = new JLabel("Enter electric power indication");
-		tfIndication = new JTextField(20);
-		tfIndication.setText("");
+		labelIndicationLastPaid = new JLabel("Electric power indication last paid:");
+		fieldIndicationLastPaid = new JTextField(20);
+		fieldIndicationLastPaid.setEnabled(false);
+		
+		labelIndication = new JLabel("Enter electric power indication:");
+		fieldIndication = new JTextField(20);
 
-		labelIndicationLastPaid = new JLabel("Electric power indication last paid");
-		tfIndicationLast = new JTextField(20);
+		labelInf = new JLabel("Enter number of receipt order:");
+		fieldInf = new JTextField(20);
 
-		labelInf = new JLabel("Number of receipt order");
-		tfInf = new JTextField(20);
-		tfInf.setText("");
 		enter = new JButton("Enter");
-		comboOrder = new JComboBox<Object>(en);
+
+		comboSelect = new JComboBox<String>(select);
+		resetFrame();
 
 		panel.add(labelNumber);
 		panel.add(comboNum);
-		panel.add(labelD);
+		panel.add(labelDate);
 		panel.add(fieldDate);
-		panel.add(tfName);
-		panel.add(labelIndication);
-		panel.add(tfIndication);
+		panel.add(labelName);
+		panel.add(fieldName);
 		panel.add(labelIndicationLastPaid);
-		panel.add(tfIndicationLast);
+		panel.add(fieldIndicationLastPaid);
+		panel.add(labelIndication);
+		panel.add(fieldIndication);
 		panel.add(labelInf);
-		panel.add(tfInf);
+		panel.add(fieldInf);
 		panel.add(enter);
-		panel.add(comboOrder);
+		panel.add(comboSelect);
 
 		add(panel);
 	}
@@ -105,7 +109,7 @@ public class ElectricFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
-				numUpdateElectroFrame();
+				updateFrame();
 			}
 		});
 
@@ -114,8 +118,8 @@ public class ElectricFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (tfInf.getText().equals("")) {
-						tfInf.setText("");
+					if (fieldInf.getText().equals("")) {
+						fieldInf.setText("");
 					}
 					if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
 						throw new NumberFormatException("e");
@@ -125,10 +129,10 @@ public class ElectricFrame extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 
 					comboNum.setSelectedIndex(0);
-					tfName.setText("");
-					tfIndication.setText("");
-					tfIndicationLast.setText("");
-					tfInf.setText("");
+					fieldName.setText("");
+					fieldIndication.setText("");
+					fieldIndicationLastPaid.setText("");
+					fieldInf.setText("");
 
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication", "error",
@@ -139,10 +143,10 @@ public class ElectricFrame extends JFrame {
 			}
 		});
 
-		comboOrder.addActionListener(new ActionListener() {
+		comboSelect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				if (comboOrder.getSelectedIndex() == 1) {
+				if (comboSelect.getSelectedIndex() == 1) {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -151,7 +155,8 @@ public class ElectricFrame extends JFrame {
 					});
 					dispose();
 				}
-				if (comboOrder.getSelectedIndex() == 2) {
+
+				if (comboSelect.getSelectedIndex() == 2) {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -164,21 +169,38 @@ public class ElectricFrame extends JFrame {
 		});
 	}
 
-	private void numUpdateElectroFrame() {
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT users.number_storage, users.name, MAX(electro.new_num)"
-						+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND users.number_storage='"+ comboNum.getSelectedItem() + "'")) {
+	private void updateFrame() {
 
-			    while (rs.next()) {
-				
-						tfName.setText(rs.getString(2));
-						tfIndicationLast.setText(rs.getString(3));
-			    }
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
+			comboNum.setSelectedIndex(0);
+			resetFrame();
+		} else {
+			resetFrame();
+			try (Connection cn = ConnectionPool.getPool().getConnection();
+					Statement st = cn.createStatement();
+					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid)"
+							+ " FROM electric, storage, user"
+							+ " WHERE storage.number='" + comboNum.getSelectedItem()
+							+ "' AND electric.storage_id=storage.storage_id"
+							+ " AND user.storage_id=storage.storage_id")) {
+
+				while (rs.next()) {
+
+					fieldName.setText(rs.getString(1));
+					fieldIndicationLastPaid.setText(rs.getString(2));
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		panel.updateUI();
+	}
+
+	private void resetFrame() {
+		fieldName.setText("");
+		fieldIndicationLastPaid.setText("");
+		fieldIndication.setText("");
+		fieldInf.setText("");
 	}
 
 }
