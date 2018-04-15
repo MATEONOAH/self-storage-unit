@@ -1,5 +1,6 @@
 package babroval.storage.frames;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -25,14 +26,14 @@ public class ElectricFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelDate, labelName, labelIndicationLastPaid, labelIndication, labelInf;
+	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelIndication, labelInf;
 	private JComboBox<String> comboNum, comboSelect;
 	private JTextField fieldDate, fieldName, fieldIndication, fieldIndicationLastPaid, fieldInf;
 	private JButton enter;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
 
 	public ElectricFrame() {
-		setSize(300, 300);
+		setSize(300, 318);
 		setTitle("Electricity payment");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -46,14 +47,15 @@ public class ElectricFrame extends JFrame {
 
 		panel = new JPanel();
 
-		labelNumber = new JLabel("Number of storage:");
-		comboNum = new JComboBox<String>();
-		labelDate = new JLabel("Date:");
-
+		labelDate = new JLabel("Date of payment:");
 		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		fieldDate = new JTextField(sdf.format(dateNow));
-
+		
+		labelNum = new JLabel("Select Number of storage:");
+		comboNum = new JComboBox<String>();
+		comboNum.setPreferredSize(new Dimension(50, 20));
+		
 		labelName = new JLabel("Name of tenant:");
 		fieldName = new JTextField(20);
 		fieldName.setEnabled(false);
@@ -85,10 +87,10 @@ public class ElectricFrame extends JFrame {
 		comboSelect = new JComboBox<String>(select);
 		resetFrame();
 
-		panel.add(labelNumber);
-		panel.add(comboNum);
 		panel.add(labelDate);
 		panel.add(fieldDate);
+		panel.add(labelNum);
+		panel.add(comboNum);
 		panel.add(labelName);
 		panel.add(fieldName);
 		panel.add(labelIndicationLastPaid);
