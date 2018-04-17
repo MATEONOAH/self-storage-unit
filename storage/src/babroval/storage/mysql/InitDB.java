@@ -1,5 +1,6 @@
 package babroval.storage.mysql;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -54,8 +55,9 @@ public class InitDB {
 							+ "electric_id INT PRIMARY KEY AUTO_INCREMENT," 
 							+ " storage_id INT,"
 							+ " date DATE," 
-							+ " meter_paid INT," 
-							+ " summ INT,"
+							+ " tariff DECIMAL(10,3),"
+							+ " meter_paid INT,"
+							+ " summ DECIMAL(10,2),"
 							+ " info VARCHAR(100)," 
 							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
 
@@ -81,11 +83,11 @@ public class InitDB {
 		daoRent.insert(new Rent(2, stringToDate("30-11-2017"), stringToDate("01-10-2018"), 60, "353465"));
 
 		ElectricDao daoElectric = new ElectricDao();
-		daoElectric.insert(new Electric(1, stringToDate("18-11-2017"), 45700, 10, "56456"));
-		daoElectric.insert(new Electric(3, stringToDate("19-11-2017"), 34500, 10, "45763"));
-		daoElectric.insert(new Electric(1, stringToDate("20-11-2017"), 55700, 10, "74535"));
-		daoElectric.insert(new Electric(3, stringToDate("01-12-2017"), 54500, 40, "34567"));
-		daoElectric.insert(new Electric(2, stringToDate("03-12-2017"), 44600, 20, "73457"));
+		daoElectric.insert(new Electric(1, stringToDate("18-11-2017"), BigDecimal.valueOf(0.178), 45700, BigDecimal.valueOf(17.80), "56456"));
+		daoElectric.insert(new Electric(3, stringToDate("19-11-2017"), BigDecimal.valueOf(0.178), 34500, BigDecimal.valueOf(26.70), "45763"));
+		daoElectric.insert(new Electric(1, stringToDate("20-11-2017"), BigDecimal.valueOf(0.178), 45800, BigDecimal.valueOf(17.80), "74535"));
+		daoElectric.insert(new Electric(3, stringToDate("01-12-2017"), BigDecimal.valueOf(0.170), 34650, BigDecimal.valueOf(25.50), "34567"));
+		daoElectric.insert(new Electric(2, stringToDate("03-12-2017"), BigDecimal.valueOf(0.170), 44600, BigDecimal.valueOf(8.50), "73457"));
 	}
 
 	public static void deleteDB(String url, String user, String password) {

@@ -26,14 +26,14 @@ public class ElectricFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelIndication, labelInf;
+	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelTariff, labelIndication, labelSum, labelInf;
 	private JComboBox<String> comboNum, comboSelect;
-	private JTextField fieldDate, fieldName, fieldIndication, fieldIndicationLastPaid, fieldInf;
-	private JButton enter;
+	private JTextField fieldDate, fieldName, fieldIndication, fieldIndicationLastPaid, fieldTariff, fieldSum, fieldInf;
+	private JButton enter, calculate;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
 
 	public ElectricFrame() {
-		setSize(300, 318);
+		setSize(300, 440);
 		setTitle("Electricity payment");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -76,9 +76,19 @@ public class ElectricFrame extends JFrame {
 		fieldIndicationLastPaid = new JTextField(20);
 		fieldIndicationLastPaid.setEnabled(false);
 		
-		labelIndication = new JLabel("Enter electric power indication:");
+		labelTariff = new JLabel("Price per kilowatt-hour:");
+		fieldTariff = new JTextField(20);
+		
+		labelIndication = new JLabel("<html>Enter electric power indication and "
+								   + "<br>press button \"Calculate\"</html>");
 		fieldIndication = new JTextField(20);
+		
+		calculate = new JButton("Calculate");
 
+		labelSum = new JLabel("Total amount:");
+		fieldSum = new JTextField(20);
+		fieldSum.setEnabled(false);
+		
 		labelInf = new JLabel("Enter number of receipt order:");
 		fieldInf = new JTextField(20);
 
@@ -95,8 +105,13 @@ public class ElectricFrame extends JFrame {
 		panel.add(fieldName);
 		panel.add(labelIndicationLastPaid);
 		panel.add(fieldIndicationLastPaid);
+		panel.add(labelTariff);
+		panel.add(fieldTariff);
 		panel.add(labelIndication);
 		panel.add(fieldIndication);
+		panel.add(calculate);
+		panel.add(labelSum);
+		panel.add(fieldSum);
 		panel.add(labelInf);
 		panel.add(fieldInf);
 		panel.add(enter);
@@ -132,8 +147,10 @@ public class ElectricFrame extends JFrame {
 
 					comboNum.setSelectedIndex(0);
 					fieldName.setText("");
-					fieldIndication.setText("");
 					fieldIndicationLastPaid.setText("");
+					fieldTariff.setText("");
+					fieldIndication.setText("");
+					fieldSum.setText("");
 					fieldInf.setText("");
 
 				} catch (NumberFormatException e) {
@@ -180,7 +197,7 @@ public class ElectricFrame extends JFrame {
 			resetFrame();
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid)"
+					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid), electric.tariff"
 							+ " FROM electric, storage, user"
 							+ " WHERE storage.number='" + comboNum.getSelectedItem()
 							+ "' AND electric.storage_id=storage.storage_id"
@@ -190,6 +207,7 @@ public class ElectricFrame extends JFrame {
 
 					fieldName.setText(rs.getString(1));
 					fieldIndicationLastPaid.setText(rs.getString(2));
+					fieldTariff.setText(rs.getString(3));
 				}
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
@@ -201,7 +219,9 @@ public class ElectricFrame extends JFrame {
 	private void resetFrame() {
 		fieldName.setText("");
 		fieldIndicationLastPaid.setText("");
+		fieldTariff.setText("");
 		fieldIndication.setText("");
+		fieldSum.setText("");
 		fieldInf.setText("");
 	}
 

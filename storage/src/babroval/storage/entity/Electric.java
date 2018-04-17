@@ -1,5 +1,6 @@
 package babroval.storage.entity;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 
@@ -8,8 +9,9 @@ public class Electric {
 	private int electric_id;
 	private int storage_id;
 	private Date date;
+	private BigDecimal tariff;
 	private int meter_paid;
-	private int summ;
+	private BigDecimal summ;
 	private String info;
 
 	public Electric() {
@@ -19,18 +21,21 @@ public class Electric {
 		this.electric_id = electric_id;
 	}
 
-	public Electric(int storage_id, Date date, int meter_paid, int summ, String info) {
+	public Electric(int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal summ, String info) {
 		this.storage_id = storage_id;
 		this.date = date;
+		this.tariff = tariff;
 		this.meter_paid = meter_paid;
 		this.summ = summ;
 		this.info = info;
 	}
 
-	public Electric(int electric_id, int storage_id, Date date, int meter_paid, int summ, String info) {
+	public Electric(int electric_id, int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal summ,
+			String info) {
 		this.electric_id = electric_id;
 		this.storage_id = storage_id;
 		this.date = date;
+		this.tariff = tariff;
 		this.meter_paid = meter_paid;
 		this.summ = summ;
 		this.info = info;
@@ -60,6 +65,14 @@ public class Electric {
 		this.date = date;
 	}
 
+	public BigDecimal getTariff() {
+		return tariff;
+	}
+
+	public void setTariff(BigDecimal tariff) {
+		this.tariff = tariff;
+	}
+
 	public int getMeter_paid() {
 		return meter_paid;
 	}
@@ -68,11 +81,11 @@ public class Electric {
 		this.meter_paid = meter_paid;
 	}
 
-	public int getSumm() {
+	public BigDecimal getSumm() {
 		return summ;
 	}
 
-	public void setSumm(int summ) {
+	public void setSumm(BigDecimal summ) {
 		this.summ = summ;
 	}
 
@@ -93,7 +106,8 @@ public class Electric {
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result + meter_paid;
 		result = prime * result + storage_id;
-		result = prime * result + summ;
+		result = prime * result + ((summ == null) ? 0 : summ.hashCode());
+		result = prime * result + ((tariff == null) ? 0 : tariff.hashCode());
 		return result;
 	}
 
@@ -122,15 +136,23 @@ public class Electric {
 			return false;
 		if (storage_id != other.storage_id)
 			return false;
-		if (summ != other.summ)
+		if (summ == null) {
+			if (other.summ != null)
+				return false;
+		} else if (!summ.equals(other.summ))
+			return false;
+		if (tariff == null) {
+			if (other.tariff != null)
+				return false;
+		} else if (!tariff.equals(other.tariff))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Electric [electric_id=" + electric_id + ", storage_id=" + storage_id + ", date=" + date
-				+ ", meter_paid=" + meter_paid + ", summ=" + summ + ", info=" + info + "]";
+		return "Electric [electric_id=" + electric_id + ", storage_id=" + storage_id + ", date=" + date + ", tariff="
+				+ tariff + ", meter_paid=" + meter_paid + ", summ=" + summ + ", info=" + info + "]";
 	}
 
 }
