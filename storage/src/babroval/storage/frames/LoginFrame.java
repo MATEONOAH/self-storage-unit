@@ -18,13 +18,12 @@ public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelLogin;
-	private JLabel labelPass;
+	private JLabel labelLogin, labelPassword;
 	private JTextField tfLogin;
-	private JPasswordField tfPass;
-	private JButton enter;
-	private JComboBox<Object> comboOrder;
-	private String[] en = { "select payment:", "RENT", "ELECTRICITY" };
+	private JPasswordField tfPassword;
+	private JButton mainView;
+	private JComboBox<String> comboOrder;
+	private String[] select = { "select payment:", "RENT", "ELECTRICITY" };
 
 	public LoginFrame() {
 		setSize(260, 175);
@@ -41,17 +40,17 @@ public class LoginFrame extends JFrame {
 
 		panel = new JPanel();
 		labelLogin = new JLabel("Login");
-		labelPass = new JLabel("Password");
+		labelPassword = new JLabel("Password");
 		tfLogin = new JTextField(20);
-		tfPass = new JPasswordField(20);
-		enter = new JButton("MAIN VIEW");
-		comboOrder = new JComboBox<Object>(en);
+		tfPassword = new JPasswordField(20);
+		mainView = new JButton("MAIN VIEW");
+		comboOrder = new JComboBox<String>(select);
 
 		panel.add(labelLogin);
 		panel.add(tfLogin);
-		panel.add(labelPass);
-		panel.add(tfPass);
-		panel.add(enter);
+		panel.add(labelPassword);
+		panel.add(tfPassword);
+		panel.add(mainView);
 		panel.add(comboOrder);
 
 		add(panel);
@@ -87,12 +86,12 @@ public class LoginFrame extends JFrame {
 			}
 		});
 
-		enter.addActionListener(new ActionListener() {
+		mainView.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
 				if (("").equals(tfLogin.getText())) {
-					char[] pass = tfPass.getPassword();
+					char[] pass = tfPassword.getPassword();
 					String res = "";
 					for (int i = 0; i < pass.length; i++) {
 						res += pass[i];

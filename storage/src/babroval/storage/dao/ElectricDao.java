@@ -18,13 +18,13 @@ public class ElectricDao implements Dao<Electric> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("insert into "
 						+ ob.getClass().getSimpleName()
-						+ " (storage_id, date, tariff, meter_paid, summ, info) values (?,?,?,?,?,?)")) {
+						+ " (storage_id, date, tariff, meter_paid, sum, info) values (?,?,?,?,?,?)")) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setBigDecimal(3, ob.getTariff());
 			ps.setInt(4, ob.getMeter_paid());
-			ps.setBigDecimal(5, ob.getSumm());
+			ps.setBigDecimal(5, ob.getSum());
 			ps.setString(6, ob.getInfo());
 			ps.execute();
 
@@ -37,14 +37,14 @@ public class ElectricDao implements Dao<Electric> {
 	public void update(Electric ob) {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("update " + ob.getClass().getSimpleName()
-						+ " set storage_id=?, date=?, tariff=?, meter_paid=?, summ=?, info=?"
+						+ " set storage_id=?, date=?, tariff=?, meter_paid=?, sum=?, info=?"
 						+ " where electric_id = " + ob.getElectric_id())) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setBigDecimal(3, ob.getTariff());
 			ps.setInt(4, ob.getMeter_paid());
-			ps.setBigDecimal(5, ob.getSumm());
+			ps.setBigDecimal(5, ob.getSum());
 			ps.setString(6, ob.getInfo());
 			ps.execute();
 

@@ -8,7 +8,7 @@ public class Rent {
 	private int storage_id;
 	private Date date;
 	private Date quarter_paid;
-	private int summ;
+	private int sum;
 	private String info;
 
 	public Rent() {
@@ -18,20 +18,20 @@ public class Rent {
 		this.rent_id = rent_id;
 	}
 
-	public Rent(int storage_id, Date date, Date quarter_paid, int summ, String info) {
+	public Rent(int storage_id, Date date, Date quarter_paid, int sum, String info) {
 		this.storage_id = storage_id;
 		this.date = date;
 		this.quarter_paid = quarter_paid;
-		this.summ = summ;
+		this.sum = sum;
 		this.info = info;
 	}
 
-	public Rent(int rent_id, int storage_id, Date date, Date quarter_paid, int summ, String info) {
+	public Rent(int rent_id, int storage_id, Date date, Date quarter_paid, int sum, String info) {
 		this.rent_id = rent_id;
 		this.storage_id = storage_id;
 		this.date = date;
 		this.quarter_paid = quarter_paid;
-		this.summ = summ;
+		this.sum = sum;
 		this.info = info;
 	}
 
@@ -67,12 +67,12 @@ public class Rent {
 		this.quarter_paid = quarter_paid;
 	}
 
-	public int getSumm() {
-		return summ;
+	public int getSum() {
+		return sum;
 	}
 
-	public void setSumm(int summ) {
-		this.summ = summ;
+	public void setSum(int sum) {
+		this.sum = sum;
 	}
 
 	public String getInfo() {
@@ -92,7 +92,7 @@ public class Rent {
 		result = prime * result + ((quarter_paid == null) ? 0 : quarter_paid.hashCode());
 		result = prime * result + rent_id;
 		result = prime * result + storage_id;
-		result = prime * result + summ;
+		result = prime * result + sum;
 		return result;
 	}
 
@@ -124,7 +124,7 @@ public class Rent {
 			return false;
 		if (storage_id != other.storage_id)
 			return false;
-		if (summ != other.summ)
+		if (sum != other.sum)
 			return false;
 		return true;
 	}
@@ -132,7 +132,7 @@ public class Rent {
 	@Override
 	public String toString() {
 		return "Rent [rent_id=" + rent_id + ", storage_id=" + storage_id + ", date=" + date + ", quarter_paid="
-				+ quarter_paid + ", summ=" + summ + ", info=" + info + "]";
+				+ quarter_paid + ", sum=" + sum + ", info=" + info + "]";
 	}
 
 }

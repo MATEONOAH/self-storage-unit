@@ -47,7 +47,7 @@ public class InitDB {
 							+ " storage_id INT,"
 							+ " date DATE," 
 							+ " quarter_paid DATE," 
-							+ " summ INT," 
+							+ " sum INT," 
 							+ " info VARCHAR(100),"
 							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
 
@@ -57,7 +57,7 @@ public class InitDB {
 							+ " date DATE," 
 							+ " tariff DECIMAL(10,3),"
 							+ " meter_paid INT,"
-							+ " summ DECIMAL(10,2),"
+							+ " sum DECIMAL(10,2),"
 							+ " info VARCHAR(100)," 
 							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
 

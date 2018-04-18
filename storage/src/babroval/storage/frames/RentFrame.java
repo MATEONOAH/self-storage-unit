@@ -30,10 +30,9 @@ class RentFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNumber, labelDate, labelName, labelQuarter, 
-				   labelSumm, labelYear, labelInf;
+	private JLabel labelNumber, labelDate, labelName, labelQuarter, labelSum, labelYear, labelInf;
 	private JComboBox<String> comboNum, comboSelect;
-	private JTextField fieldDate, fieldName, fieldSumm, fieldInf;
+	private JTextField tfDate, tfName, tfSum, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private JButton enter;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
@@ -56,15 +55,15 @@ class RentFrame extends JFrame {
 		labelDate = new JLabel("Date of payment:");
 		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		fieldDate = new JTextField(sdf.format(dateNow));
+		tfDate = new JTextField(sdf.format(dateNow));
 		
 		labelNumber = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
 		comboNum.setPreferredSize(new Dimension(50, 20));
 		
 		labelName = new JLabel("Name of tenant:");
-		fieldName = new JTextField(20);
-		fieldName.setEnabled(false);
+		tfName = new JTextField(20);
+		tfName.setEnabled(false);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -86,11 +85,11 @@ class RentFrame extends JFrame {
 
 		labelYear = new JLabel("Year");
 		
-		labelSumm = new JLabel("Enter rent amount:");
-		fieldSumm = new JTextField(20);
+		labelSum = new JLabel("Enter rent amount:");
+		tfSum = new JTextField(20);
 
 		labelInf = new JLabel("Enter number of receipt order:");
-		fieldInf = new JTextField(20);
+		tfInf = new JTextField(20);
 
 		enter = new JButton("Enter");
 		
@@ -98,21 +97,21 @@ class RentFrame extends JFrame {
 		resetFrame();
 		
 		panel.add(labelDate);
-		panel.add(fieldDate);
+		panel.add(tfDate);
 		panel.add(labelNumber);
 		panel.add(comboNum);
 		panel.add(labelName);
-		panel.add(fieldName);
+		panel.add(tfName);
 		panel.add(labelQuarter);
 		panel.add(labelYear);
 		panel.add(quart1);
 		panel.add(quart2);
 		panel.add(quart3);
 		panel.add(quart4);
-		panel.add(labelSumm);
-		panel.add(fieldSumm);
+		panel.add(labelSum);
+		panel.add(tfSum);
 		panel.add(labelInf);
-		panel.add(fieldInf);
+		panel.add(tfInf);
 		panel.add(enter);
 		panel.add(comboSelect);
 
@@ -133,8 +132,8 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (fieldInf.getText().equals("")) {
-						fieldInf.setText("");
+					if (tfInf.getText().equals("")) {
+						tfInf.setText("");
 					}
 					String quarter = ""; // first month of year quarter
 
@@ -149,9 +148,9 @@ class RentFrame extends JFrame {
 					}
 					RentDao daoRent = new RentDao();
 					daoRent.insert(new Rent(comboNum.getSelectedIndex(),
-							InitDB.stringToDate(fieldDate.getText()),
+							InitDB.stringToDate(tfDate.getText()),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
-							Integer.valueOf(fieldSumm.getText()), fieldInf.getText()));
+							Integer.valueOf(tfSum.getText()), tfInf.getText()));
 					
 					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -212,7 +211,7 @@ class RentFrame extends JFrame {
 
 				while (rs.next()) {
 
-					fieldName.setText(rs.getString(1));
+					tfName.setText(rs.getString(1));
 
 					String str = rs.getString(2);
 					Integer year = Integer.valueOf(str.substring(0, 4));
@@ -261,8 +260,8 @@ class RentFrame extends JFrame {
 
 	private void resetFrame() {
 
-		fieldName.setText("");
-		fieldSumm.setText("");
+		tfName.setText("");
+		tfSum.setText("");
 		quart1.setEnabled(false);
 		quart1.setSelected(false);
 		quart2.setEnabled(false);
@@ -272,7 +271,7 @@ class RentFrame extends JFrame {
 		quart4.setEnabled(false);
 		quart4.setSelected(false);
 		labelYear.setText("");
-		fieldInf.setText("");
+		tfInf.setText("");
 	}
 
 }

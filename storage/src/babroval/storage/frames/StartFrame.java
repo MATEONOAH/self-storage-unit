@@ -22,8 +22,8 @@ public class StartFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelUrl, labelLogin, labelPass;
-	private JTextField tfUrl, tfLogin, tfPass;
+	private JLabel labelUrl, labelLogin, labelPassword;
+	private JTextField tfUrl, tfLogin, tfPassword;
 	private JButton create, delete, connect;
 
 	public StartFrame() {
@@ -46,17 +46,17 @@ public class StartFrame extends JFrame {
 	}
 
 	public JTextField getTfPass() {
-		return tfPass;
+		return tfPassword;
 	}
 
 	private void initComponents() {
 		panel = new JPanel();
 		labelUrl = new JLabel("URL");
 		labelLogin = new JLabel("Login");
-		labelPass = new JLabel("Password");
+		labelPassword = new JLabel("Password");
 		tfUrl = new JTextField("jdbc:mysql://localhost", 20);
 		tfLogin = new JTextField("root", 20);
-		tfPass = new JTextField("root", 20);
+		tfPassword = new JTextField("root", 20);
 		create = new JButton("create");
 		delete = new JButton("delete");
 		connect = new JButton("connect");
@@ -65,8 +65,8 @@ public class StartFrame extends JFrame {
 		panel.add(tfUrl);
 		panel.add(labelLogin);
 		panel.add(tfLogin);
-		panel.add(labelPass);
-		panel.add(tfPass);
+		panel.add(labelPassword);
+		panel.add(tfPassword);
 		panel.add(create);
 		panel.add(delete);
 		panel.add(connect);
@@ -79,7 +79,7 @@ public class StartFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					InitDB.createDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDB.createDB(tfUrl.getText(), tfLogin.getText(), tfPassword.getText());
 					
 					JOptionPane.showMessageDialog(panel, "The database has been successfully created", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -94,7 +94,7 @@ public class StartFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					InitDB.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPass.getText());
+					InitDB.deleteDB(tfUrl.getText(), tfLogin.getText(), tfPassword.getText());
 					
 					JOptionPane.showMessageDialog(panel, "The database has been successfully deleted", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -111,7 +111,7 @@ public class StartFrame extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 
 				try (Connection cn = ConnectionPool.getPool().getConnection(tfUrl.getText(), tfLogin.getText(),
-						tfPass.getText()); Statement st = cn.createStatement()) {
+						tfPassword.getText()); Statement st = cn.createStatement()) {
 					
 					st.executeUpdate("USE " + ConnectionPool.NAME_DB);
 					

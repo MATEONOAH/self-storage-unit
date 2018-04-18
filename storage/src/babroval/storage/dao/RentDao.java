@@ -18,12 +18,12 @@ public class RentDao implements Dao<Rent> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("insert into "
 						+ ob.getClass().getSimpleName()
-						+ " (storage_id, date, quarter_paid, summ, info) values (?,?,?,?,?)")) {
+						+ " (storage_id, date, quarter_paid, sum, info) values (?,?,?,?,?)")) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setDate(3, ob.getQuarter_paid());	
-			ps.setInt(4, ob.getSumm());
+			ps.setInt(4, ob.getSum());
 			ps.setString(5, ob.getInfo());
 			
 			ps.execute();
@@ -37,13 +37,13 @@ public class RentDao implements Dao<Rent> {
 	public void update(Rent ob) {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("update " + ob.getClass().getSimpleName()
-						+ " set storage_id=?, date=?, quarter_paid=?, summ=?, info=? "
+						+ " set storage_id=?, date=?, quarter_paid=?, sum=?, info=? "
 						+ " where rent_id = " + ob.getRent_id())) {
 
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setDate(3, ob.getQuarter_paid());
-			ps.setInt(4, ob.getSumm());
+			ps.setInt(4, ob.getSum());
 			ps.setString(8, ob.getInfo());
 			
 			ps.execute();

@@ -11,7 +11,7 @@ public class Electric {
 	private Date date;
 	private BigDecimal tariff;
 	private int meter_paid;
-	private BigDecimal summ;
+	private BigDecimal sum;
 	private String info;
 
 	public Electric() {
@@ -21,23 +21,23 @@ public class Electric {
 		this.electric_id = electric_id;
 	}
 
-	public Electric(int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal summ, String info) {
+	public Electric(int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal sum, String info) {
 		this.storage_id = storage_id;
 		this.date = date;
 		this.tariff = tariff;
 		this.meter_paid = meter_paid;
-		this.summ = summ;
+		this.sum = sum;
 		this.info = info;
 	}
 
-	public Electric(int electric_id, int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal summ,
+	public Electric(int electric_id, int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal sum,
 			String info) {
 		this.electric_id = electric_id;
 		this.storage_id = storage_id;
 		this.date = date;
 		this.tariff = tariff;
 		this.meter_paid = meter_paid;
-		this.summ = summ;
+		this.sum = sum;
 		this.info = info;
 	}
 
@@ -81,12 +81,12 @@ public class Electric {
 		this.meter_paid = meter_paid;
 	}
 
-	public BigDecimal getSumm() {
-		return summ;
+	public BigDecimal getSum() {
+		return sum;
 	}
 
-	public void setSumm(BigDecimal summ) {
-		this.summ = summ;
+	public void setSum(BigDecimal sum) {
+		this.sum = sum;
 	}
 
 	public String getInfo() {
@@ -106,7 +106,7 @@ public class Electric {
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result + meter_paid;
 		result = prime * result + storage_id;
-		result = prime * result + ((summ == null) ? 0 : summ.hashCode());
+		result = prime * result + ((sum == null) ? 0 : sum.hashCode());
 		result = prime * result + ((tariff == null) ? 0 : tariff.hashCode());
 		return result;
 	}
@@ -136,10 +136,10 @@ public class Electric {
 			return false;
 		if (storage_id != other.storage_id)
 			return false;
-		if (summ == null) {
-			if (other.summ != null)
+		if (sum == null) {
+			if (other.sum != null)
 				return false;
-		} else if (!summ.equals(other.summ))
+		} else if (!sum.equals(other.sum))
 			return false;
 		if (tariff == null) {
 			if (other.tariff != null)
@@ -152,7 +152,7 @@ public class Electric {
 	@Override
 	public String toString() {
 		return "Electric [electric_id=" + electric_id + ", storage_id=" + storage_id + ", date=" + date + ", tariff="
-				+ tariff + ", meter_paid=" + meter_paid + ", summ=" + summ + ", info=" + info + "]";
+				+ tariff + ", meter_paid=" + meter_paid + ", sum=" + sum + ", info=" + info + "]";
 	}
 
 }
