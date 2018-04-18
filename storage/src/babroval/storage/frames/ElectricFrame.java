@@ -3,6 +3,9 @@ package babroval.storage.frames;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -19,7 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.ElectricDao;
+import babroval.storage.dao.RentDao;
+import babroval.storage.entity.Rent;
 import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
 
@@ -129,15 +136,41 @@ public class ElectricFrame extends JFrame {
 				updateFrame();
 			}
 		});
+		
+		calculate.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					BigDecimal indicationLastPaid = new BigDecimal(tfIndicationLastPaid.getText());
+					BigDecimal indication = new BigDecimal(tfIndication.getText());
+					BigDecimal kW = indication.subtract(indicationLastPaid);
+					BigDecimal tariff = new BigDecimal(tfTariff.getText());
+					BigDecimal sum = kW.multiply(tariff) ;
+					sum = sum.setScale(2, RoundingMode.HALF_UP);
+					tfSum.setText(String.valueOf(sum));	
+					
+					panel.updateUI();
+					
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(panel,
+							"select storage, quarters and enter the right payment",	"",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, 
+							"database fault", "", JOptionPane.ERROR_MESSAGE);
+					comboNum.setSelectedIndex(0);
+					resetFrame();
+				}
+			}
+		});
 
 		enter.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (tfInf.getText().equals("")) {
-						tfInf.setText("");
-					}
+
 					if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
 						throw new NumberFormatException("e");
 					}

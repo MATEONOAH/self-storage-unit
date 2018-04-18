@@ -132,9 +132,7 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (tfInf.getText().equals("")) {
-						tfInf.setText("");
-					}
+
 					String quarter = ""; // first month of year quarter
 
 					if (quart1.isEnabled() && quart1.isSelected()) quarter = "01";
