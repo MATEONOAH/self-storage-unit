@@ -61,7 +61,7 @@ public class InitDB {
 							+ " info VARCHAR(100)," 
 							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
@@ -97,7 +97,7 @@ public class InitDB {
 
 			st.executeUpdate("DROP DATABASE " + ConnectionPool.NAME_DB);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

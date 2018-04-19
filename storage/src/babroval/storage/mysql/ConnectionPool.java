@@ -46,7 +46,7 @@ public class ConnectionPool {
 														user, password);
 			return cn;
 		
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}

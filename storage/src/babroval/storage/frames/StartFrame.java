@@ -37,18 +37,6 @@ public class StartFrame extends JFrame {
 		setResizable(false);
 	}
 
-	public JTextField getTfUrl() {
-		return tfUrl;
-	}
-
-	public JTextField getTfLogin() {
-		return tfLogin;
-	}
-
-	public JTextField getTfPass() {
-		return tfPassword;
-	}
-
 	private void initComponents() {
 		panel = new JPanel();
 		labelUrl = new JLabel("URL");
@@ -123,7 +111,7 @@ public class StartFrame extends JFrame {
 					
 					dispose();
 					
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "no database connection", "", JOptionPane.ERROR_MESSAGE);
 
 				}

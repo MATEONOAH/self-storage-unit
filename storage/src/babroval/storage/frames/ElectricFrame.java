@@ -142,9 +142,9 @@ public class ElectricFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					BigDecimal indicationLastPaid = new BigDecimal(tfIndicationLastPaid.getText());
-					BigDecimal indication = new BigDecimal(tfIndication.getText());
-					BigDecimal kW = indication.subtract(indicationLastPaid);
+					Integer indicationLastPaid = new Integer(tfIndicationLastPaid.getText());
+					Integer indication = new Integer(tfIndication.getText());
+					BigDecimal kW = new BigDecimal(String.valueOf(indication - indicationLastPaid));
 					BigDecimal tariff = new BigDecimal(tfTariff.getText());
 					BigDecimal sum = kW.multiply(tariff) ;
 					sum = sum.setScale(2, RoundingMode.HALF_UP);
