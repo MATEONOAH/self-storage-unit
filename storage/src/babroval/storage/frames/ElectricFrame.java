@@ -148,19 +148,25 @@ public class ElectricFrame extends JFrame {
 					BigDecimal tariff = new BigDecimal(tfTariff.getText());
 					BigDecimal sum = kW.multiply(tariff) ;
 					sum = sum.setScale(2, RoundingMode.HALF_UP);
+					
 					tfSum.setText(String.valueOf(sum));	
+					tfInf.setEnabled(true);
+					enter.setEnabled(true);
 					
 					panel.updateUI();
 					
 				} catch (NumberFormatException e) {
+					
+					tfTariff.setText("");
+					tfIndication.setText("");
 					JOptionPane.showMessageDialog(panel,
-							"select storage, quarters and enter the right payment",	"",
+							"enter the right price per kilowatt and the right indication",	"",
 							JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, 
-							"database fault", "", JOptionPane.ERROR_MESSAGE);
 					comboNum.setSelectedIndex(0);
 					resetFrame();
+					JOptionPane.showMessageDialog(panel, 
+							"database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -227,7 +233,6 @@ public class ElectricFrame extends JFrame {
 			comboNum.setSelectedIndex(0);
 			resetFrame();
 		} else {
-			resetFrame();
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid), electric.tariff"
@@ -242,7 +247,13 @@ public class ElectricFrame extends JFrame {
 					tfIndicationLastPaid.setText(rs.getString(2));
 					tfTariff.setText(rs.getString(3));
 				}
+				
+				tfTariff.setEnabled(true);
+				tfIndication.setEnabled(true);
+				calculate.setEnabled(true);
 			} catch (SQLException e) {
+				comboNum.setSelectedIndex(0);
+				resetFrame();
 				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -253,9 +264,15 @@ public class ElectricFrame extends JFrame {
 		tfName.setText("");
 		tfIndicationLastPaid.setText("");
 		tfTariff.setText("");
+		tfTariff.setEnabled(false);
 		tfIndication.setText("");
+		tfIndication.setEnabled(false);
+		calculate.setEnabled(false);
 		tfSum.setText("");
+		tfSum.setEnabled(false);
 		tfInf.setText("");
+		tfInf.setEnabled(false);
+		enter.setEnabled(false);
 	}
 
 }
