@@ -131,7 +131,6 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-
 					String quarter = ""; // first month of year quarter
 
 					if (quart1.isEnabled() && quart1.isSelected()) quarter = "01";
@@ -139,29 +138,32 @@ class RentFrame extends JFrame {
 					else if (quart3.isEnabled() && quart3.isSelected())	quarter = "07";
 					else if (quart4.isEnabled() && quart4.isSelected())	quarter = "10";
 
-					if (quarter.equals("") || comboNum.getSelectedIndex() == 0
-							               || comboNum.getSelectedItem().equals("")) {
+					if (comboNum.getSelectedIndex() == 0 
+						|| comboNum.getSelectedItem().equals("") 
+						|| quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
 					RentDao daoRent = new RentDao();
 					daoRent.insert(new Rent(comboNum.getSelectedIndex(),
-							InitDB.stringToDate(tfDate.getText()),
-							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
-							Integer.valueOf(tfSum.getText()), tfInf.getText()));
+						InitDB.stringToDate(tfDate.getText()),
+						InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
+						Integer.valueOf(tfSum.getText()), tfInf.getText()));
 					
-					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
-							JOptionPane.INFORMATION_MESSAGE);
 					comboNum.setSelectedIndex(0);
 					resetFrame();
+					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
+				
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel,
 							"select storage, quarters and enter the right payment",	"",
 							JOptionPane.ERROR_MESSAGE);
+				
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, 
-							"database fault", "", JOptionPane.ERROR_MESSAGE);
 					comboNum.setSelectedIndex(0);
 					resetFrame();
+					JOptionPane.showMessageDialog(panel, 
+							"database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -246,9 +248,13 @@ class RentFrame extends JFrame {
 						break;
 					}
 					labelYear.setText(String.valueOf(year));
-
+					tfSum.setEnabled(true);
+					tfInf.setEnabled(true);
+					enter.setEnabled(true);
 				}
 			} catch (Exception e) {
+				comboNum.setSelectedIndex(0);
+				resetFrame();
 				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -256,9 +262,8 @@ class RentFrame extends JFrame {
 	}
 
 	private void resetFrame() {
-
+		
 		tfName.setText("");
-		tfSum.setText("");
 		quart1.setEnabled(false);
 		quart1.setSelected(false);
 		quart2.setEnabled(false);
@@ -268,7 +273,11 @@ class RentFrame extends JFrame {
 		quart4.setEnabled(false);
 		quart4.setSelected(false);
 		labelYear.setText("");
+		tfSum.setText("");
+		tfSum.setEnabled(false);
 		tfInf.setText("");
+		tfInf.setEnabled(false);
+		enter.setEnabled(false);
 	}
 
 }
