@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 
@@ -73,7 +72,7 @@ class RentFrame extends JFrame {
 			while (rs.next()) {
 				comboNum.addItem(rs.getString(1));
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -249,7 +248,7 @@ class RentFrame extends JFrame {
 					labelYear.setText(String.valueOf(year));
 
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 			}
 		}

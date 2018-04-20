@@ -53,7 +53,7 @@ public class ConnectionPool {
 
 	public Connection getConnection() {
 		try {
-			Connection cn = DriverManager.getConnection(url + "/" + NAME_DB + "?autoReconnect=true&useSSL=false",
+			Connection cn = DriverManager.getConnection(url + "" + NAME_DB + "autoReconnect=true&useSSL=false",
 														user, password);
 			return cn;
 			

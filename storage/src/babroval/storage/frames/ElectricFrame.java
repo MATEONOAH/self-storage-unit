@@ -4,12 +4,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 
@@ -22,11 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.ElectricDao;
-import babroval.storage.dao.RentDao;
-import babroval.storage.entity.Rent;
 import babroval.storage.mysql.ConnectionPool;
-import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
 
@@ -75,7 +69,7 @@ public class ElectricFrame extends JFrame {
 			while (rs.next()) {
 				comboNum.addItem(rs.getString(1));
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -251,7 +245,7 @@ public class ElectricFrame extends JFrame {
 				tfTariff.setEnabled(true);
 				tfIndication.setEnabled(true);
 				calculate.setEnabled(true);
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				comboNum.setSelectedIndex(0);
 				resetFrame();
 				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);

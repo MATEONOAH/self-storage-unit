@@ -27,9 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.RentDao;
-import babroval.storage.dao.UserDao;
-import babroval.storage.entity.Rent;
-import babroval.storage.entity.User;
 import babroval.storage.mysql.ConnectionPool;
 
 public class AdminFrame extends JFrame {
