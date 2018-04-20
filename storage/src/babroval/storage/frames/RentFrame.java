@@ -33,11 +33,11 @@ class RentFrame extends JFrame {
 	private JComboBox<String> comboNum, comboSelect;
 	private JTextField tfDate, tfName, tfSum, tfInf;
 	private JCheckBox quart1, quart2, quart3, quart4;
-	private JButton enter;
+	private JButton enter, cancel;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
 
 	public RentFrame() {
-		setSize(300, 310);
+		setSize(300, 327);
 		setTitle("Rent payment");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -91,6 +91,7 @@ class RentFrame extends JFrame {
 		tfInf = new JTextField(20);
 
 		enter = new JButton("Enter");
+		cancel = new JButton("Cancel");
 		
 		comboSelect = new JComboBox<String>(select);
 		resetFrame();
@@ -112,6 +113,7 @@ class RentFrame extends JFrame {
 		panel.add(labelInf);
 		panel.add(tfInf);
 		panel.add(enter);
+		panel.add(cancel);
 		panel.add(comboSelect);
 
 		add(panel);
@@ -165,6 +167,15 @@ class RentFrame extends JFrame {
 					JOptionPane.showMessageDialog(panel, 
 							"database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+
+				updateFrame();
 			}
 		});
 
@@ -251,6 +262,7 @@ class RentFrame extends JFrame {
 					tfSum.setEnabled(true);
 					tfInf.setEnabled(true);
 					enter.setEnabled(true);
+					cancel.setEnabled(true);
 				}
 			} catch (Exception e) {
 				comboNum.setSelectedIndex(0);
@@ -278,6 +290,7 @@ class RentFrame extends JFrame {
 		tfInf.setText("");
 		tfInf.setEnabled(false);
 		enter.setEnabled(false);
+		cancel.setEnabled(false);
 	}
 
 }
