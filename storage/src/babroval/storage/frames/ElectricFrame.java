@@ -95,8 +95,10 @@ public class ElectricFrame extends JFrame {
 
 		enter = new JButton("Enter");
 		cancel = new JButton("Cancel");
-
+		
 		comboSelect = new JComboBox<String>(select);
+		comboSelect.setPreferredSize(new Dimension(115, 20));
+		
 		resetFrame();
 
 		panel.add(labelDate);
@@ -119,11 +121,38 @@ public class ElectricFrame extends JFrame {
 		panel.add(enter);
 		panel.add(cancel);
 		panel.add(comboSelect);
-
+	
 		add(panel);
+		
 	}
 
 	private void action() {
+		
+		comboSelect.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (comboSelect.getSelectedIndex() == 1) {
+
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new RentFrame();
+						}
+					});
+					dispose();
+				}
+
+				if (comboSelect.getSelectedIndex() == 2) {
+
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							new LoginFrame();
+						}
+					});
+					dispose();
+				}
+			}
+		});
+		
 		comboNum.addActionListener(new ActionListener() {
 
 			@Override
@@ -140,10 +169,14 @@ public class ElectricFrame extends JFrame {
 				try {
 					Integer indicationLastPaid = new Integer(tfIndicationLastPaid.getText());
 					Integer indication = new Integer(tfIndication.getText());
-					BigDecimal kW = new BigDecimal(String.valueOf(indication - indicationLastPaid));
 					BigDecimal tariff = new BigDecimal(tfTariff.getText());
+					BigDecimal kW = new BigDecimal(String.valueOf(indication - indicationLastPaid));
 					BigDecimal sum = kW.multiply(tariff) ;
 					sum = sum.setScale(2, RoundingMode.HALF_UP);
+					
+					if(sum.compareTo(new BigDecimal("0")) <= 0) {
+							throw new NumberFormatException("e");
+						}
 					
 					tfSum.setText(String.valueOf(sum));
 					tfInf.setEnabled(true);
@@ -203,31 +236,7 @@ public class ElectricFrame extends JFrame {
 				updateFrame();
 			}
 		});
-
-		comboSelect.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				if (comboSelect.getSelectedIndex() == 1) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new RentFrame();
-						}
-					});
-					dispose();
-				}
-
-				if (comboSelect.getSelectedIndex() == 2) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new LoginFrame();
-						}
-					});
-					dispose();
-				}
-			}
-		});
+		
 	}
 
 	private void updateFrame() {
@@ -265,8 +274,8 @@ public class ElectricFrame extends JFrame {
 	}
 
 	private void resetFrame() {
-		
-		tfName.setText("");
+	    
+    	tfName.setText("");
 		tfIndicationLastPaid.setText("");
 		tfTariff.setText("");
 		tfTariff.setEnabled(false);

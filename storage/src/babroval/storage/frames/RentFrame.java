@@ -94,6 +94,8 @@ class RentFrame extends JFrame {
 		cancel = new JButton("Cancel");
 		
 		comboSelect = new JComboBox<String>(select);
+		comboSelect.setPreferredSize(new Dimension(180, 20));
+		
 		resetFrame();
 		
 		panel.add(labelDate);
