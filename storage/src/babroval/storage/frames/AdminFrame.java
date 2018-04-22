@@ -1,5 +1,6 @@
 package babroval.storage.frames;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
@@ -34,12 +35,10 @@ public class AdminFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JComboBox<Object> combo, comboRead, comboOrder;
+	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear;   
 	private JLabel labelComboNum, labelQuarts;
-	private JComboBox<String> comboNum, comboYear;
 	private JScrollPane scroll;
 	private JButton add, delete, edit, editPrihodOrder, sortFamily, notPaid;
-	private String[] en = { "enter", "rent payment", "electricity" };
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private ButtonGroup group;
 	private TableStorage tableUsers;
@@ -47,8 +46,9 @@ public class AdminFrame extends JFrame {
 	private JMenuItem itemWrite, itemAbout, itemExit;
 	private JMenu file, about;
 	private JFileChooser chooser;
-	private String[] es = { "edit", "rent payment", "electricity", "owners" };
-	private String[] read = { "select", "rent payment", "electricity", "owners" };
+	private String[] selectRead = { "select:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
+	private String[] selectEdit = { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
+	private String[] selectPayment = { "select payment:", "RENT", "ELECTRYCITY" };
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
 
 	public AdminFrame() {
@@ -81,15 +81,20 @@ public class AdminFrame extends JFrame {
 		menuBar.add(about);
 		setJMenuBar(menuBar);
 
-		combo = new JComboBox<Object>(es);
-		comboRead = new JComboBox<Object>(read);
-		comboOrder = new JComboBox<Object>(en);
+		comboRead = new JComboBox<String>(selectRead);
+		comboEdit = new JComboBox<String>(selectEdit);
+		comboPayment = new JComboBox<String>(selectPayment);
+		
 		labelComboNum = new JLabel("Rent payment for storage:");
 		comboNum = new JComboBox<String>();
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number FROM storage")) {
+				ResultSet rs = st.executeQuery(
+						"SELECT storage.storage_number"
+						+ " FROM storage"
+						+ " WHERE storage.storage_number!=0"
+						+ " ORDER BY storage.storage_number ASC")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
@@ -134,7 +139,7 @@ public class AdminFrame extends JFrame {
 
 		sortFamily.setVisible(false);
 
-		comboRead.setBounds(30, 10, 120, 20);
+		comboRead.setBounds(30, 10, 160, 20);
 		labelComboNum.setBounds(200, 10, 150, 20);
 		comboNum.setBounds(352, 10, 70, 20);
 		sortFamily.setBounds(430, 10, 140, 20);
@@ -145,12 +150,12 @@ public class AdminFrame extends JFrame {
 		comboYear.setBounds(732, 10, 60, 20);
 		notPaid.setBounds(800, 10, 95, 20);
 		scroll.setBounds(20, 40, 950, 390);
-		combo.setBounds(30, 450, 120, 20);
-		add.setBounds(160, 450, 110, 20);
-		edit.setBounds(280, 450, 110, 20);
-		delete.setBounds(400, 450, 110, 20);
-		editPrihodOrder.setBounds(520, 450, 110, 20);
-		comboOrder.setBounds(640, 450, 120, 20);
+		comboEdit.setBounds(30, 450, 160, 20);
+		add.setBounds(205, 450, 110, 20);
+		edit.setBounds(325, 450, 110, 20);
+		delete.setBounds(445, 450, 110, 20);
+		editPrihodOrder.setBounds(565, 450, 110, 20);
+		comboPayment.setBounds(695, 450, 130, 20);
 
 		group.add(quart1);
 		group.add(quart2);
@@ -168,12 +173,12 @@ public class AdminFrame extends JFrame {
 		panel.add(quart4);
 		panel.add(comboYear);
 		panel.add(notPaid);
-		panel.add(combo);
+		panel.add(comboEdit);
 		panel.add(add);
 		panel.add(edit);
 		panel.add(delete);
 		panel.add(editPrihodOrder);
-		panel.add(comboOrder);
+		panel.add(comboPayment);
 
 		add(panel);
 	}
@@ -246,14 +251,18 @@ public class AdminFrame extends JFrame {
 					editPrihodOrder.setEnabled(true);
 					RefreshTableOrdersNotEdit(
 							"SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
-									+ " FROM storage, rent WHERE storage.storage_id=rent.storage_id AND rent.date!=0 ORDER BY rent.date ASC");
+							+ " FROM storage, rent"
+							+ " WHERE storage.storage_id=rent.storage_id "
+							+ " AND rent.date!=0 ORDER BY rent.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
 					editPrihodOrder.setEnabled(false);
 					RefreshTableElectroNotEdit(
 							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
-									+ " FROM storage, electric WHERE storage.storage_id=electric.storage_id AND electric.date!=0 ORDER BY electric.date ASC");
+							+ " FROM storage, electric"
+							+ " WHERE storage.storage_id=electric.storage_id"
+							+ " AND electric.date!=0 ORDER BY electric.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
 
@@ -261,7 +270,10 @@ public class AdminFrame extends JFrame {
 					editPrihodOrder.setEnabled(false);
 
 					RefreshTableUsersNotEdit(
-							"SELECT storage.storage_number, user.name, user.info FROM storage, user WHERE storage.storage_id=user.storage_id AND storage.storage_number!=0 ORDER BY storage.storage_number ASC");
+							"SELECT storage.storage_number, user.name, user.info"
+							+ " FROM storage, user"
+							+ " WHERE storage.storage_id=user.storage_id"
+							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number ASC");
 				}
 			}
 		});
@@ -371,7 +383,7 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
-		combo.addActionListener(new ActionListener() {
+		comboEdit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
@@ -380,7 +392,7 @@ public class AdminFrame extends JFrame {
 				itemWrite.setEnabled(false);
 				panel.remove(scroll);
 
-				if (combo.getSelectedIndex() == 0) {
+				if (comboEdit.getSelectedIndex() == 0) {
 					add.setEnabled(false);
 					edit.setEnabled(false);
 					delete.setEnabled(false);
@@ -389,14 +401,14 @@ public class AdminFrame extends JFrame {
 					panel.remove(scroll);
 					panel.updateUI();
 				}
-				if (combo.getSelectedIndex() == 1) {
+				if (comboEdit.getSelectedIndex() == 1) {
 					add.setEnabled(false);
 					edit.setEnabled(false);
 					delete.setEnabled(true);
 					editPrihodOrder.setEnabled(false);
 					RefreshTableOrders();
 				}
-				if (combo.getSelectedIndex() == 2) {
+				if (comboEdit.getSelectedIndex() == 2) {
 					add.setEnabled(false);
 					edit.setEnabled(false);
 					delete.setEnabled(true);
@@ -405,7 +417,7 @@ public class AdminFrame extends JFrame {
 					panel.remove(scroll);
 					panel.updateUI();
 				}
-				if (combo.getSelectedIndex() == 3) {
+				if (comboEdit.getSelectedIndex() == 3) {
 					add.setEnabled(true);
 					edit.setEnabled(true);
 					delete.setEnabled(false);
@@ -453,7 +465,7 @@ public class AdminFrame extends JFrame {
 					if (result == JOptionPane.OK_OPTION) {
 						String buff = "";
 
-						if (combo.getSelectedIndex() == 1) {
+						if (comboEdit.getSelectedIndex() == 1) {
 							if (tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString().equals("0")) {
 								throw new ArrayIndexOutOfBoundsException("ex");
 							}
@@ -626,14 +638,14 @@ public class AdminFrame extends JFrame {
 
 		});
 		
-		comboOrder.addActionListener(new ActionListener() {
+		comboPayment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
 				comboRead.setSelectedIndex(0);
-				combo.setSelectedIndex(0);
+				comboEdit.setSelectedIndex(0);
 
-				if (comboOrder.getSelectedIndex() == 1) {
+				if (comboPayment.getSelectedIndex() == 1) {
 					
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -643,7 +655,7 @@ public class AdminFrame extends JFrame {
 					dispose();
 				}
 
-				if (comboOrder.getSelectedIndex() == 2) {
+				if (comboPayment.getSelectedIndex() == 2) {
 						
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
