@@ -47,7 +47,7 @@ public class InitDB {
 							+ " storage_id INT,"
 							+ " date DATE," 
 							+ " quarter_paid DATE," 
-							+ " sum INT," 
+							+ " sum DECIMAL(10,2)," 
 							+ " info VARCHAR(100),"
 							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
 
@@ -76,11 +76,11 @@ public class InitDB {
 		daoUser.insert(new User(1, "CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102"));
 
 		RentDao daoRent = new RentDao();
-		daoRent.insert(new Rent(1, stringToDate("18-11-2017"), stringToDate("01-01-2018"), 20, "45325"));
-		daoRent.insert(new Rent(3, stringToDate("19-11-2017"), stringToDate("01-04-2018"), 40, "67567"));
-		daoRent.insert(new Rent(1, stringToDate("20-11-2017"), stringToDate("01-04-2018"), 20, "34556"));
-		daoRent.insert(new Rent(3, stringToDate("29-11-2017"), stringToDate("01-07-2018"), 20, "78574"));
-		daoRent.insert(new Rent(2, stringToDate("30-11-2017"), stringToDate("01-10-2018"), 60, "353465"));
+		daoRent.insert(new Rent(1, stringToDate("18-11-2017"), stringToDate("01-01-2018"), BigDecimal.valueOf(20.00), "45325"));
+		daoRent.insert(new Rent(3, stringToDate("19-11-2017"), stringToDate("01-04-2018"), BigDecimal.valueOf(40.00), "67567"));
+		daoRent.insert(new Rent(1, stringToDate("20-11-2017"), stringToDate("01-04-2018"), BigDecimal.valueOf(20.00), "34556"));
+		daoRent.insert(new Rent(3, stringToDate("29-11-2017"), stringToDate("01-07-2018"), BigDecimal.valueOf(20.00), "78574"));
+		daoRent.insert(new Rent(2, stringToDate("30-11-2017"), stringToDate("01-10-2018"), BigDecimal.valueOf(60.00), "353465"));
 
 		ElectricDao daoElectric = new ElectricDao();
 		daoElectric.insert(new Electric(1, stringToDate("18-11-2017"), BigDecimal.valueOf(0.178), 45700, BigDecimal.valueOf(17.80), "56456"));

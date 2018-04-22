@@ -3,14 +3,14 @@ package babroval.storage.entity;
 
 public class Storage {
 	
-	private int storage_id;
+	private Integer storage_id;
 	private String number;
 	private String info;
 
 	public Storage() {
 	}
 
-	public Storage(int storage_id) {
+	public Storage(Integer storage_id) {
 		this.storage_id = storage_id;
 	}
 
@@ -19,17 +19,17 @@ public class Storage {
 		this.info = info;
 	}
 
-	public Storage(int storage_id, String number, String info) {
+	public Storage(Integer storage_id, String number, String info) {
 		this.storage_id = storage_id;
 		this.number = number;
 		this.info = info;
 	}
 
-	public int getStorage_id() {
+	public Integer getStorage_id() {
 		return storage_id;
 	}
 
-	public void setStorage_id(int storage_id) {
+	public void setStorage_id(Integer storage_id) {
 		this.storage_id = storage_id;
 	}
 
@@ -55,7 +55,7 @@ public class Storage {
 		int result = 1;
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result + ((number == null) ? 0 : number.hashCode());
-		result = prime * result + storage_id;
+		result = prime * result + ((storage_id == null) ? 0 : storage_id.hashCode());
 		return result;
 	}
 
@@ -78,7 +78,10 @@ public class Storage {
 				return false;
 		} else if (!number.equals(other.number))
 			return false;
-		if (storage_id != other.storage_id)
+		if (storage_id == null) {
+			if (other.storage_id != null)
+				return false;
+		} else if (!storage_id.equals(other.storage_id))
 			return false;
 		return true;
 	}
@@ -87,5 +90,5 @@ public class Storage {
 	public String toString() {
 		return "Storage [storage_id=" + storage_id + ", number=" + number + ", info=" + info + "]";
 	}
-	
+
 }

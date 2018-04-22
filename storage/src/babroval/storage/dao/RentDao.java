@@ -23,7 +23,7 @@ public class RentDao implements Dao<Rent> {
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setDate(3, ob.getQuarter_paid());	
-			ps.setInt(4, ob.getSum());
+			ps.setBigDecimal(4, ob.getSum());
 			ps.setString(5, ob.getInfo());
 			
 			ps.execute();
@@ -43,7 +43,7 @@ public class RentDao implements Dao<Rent> {
 			ps.setInt(1, ob.getStorage_id());
 			ps.setDate(2, ob.getDate());
 			ps.setDate(3, ob.getQuarter_paid());
-			ps.setInt(4, ob.getSum());
+			ps.setBigDecimal(4, ob.getSum());
 			ps.setString(8, ob.getInfo());
 			
 			ps.execute();

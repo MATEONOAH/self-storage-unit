@@ -3,6 +3,7 @@ package babroval.storage.frames;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -36,6 +37,7 @@ class RentFrame extends JFrame {
 	private JButton enter, cancel;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
 
+	
 	public RentFrame() {
 		setSize(300, 327);
 		setTitle("Rent payment");
@@ -55,11 +57,11 @@ class RentFrame extends JFrame {
 		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		tfDate = new JTextField(sdf.format(dateNow));
-		
+
 		labelNumber = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
 		comboNum.setPreferredSize(new Dimension(50, 20));
-		
+
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
@@ -77,14 +79,14 @@ class RentFrame extends JFrame {
 		}
 
 		labelQuarter = new JLabel("Select Quarter of");
-		
+
 		quart1 = new JCheckBox("I");
 		quart2 = new JCheckBox("II");
 		quart3 = new JCheckBox("III");
 		quart4 = new JCheckBox("IV");
 
 		labelYear = new JLabel("Year");
-		
+
 		labelSum = new JLabel("Enter rent amount:");
 		tfSum = new JTextField(20);
 
@@ -93,12 +95,12 @@ class RentFrame extends JFrame {
 
 		enter = new JButton("Enter");
 		cancel = new JButton("Cancel");
-		
+
 		comboSelect = new JComboBox<String>(select);
 		comboSelect.setPreferredSize(new Dimension(180, 20));
-		
+
 		resetFrame();
-		
+
 		panel.add(labelDate);
 		panel.add(tfDate);
 		panel.add(labelNumber);
@@ -138,41 +140,43 @@ class RentFrame extends JFrame {
 				try {
 					String quarter = ""; // first month of year quarter
 
-					if (quart1.isEnabled() && quart1.isSelected()) quarter = "01";
-					else if (quart2.isEnabled() && quart2.isSelected())	quarter = "04";
-					else if (quart3.isEnabled() && quart3.isSelected())	quarter = "07";
-					else if (quart4.isEnabled() && quart4.isSelected())	quarter = "10";
+					if (quart1.isEnabled() && quart1.isSelected())
+						quarter = "01";
+					else if (quart2.isEnabled() && quart2.isSelected())
+						quarter = "04";
+					else if (quart3.isEnabled() && quart3.isSelected())
+						quarter = "07";
+					else if (quart4.isEnabled() && quart4.isSelected())
+						quarter = "10";
 
-					if (comboNum.getSelectedIndex() == 0 
-						|| comboNum.getSelectedItem().equals("") 
-						|| quarter.equals("")) {
+					if (comboNum.getSelectedIndex() == 0 || quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
 					RentDao daoRent = new RentDao();
-					daoRent.insert(new Rent(comboNum.getSelectedIndex(),
-						InitDB.stringToDate(tfDate.getText()),
-						InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
-						Integer.valueOf(tfSum.getText()), tfInf.getText()));
-					
+					daoRent.insert(new Rent(
+							comboNum.getSelectedIndex(),
+							InitDB.stringToDate(tfDate.getText()),
+							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
+							new BigDecimal(tfSum.getText()),
+							tfInf.getText()));
+
 					comboNum.setSelectedIndex(0);
 					resetFrame();
 					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
-				
+
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel,
-							"select storage, quarter and enter the right amount",	"",
+					JOptionPane.showMessageDialog(panel, "select storage, quarter and enter the right amount", "",
 							JOptionPane.ERROR_MESSAGE);
-				
+
 				} catch (Exception e) {
 					comboNum.setSelectedIndex(0);
 					resetFrame();
-					JOptionPane.showMessageDialog(panel, 
-							"database fault", "", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		cancel.addActionListener(new ActionListener() {
 
 			@Override
@@ -210,8 +214,7 @@ class RentFrame extends JFrame {
 
 	private void updateFrame() {
 
-		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
-			comboNum.setSelectedIndex(0);
+		if (comboNum.getSelectedIndex() == 0) {
 			resetFrame();
 		} else {
 			resetFrame();
@@ -219,8 +222,7 @@ class RentFrame extends JFrame {
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
 							+ " WHERE storage.number='" + comboNum.getSelectedItem()
-							+ "' AND rent.storage_id=storage.storage_id"
-							+ " AND user.storage_id=storage.storage_id")) {
+							+ "' AND rent.storage_id=storage.storage_id" + " AND user.storage_id=storage.storage_id")) {
 
 				while (rs.next()) {
 
@@ -277,7 +279,7 @@ class RentFrame extends JFrame {
 	}
 
 	private void resetFrame() {
-		
+
 		tfName.setText("");
 		quart1.setEnabled(false);
 		quart1.setSelected(false);

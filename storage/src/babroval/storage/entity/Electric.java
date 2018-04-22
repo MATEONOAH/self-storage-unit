@@ -6,22 +6,22 @@ import java.sql.Date;
 
 public class Electric {
 
-	private int electric_id;
-	private int storage_id;
+	private Integer electric_id;
+	private Integer storage_id;
 	private Date date;
 	private BigDecimal tariff;
-	private int meter_paid;
+	private Integer meter_paid;
 	private BigDecimal sum;
 	private String info;
 
 	public Electric() {
 	}
 
-	public Electric(int electric_id) {
+	public Electric(Integer electric_id) {
 		this.electric_id = electric_id;
 	}
 
-	public Electric(int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal sum, String info) {
+	public Electric(Integer storage_id, Date date, BigDecimal tariff, Integer meter_paid, BigDecimal sum, String info) {
 		this.storage_id = storage_id;
 		this.date = date;
 		this.tariff = tariff;
@@ -30,8 +30,8 @@ public class Electric {
 		this.info = info;
 	}
 
-	public Electric(int electric_id, int storage_id, Date date, BigDecimal tariff, int meter_paid, BigDecimal sum,
-			String info) {
+	public Electric(Integer electric_id, Integer storage_id, Date date, BigDecimal tariff, Integer meter_paid,
+			BigDecimal sum, String info) {
 		this.electric_id = electric_id;
 		this.storage_id = storage_id;
 		this.date = date;
@@ -41,19 +41,19 @@ public class Electric {
 		this.info = info;
 	}
 
-	public int getElectric_id() {
+	public Integer getElectric_id() {
 		return electric_id;
 	}
 
-	public void setElectric_id(int electric_id) {
+	public void setElectric_id(Integer electric_id) {
 		this.electric_id = electric_id;
 	}
 
-	public int getStorage_id() {
+	public Integer getStorage_id() {
 		return storage_id;
 	}
 
-	public void setStorage_id(int storage_id) {
+	public void setStorage_id(Integer storage_id) {
 		this.storage_id = storage_id;
 	}
 
@@ -73,11 +73,11 @@ public class Electric {
 		this.tariff = tariff;
 	}
 
-	public int getMeter_paid() {
+	public Integer getMeter_paid() {
 		return meter_paid;
 	}
 
-	public void setMeter_paid(int meter_paid) {
+	public void setMeter_paid(Integer meter_paid) {
 		this.meter_paid = meter_paid;
 	}
 
@@ -102,10 +102,10 @@ public class Electric {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + electric_id;
+		result = prime * result + ((electric_id == null) ? 0 : electric_id.hashCode());
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
-		result = prime * result + meter_paid;
-		result = prime * result + storage_id;
+		result = prime * result + ((meter_paid == null) ? 0 : meter_paid.hashCode());
+		result = prime * result + ((storage_id == null) ? 0 : storage_id.hashCode());
 		result = prime * result + ((sum == null) ? 0 : sum.hashCode());
 		result = prime * result + ((tariff == null) ? 0 : tariff.hashCode());
 		return result;
@@ -125,16 +125,25 @@ public class Electric {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (electric_id != other.electric_id)
+		if (electric_id == null) {
+			if (other.electric_id != null)
+				return false;
+		} else if (!electric_id.equals(other.electric_id))
 			return false;
 		if (info == null) {
 			if (other.info != null)
 				return false;
 		} else if (!info.equals(other.info))
 			return false;
-		if (meter_paid != other.meter_paid)
+		if (meter_paid == null) {
+			if (other.meter_paid != null)
+				return false;
+		} else if (!meter_paid.equals(other.meter_paid))
 			return false;
-		if (storage_id != other.storage_id)
+		if (storage_id == null) {
+			if (other.storage_id != null)
+				return false;
+		} else if (!storage_id.equals(other.storage_id))
 			return false;
 		if (sum == null) {
 			if (other.sum != null)

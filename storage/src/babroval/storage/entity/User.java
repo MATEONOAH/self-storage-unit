@@ -3,45 +3,44 @@ package babroval.storage.entity;
 
 public class User {
 	
-	private int user_id;
-	private int storage_id;
+	private Integer user_id;
+	private Integer storage_id;
 	private String name;
 	private String info;
 
 	public User() {
 	}
 
-	public User(int user_id) {
+	public User(Integer user_id) {
 		this.user_id = user_id;
 	}
 
-	public User(int storage_id, String name, String info) {
+	public User(Integer storage_id, String name, String info) {
 		this.storage_id = storage_id;
 		this.name = name;
 		this.info = info;
 	}
 
-	public User(int user_id, int storage_id, String name, String info) {
-		super();
+	public User(Integer user_id, Integer storage_id, String name, String info) {
 		this.user_id = user_id;
 		this.storage_id = storage_id;
 		this.name = name;
 		this.info = info;
 	}
 
-	public int getUser_id() {
+	public Integer getUser_id() {
 		return user_id;
 	}
 
-	public void setUser_id(int user_id) {
+	public void setUser_id(Integer user_id) {
 		this.user_id = user_id;
 	}
 
-	public int getStorage_id() {
+	public Integer getStorage_id() {
 		return storage_id;
 	}
 
-	public void setStorage_id(int storage_id) {
+	public void setStorage_id(Integer storage_id) {
 		this.storage_id = storage_id;
 	}
 
@@ -67,8 +66,8 @@ public class User {
 		int result = 1;
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + storage_id;
-		result = prime * result + user_id;
+		result = prime * result + ((storage_id == null) ? 0 : storage_id.hashCode());
+		result = prime * result + ((user_id == null) ? 0 : user_id.hashCode());
 		return result;
 	}
 
@@ -91,9 +90,15 @@ public class User {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (storage_id != other.storage_id)
+		if (storage_id == null) {
+			if (other.storage_id != null)
+				return false;
+		} else if (!storage_id.equals(other.storage_id))
 			return false;
-		if (user_id != other.user_id)
+		if (user_id == null) {
+			if (other.user_id != null)
+				return false;
+		} else if (!user_id.equals(other.user_id))
 			return false;
 		return true;
 	}
@@ -102,5 +107,5 @@ public class User {
 	public String toString() {
 		return "User [user_id=" + user_id + ", storage_id=" + storage_id + ", name=" + name + ", info=" + info + "]";
 	}
-
+	
 }
