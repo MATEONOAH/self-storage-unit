@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -149,6 +150,9 @@ class RentFrame extends JFrame {
 					else if (quart4.isEnabled() && quart4.isSelected())
 						quarter = "10";
 
+					BigDecimal sum = new BigDecimal(tfSum.getText());
+					sum = sum.setScale(2, RoundingMode.FLOOR);
+					
 					if (comboNum.getSelectedIndex() == 0 || quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
@@ -157,7 +161,7 @@ class RentFrame extends JFrame {
 							comboNum.getSelectedIndex(),
 							InitDB.stringToDate(tfDate.getText()),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
-							new BigDecimal(tfSum.getText()),
+							sum,
 							tfInf.getText()));
 
 					comboNum.setSelectedIndex(0);
