@@ -69,7 +69,7 @@ class RentFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.number FROM storage")) {
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number FROM storage")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
@@ -225,7 +225,7 @@ class RentFrame extends JFrame {
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
-							+ " WHERE storage.number='" + comboNum.getSelectedItem()
+							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
 							+ "' AND rent.storage_id=storage.storage_id" + " AND user.storage_id=storage.storage_id")) {
 
 				while (rs.next()) {

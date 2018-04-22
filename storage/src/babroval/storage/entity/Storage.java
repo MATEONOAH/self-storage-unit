@@ -4,7 +4,7 @@ package babroval.storage.entity;
 public class Storage {
 	
 	private Integer storage_id;
-	private String number;
+	private String storage_number;
 	private String info;
 
 	public Storage() {
@@ -14,14 +14,14 @@ public class Storage {
 		this.storage_id = storage_id;
 	}
 
-	public Storage(String number, String info) {
-		this.number = number;
+	public Storage(String storage_number, String info) {
+		this.storage_number = storage_number;
 		this.info = info;
 	}
 
-	public Storage(Integer storage_id, String number, String info) {
+	public Storage(Integer storage_id, String storage_number, String info) {
 		this.storage_id = storage_id;
-		this.number = number;
+		this.storage_number = storage_number;
 		this.info = info;
 	}
 
@@ -33,12 +33,12 @@ public class Storage {
 		this.storage_id = storage_id;
 	}
 
-	public String getNumber() {
-		return number;
+	public String getStorage_number() {
+		return storage_number;
 	}
 
-	public void setNumber(String number) {
-		this.number = number;
+	public void setStorage_number(String storage_number) {
+		this.storage_number = storage_number;
 	}
 
 	public String getInfo() {
@@ -54,8 +54,8 @@ public class Storage {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
 		result = prime * result + ((storage_id == null) ? 0 : storage_id.hashCode());
+		result = prime * result + ((storage_number == null) ? 0 : storage_number.hashCode());
 		return result;
 	}
 
@@ -73,22 +73,22 @@ public class Storage {
 				return false;
 		} else if (!info.equals(other.info))
 			return false;
-		if (number == null) {
-			if (other.number != null)
-				return false;
-		} else if (!number.equals(other.number))
-			return false;
 		if (storage_id == null) {
 			if (other.storage_id != null)
 				return false;
 		} else if (!storage_id.equals(other.storage_id))
+			return false;
+		if (storage_number == null) {
+			if (other.storage_number != null)
+				return false;
+		} else if (!storage_number.equals(other.storage_number))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Storage [storage_id=" + storage_id + ", number=" + number + ", info=" + info + "]";
+		return "Storage [storage_id=" + storage_id + ", storage_number=" + storage_number + ", info=" + info + "]";
 	}
 
 }

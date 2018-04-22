@@ -63,7 +63,9 @@ public class AdminFrame extends JFrame {
 	}
 
 	private void initComponents() {
+		
 		panel = new JPanel(null);
+		
 		chooser = new JFileChooser();
 		menuBar = new JMenuBar();
 		file = new JMenu("File");
@@ -87,17 +89,16 @@ public class AdminFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number FROM storage")) {
 
 			comboNum.addItem("");
-
 			while (rs.next()) {
-				comboNum.addItem(rs.getString(2));
+				comboNum.addItem(rs.getString(1));
 			}
 			tableUsers = new TableStorage(rs);
 
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 
 		scroll = new JScrollPane(tableUsers);
@@ -244,15 +245,15 @@ public class AdminFrame extends JFrame {
 					sortFamily.setVisible(false);
 					editPrihodOrder.setEnabled(true);
 					RefreshTableOrdersNotEdit(
-							"SELECT orders.order_id, users.number_storage, orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
-									+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND orders.date!=0 ORDER BY orders.date ASC");
+							"SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
+									+ " FROM storage, rent WHERE storage.storage_id=rent.storage_id AND rent.date!=0 ORDER BY rent.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
 					editPrihodOrder.setEnabled(false);
 					RefreshTableElectroNotEdit(
-							"SELECT users.number_storage, electro.date, electro.last_num, electro.new_num, electro.kw_h, electro.tariff, electro.summ, electro.info"
-									+ " FROM users, electro WHERE electro.storage_id=users.storage_id AND electro.date!=0 ORDER BY electro.date ASC");
+							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
+									+ " FROM storage, electric WHERE storage.storage_id=electric.storage_id AND electric.date!=0 ORDER BY electric.date ASC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
 
@@ -260,7 +261,7 @@ public class AdminFrame extends JFrame {
 					editPrihodOrder.setEnabled(false);
 
 					RefreshTableUsersNotEdit(
-							"SELECT number_storage, name, person_info FROM users WHERE number_storage!=0 ORDER BY storage_id ASC");
+							"SELECT storage.storage_number, user.name, user.info FROM storage, user WHERE storage.storage_id=user.storage_id AND storage.storage_number!=0 ORDER BY storage.storage_number ASC");
 				}
 			}
 		});
@@ -282,7 +283,7 @@ public class AdminFrame extends JFrame {
 
 				try (Connection cn = ConnectionPool.getPool().getConnection();
 						Statement st = cn.createStatement();
-						ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+						ResultSet rs = st.executeQuery("SELECT * FROM user")) {
 
 					comboNum.addItem("");
 					while (rs.next()) {
@@ -293,16 +294,15 @@ public class AdminFrame extends JFrame {
 							break;
 						}
 					}
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 
 				try (Connection cn = ConnectionPool.getPool().getConnection();
 						Statement st = cn.createStatement();
 						ResultSet rs = st.executeQuery(
-								"SELECT orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
-										+ " FROM orders WHERE orders.storage_id='" + temp
-										+ "' AND orders.date!=0 ORDER BY orders.date ASC")) {
+								"SELECT rent.date, rent.quarter_paid, rent.sum, rent.info"
+										+ " FROM storage, rent WHERE storage.storage_id=rent.storage_id AND storage.storage_number="+ comboNum.getSelectedItem() +" AND rent.date!=0 ORDER BY rent.date ASC")) {
 
 					tableUsers = new TableStorage(rs);
 					scroll = new JScrollPane(tableUsers);
@@ -310,8 +310,8 @@ public class AdminFrame extends JFrame {
 					panel.add(scroll);
 					panel.updateUI();
 
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -322,7 +322,7 @@ public class AdminFrame extends JFrame {
 
 				itemWrite.setEnabled(true);
 				RefreshTableUsersNotEdit(
-						"SELECT number_storage, name, person_info FROM users WHERE number_storage!=0 ORDER BY name ASC");
+						"SELECT storage.storage_number, user.name, user.info FROM storage, user WHERE storage.storage_id=user.storage_id AND storage.storage_number!=0 ORDER BY user.name ASC");
 			}
 		});
 
@@ -433,7 +433,7 @@ public class AdminFrame extends JFrame {
 						RefreshTableUsers();
 					}
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -468,8 +468,8 @@ public class AdminFrame extends JFrame {
 								while (rs.next()) {
 									temp = rs.getString(1);
 								}
-							} catch (SQLException e) {
-								JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 							}
 
 							try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -482,8 +482,8 @@ public class AdminFrame extends JFrame {
 									}
 									quarter1 = j;
 								}
-							} catch (SQLException e) {
-								JOptionPane.showMessageDialog(panel, "database error", "Error", JOptionPane.ERROR_MESSAGE);
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 							}
 							
 							try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -498,9 +498,9 @@ public class AdminFrame extends JFrame {
 									}
 									quarter2 = j;
 								}
-					    	} catch (SQLException e) {
-					    		JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
-						}
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+							}
 
 							try (Connection cn = ConnectionPool.getPool().getConnection();
 									Statement st = cn.createStatement();
@@ -514,8 +514,8 @@ public class AdminFrame extends JFrame {
 
 									quarter3 = j;
 								}
-							} catch (SQLException e) {
-								JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 							}
 
 								try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -529,9 +529,9 @@ public class AdminFrame extends JFrame {
 									}
 									quarter4 = j;
 								}
-					} catch (SQLException e) {
-						JOptionPane.showMessageDialog(panel, "database Error", "Error", JOptionPane.ERROR_MESSAGE);
-					}
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+								}
 
 //							UserDao daoUser = new UserDao();
 //							daoUser.deleteQuarters(new User(
@@ -598,8 +598,7 @@ public class AdminFrame extends JFrame {
 				} catch (ArrayIndexOutOfBoundsException e) {
 					JOptionPane.showMessageDialog(panel, "select storage", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database", "Error", JOptionPane.ERROR_MESSAGE);
-						throw new RuntimeException(e);
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -672,13 +671,13 @@ public class AdminFrame extends JFrame {
 			tableUsers = new TableStorage(rs);
 
 			// for hiding key column;
-			tableUsers.getColumn("order_id").setMaxWidth(0);
-			tableUsers.getColumn("order_id").setMinWidth(0);
-			tableUsers.getColumn("order_id").setPreferredWidth(0);
-			// for hiding key column;
-			tableUsers.getColumn("storage_id").setMaxWidth(0);
-			tableUsers.getColumn("storage_id").setMinWidth(0);
-			tableUsers.getColumn("storage_id").setPreferredWidth(0);
+//			tableUsers.getColumn("order_id").setMaxWidth(0);
+//			tableUsers.getColumn("order_id").setMinWidth(0);
+//			tableUsers.getColumn("order_id").setPreferredWidth(0);
+//			// for hiding key column;
+//			tableUsers.getColumn("storage_id").setMaxWidth(0);
+//			tableUsers.getColumn("storage_id").setMinWidth(0);
+//			tableUsers.getColumn("storage_id").setPreferredWidth(0);
 
 			scroll = new JScrollPane(tableUsers);
 			scroll.setBounds(20, 40, 950, 390);
@@ -686,7 +685,7 @@ public class AdminFrame extends JFrame {
 			panel.updateUI();
 
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -738,7 +737,7 @@ public class AdminFrame extends JFrame {
 			panel.updateUI();
 
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -753,9 +752,9 @@ public class AdminFrame extends JFrame {
 			tableUsers = new TableStorage(rs);
 
 			// hide key column;
-			tableUsers.getColumn("order_id").setMaxWidth(0);
-			tableUsers.getColumn("order_id").setMinWidth(0);
-			tableUsers.getColumn("order_id").setPreferredWidth(0);
+//			tableUsers.getColumn("order_id").setMaxWidth(0);
+//			tableUsers.getColumn("order_id").setMinWidth(0);
+//			tableUsers.getColumn("order_id").setPreferredWidth(0);
 
 			scroll = new JScrollPane(tableUsers);
 			scroll.setBounds(20, 40, 950, 390);
@@ -763,7 +762,7 @@ public class AdminFrame extends JFrame {
 			panel.updateUI();
 
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -780,7 +779,7 @@ public class AdminFrame extends JFrame {
 			panel.add(scroll);
 			panel.updateUI();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -800,7 +799,7 @@ public class AdminFrame extends JFrame {
 			panel.updateUI();
 
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(panel, "update database error", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(panel, "update database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

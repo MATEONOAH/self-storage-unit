@@ -32,7 +32,7 @@ public class InitDB {
 
 			st.executeUpdate("CREATE TABLE storage (" 
 							+ "storage_id INT PRIMARY KEY AUTO_INCREMENT,"
-							+ " number VARCHAR(50),"
+							+ " storage_number VARCHAR(50),"
 							+ " info VARCHAR(100))");
 			
 			st.executeUpdate("CREATE TABLE user (" 

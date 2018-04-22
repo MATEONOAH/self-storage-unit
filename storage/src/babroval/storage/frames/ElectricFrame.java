@@ -71,7 +71,7 @@ public class ElectricFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.number FROM storage")) {
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number FROM storage")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
@@ -265,7 +265,7 @@ public class ElectricFrame extends JFrame {
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid), electric.tariff"
-							+ " FROM electric, storage, user" + " WHERE storage.number='" + comboNum.getSelectedItem()
+							+ " FROM electric, storage, user" + " WHERE storage.storage_number='" + comboNum.getSelectedItem()
 							+ "' AND electric.storage_id=storage.storage_id"
 							+ " AND user.storage_id=storage.storage_id")) {
 
