@@ -77,6 +77,7 @@ class RentFrame extends JFrame {
 		}
 
 		labelQuarter = new JLabel("Select Quarter of");
+		
 		quart1 = new JCheckBox("I");
 		quart2 = new JCheckBox("II");
 		quart3 = new JCheckBox("III");
@@ -160,7 +161,7 @@ class RentFrame extends JFrame {
 				
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel,
-							"select storage, quarters and enter the right payment",	"",
+							"select storage, quarter and enter the right amount",	"",
 							JOptionPane.ERROR_MESSAGE);
 				
 				} catch (Exception e) {

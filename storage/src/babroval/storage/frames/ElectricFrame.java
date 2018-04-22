@@ -81,7 +81,7 @@ public class ElectricFrame extends JFrame {
 		tfTariff = new JTextField(20);
 		
 		labelIndication = new JLabel("<html>Enter electric power indication and "
-								   + "<br>press button \"Calculate\"</html>");
+								   + "<br>press button \"Calculate\":</html>");
 		tfIndication = new JTextField(20);
 		
 		calculate = new JButton("Calculate");
@@ -170,13 +170,14 @@ public class ElectricFrame extends JFrame {
 					Integer indicationLastPaid = new Integer(tfIndicationLastPaid.getText());
 					Integer indication = new Integer(tfIndication.getText());
 					BigDecimal tariff = new BigDecimal(tfTariff.getText());
-					BigDecimal kW = new BigDecimal(String.valueOf(indication - indicationLastPaid));
-					BigDecimal sum = kW.multiply(tariff) ;
-					sum = sum.setScale(2, RoundingMode.HALF_UP);
+					BigDecimal kWh = new BigDecimal(String.valueOf(indication - indicationLastPaid));
 					
-					if(sum.compareTo(new BigDecimal("0")) <= 0) {
-							throw new NumberFormatException("e");
-						}
+					if(tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
+						throw new NumberFormatException("e");
+					}
+					
+					BigDecimal sum = kWh.multiply(tariff) ;
+					sum = sum.setScale(2, RoundingMode.HALF_UP);
 					
 					tfSum.setText(String.valueOf(sum));
 					tfInf.setEnabled(true);
@@ -191,7 +192,7 @@ public class ElectricFrame extends JFrame {
 					
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel,
-							"enter the right price per kilowatt and the right indication",	"",
+							"enter the right price per kilowatt-hour and the right indication",	"",
 							JOptionPane.ERROR_MESSAGE);
 					updateFrame();
 				
