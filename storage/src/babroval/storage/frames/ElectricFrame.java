@@ -20,19 +20,27 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.ElectricDao;
+import babroval.storage.entity.Electric;
 import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelTariff, labelIndication, labelSum, labelInf;
+	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelTariff, labelIndication, labelSum,
+			labelInf;
 	private JComboBox<String> comboNum, comboSelect;
 	private JTextField tfDate, tfName, tfIndication, tfIndicationLastPaid, tfTariff, tfSum, tfInf;
 	private JButton calculate, enter, cancel;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
 
+	private Integer indication;
+	private BigDecimal tariff, sum;
+
+	
 	public ElectricFrame() {
 		setSize(270, 460);
 		setTitle("Electricity payment");
@@ -52,11 +60,11 @@ public class ElectricFrame extends JFrame {
 		Date dateNow = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		tfDate = new JTextField(sdf.format(dateNow));
-		
+
 		labelNum = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
 		comboNum.setPreferredSize(new Dimension(50, 20));
-		
+
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
@@ -76,29 +84,29 @@ public class ElectricFrame extends JFrame {
 		labelIndicationLastPaid = new JLabel("Electric power indication last paid:");
 		tfIndicationLastPaid = new JTextField(20);
 		tfIndicationLastPaid.setEnabled(false);
-		
+
 		labelTariff = new JLabel("Price per kilowatt-hour:");
 		tfTariff = new JTextField(20);
-		
-		labelIndication = new JLabel("<html>Enter electric power indication and "
-								   + "<br>press button \"Calculate\":</html>");
+
+		labelIndication = new JLabel(
+				"<html>Enter electric power indication and " + "<br>press button \"Calculate\":</html>");
 		tfIndication = new JTextField(20);
-		
+
 		calculate = new JButton("Calculate");
 
 		labelSum = new JLabel("Total amount:");
 		tfSum = new JTextField(20);
 		tfSum.setEnabled(false);
-		
+
 		labelInf = new JLabel("Enter number of receipt order:");
 		tfInf = new JTextField(20);
 
 		enter = new JButton("Enter");
 		cancel = new JButton("Cancel");
-		
+
 		comboSelect = new JComboBox<String>(select);
 		comboSelect.setPreferredSize(new Dimension(115, 20));
-		
+
 		resetFrame();
 
 		panel.add(labelDate);
@@ -121,13 +129,13 @@ public class ElectricFrame extends JFrame {
 		panel.add(enter);
 		panel.add(cancel);
 		panel.add(comboSelect);
-	
+
 		add(panel);
-		
+
 	}
 
 	private void action() {
-		
+
 		comboSelect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -152,7 +160,7 @@ public class ElectricFrame extends JFrame {
 				}
 			}
 		});
-		
+
 		comboNum.addActionListener(new ActionListener() {
 
 			@Override
@@ -161,24 +169,24 @@ public class ElectricFrame extends JFrame {
 				updateFrame();
 			}
 		});
-		
+
 		calculate.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					Integer indicationLastPaid = new Integer(tfIndicationLastPaid.getText());
-					Integer indication = new Integer(tfIndication.getText());
-					BigDecimal tariff = new BigDecimal(tfTariff.getText());
+					indication = new Integer(tfIndication.getText());
+					tariff = new BigDecimal(tfTariff.getText());
 					BigDecimal kWh = new BigDecimal(String.valueOf(indication - indicationLastPaid));
-					
-					if(tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
+
+					if (tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
 						throw new NumberFormatException("e");
 					}
-					
-					BigDecimal sum = kWh.multiply(tariff) ;
+
+					sum = kWh.multiply(tariff) ;
 					sum = sum.setScale(2, RoundingMode.HALF_UP);
-					
+
 					tfSum.setText(String.valueOf(sum));
 					tfInf.setEnabled(true);
 					enter.setEnabled(true);
@@ -187,48 +195,56 @@ public class ElectricFrame extends JFrame {
 					tfIndication.setEnabled(false);
 					calculate.setEnabled(false);
 					cancel.setEnabled(true);
-					
+
 					panel.updateUI();
-					
+
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel,
-							"enter the right price per kilowatt-hour and the right indication",	"",
+							"enter the right price per kilowatt-hour and the right indication", "",
 							JOptionPane.ERROR_MESSAGE);
 					updateFrame();
-				
+
 				} catch (Exception e) {
 					comboNum.setSelectedIndex(0);
 					resetFrame();
-					JOptionPane.showMessageDialog(panel, 
-							"database fault", "", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		enter.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
 
-					if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
+					if (comboNum.getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
+					ElectricDao daoElectric = new ElectricDao();
+					daoElectric.insert(new Electric(
+							comboNum.getSelectedIndex(),
+							InitDB.stringToDate(tfDate.getText()),
+							tariff,
+							indication,
+							sum,
+							tfInf.getText()));
 					
 					comboNum.setSelectedIndex(0);
 					resetFrame();
-					JOptionPane.showMessageDialog(panel, "Payment has been included", "Message",
+					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
 							JOptionPane.INFORMATION_MESSAGE);
 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication", "error",
+					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication", "",
 							JOptionPane.ERROR_MESSAGE);
+
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database error", "error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		cancel.addActionListener(new ActionListener() {
 
 			@Override
@@ -237,21 +253,19 @@ public class ElectricFrame extends JFrame {
 				updateFrame();
 			}
 		});
-		
+
 	}
 
 	private void updateFrame() {
 
-		if (comboNum.getSelectedIndex() == 0 || comboNum.getSelectedItem().equals("")) {
-			comboNum.setSelectedIndex(0);
+		if (comboNum.getSelectedIndex() == 0) {
 			resetFrame();
 		} else {
 			resetFrame();
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid), electric.tariff"
-							+ " FROM electric, storage, user"
-							+ " WHERE storage.number='" + comboNum.getSelectedItem()
+							+ " FROM electric, storage, user" + " WHERE storage.number='" + comboNum.getSelectedItem()
 							+ "' AND electric.storage_id=storage.storage_id"
 							+ " AND user.storage_id=storage.storage_id")) {
 
@@ -261,7 +275,7 @@ public class ElectricFrame extends JFrame {
 					tfIndicationLastPaid.setText(rs.getString(2));
 					tfTariff.setText(rs.getString(3));
 				}
-				
+
 				tfTariff.setEnabled(true);
 				tfIndication.setEnabled(true);
 				calculate.setEnabled(true);
@@ -275,8 +289,8 @@ public class ElectricFrame extends JFrame {
 	}
 
 	private void resetFrame() {
-	    
-    	tfName.setText("");
+
+		tfName.setText("");
 		tfIndicationLastPaid.setText("");
 		tfTariff.setText("");
 		tfTariff.setEnabled(false);
