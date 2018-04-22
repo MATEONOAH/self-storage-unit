@@ -71,7 +71,11 @@ public class ElectricFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number FROM storage")) {
+				ResultSet rs = st.executeQuery(
+						"SELECT storage.storage_number"
+						+ " FROM storage"
+						+ " WHERE storage.storage_number!=0"
+						+ " ORDER BY storage.storage_number ASC")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
