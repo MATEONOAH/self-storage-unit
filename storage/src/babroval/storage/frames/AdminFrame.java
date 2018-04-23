@@ -291,30 +291,15 @@ public class AdminFrame extends JFrame {
 				editPrihodOrder.setEnabled(false);
 				panel.remove(scroll);
 
-				int temp = 0;
-
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st.executeQuery("SELECT * FROM user")) {
-
-					comboNum.addItem("");
-					while (rs.next()) {
-						String i = rs.getString(2);
-						String j = (String) comboNum.getSelectedItem();
-						if (i.equals(j)) {
-							temp = rs.getInt(1);
-							break;
-						}
-					}
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-
 				try (Connection cn = ConnectionPool.getPool().getConnection();
 						Statement st = cn.createStatement();
 						ResultSet rs = st.executeQuery(
 								"SELECT rent.date, rent.quarter_paid, rent.sum, rent.info"
-										+ " FROM storage, rent WHERE storage.storage_id=rent.storage_id AND storage.storage_number="+ comboNum.getSelectedItem() +" AND rent.date!=0 ORDER BY rent.date ASC")) {
+								+ " FROM storage, rent"
+								+ " WHERE storage.storage_id=rent.storage_id"
+								+ " AND storage.storage_number='" + comboNum.getSelectedItem() + "'"
+								+ " AND rent.date!=0"
+								+ " ORDER BY rent.date ASC")) {
 
 					tableUsers = new TableStorage(rs);
 					scroll = new JScrollPane(tableUsers);
