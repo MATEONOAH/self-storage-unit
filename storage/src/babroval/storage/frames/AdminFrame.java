@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -126,11 +126,9 @@ public class AdminFrame extends JFrame {
 		quart4 = new JCheckBox("IV");
 		group = new ButtonGroup();
 
-		Date dNow = new Date();
-		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-
-		ft = new SimpleDateFormat("yyyy");
-		int i = Integer.parseInt(ft.format(dNow));
+		Date today = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+		int i = Integer.parseInt(sdf.format(today));
 		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
@@ -574,9 +572,9 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 
-					Date dNow = new Date();
+					Date today = new Date(System.currentTimeMillis());
 					SimpleDateFormat ft = new SimpleDateFormat("yyyy");
-					String t = ft.format(dNow);
+					String t = ft.format(today);
 //					UserDao daoUser = new UserDao();
 //					daoUser.update(
 //							new User(Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),

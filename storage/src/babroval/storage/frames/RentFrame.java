@@ -55,9 +55,10 @@ class RentFrame extends JFrame {
 		panel = new JPanel();
 
 		labelDate = new JLabel("Date of payment:");
-		Date dateNow = new Date(System.currentTimeMillis());
+		
+		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		tfDate = new JTextField(sdf.format(dateNow));
+		tfDate = new JTextField(sdf.format(today));
 
 		labelNumber = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
@@ -163,8 +164,8 @@ class RentFrame extends JFrame {
 					RentDao daoRent = new RentDao();
 					daoRent.insert(new Rent(
 							comboNum.getSelectedIndex(),
-							InitDB.stringToDate(tfDate.getText()),
-							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText()),
+							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
+							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
 							sum,
 							tfInf.getText()));
 

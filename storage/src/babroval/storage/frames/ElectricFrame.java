@@ -228,7 +228,7 @@ public class ElectricFrame extends JFrame {
 					ElectricDao daoElectric = new ElectricDao();
 					daoElectric.insert(new Electric(
 							comboNum.getSelectedIndex(),
-							InitDB.stringToDate(tfDate.getText()),
+							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							tariff,
 							indication,
 							sum,
