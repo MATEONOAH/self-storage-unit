@@ -38,7 +38,6 @@ class RentFrame extends JFrame {
 	private JButton enter, cancel;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
 
-	
 	public RentFrame() {
 		setSize(300, 327);
 		setTitle("Rent payment");
@@ -55,7 +54,7 @@ class RentFrame extends JFrame {
 		panel = new JPanel();
 
 		labelDate = new JLabel("Date of payment:");
-		
+
 		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		tfDate = new JTextField(sdf.format(today));
@@ -70,11 +69,8 @@ class RentFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(
-						"SELECT storage.storage_number"
-								+ " FROM storage"
-								+ " WHERE storage.storage_number!=0"
-								+ " ORDER BY storage.storage_number ASC")) {
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number" + " FROM storage"
+						+ " WHERE storage.storage_number!=0" + " ORDER BY storage.storage_number ASC")) {
 
 			comboNum.addItem("");
 			while (rs.next()) {
@@ -143,7 +139,18 @@ class RentFrame extends JFrame {
 		enter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				try {
+
+				Integer storageId = 0;
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						Statement st = cn.createStatement();
+						ResultSet rs = st.executeQuery("SELECT storage.storage_id"
+								+ " FROM storage"
+								+ " WHERE storage.storage_number='" + comboNum.getSelectedItem() + "'")) {
+									
+					while (rs.next()) {
+						storageId = Integer.valueOf(rs.getString(1));
+					}
+
 					String quarter = ""; // first month of year quarter
 
 					if (quart1.isEnabled() && quart1.isSelected())
@@ -157,13 +164,14 @@ class RentFrame extends JFrame {
 
 					BigDecimal sum = new BigDecimal(tfSum.getText());
 					sum = sum.setScale(2, RoundingMode.FLOOR);
-					
+
 					if (comboNum.getSelectedIndex() == 0 || quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
+
 					RentDao daoRent = new RentDao();
 					daoRent.insert(new Rent(
-							comboNum.getSelectedIndex(),
+							storageId,
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
 							sum,
