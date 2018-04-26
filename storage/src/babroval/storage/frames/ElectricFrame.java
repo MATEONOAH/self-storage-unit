@@ -220,14 +220,24 @@ public class ElectricFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				try {
+				
+				Integer storageId = 0;
+				try (Connection cn = ConnectionPool.getPool().getConnection();
+						Statement st = cn.createStatement();
+						ResultSet rs = st.executeQuery("SELECT storage.storage_id"
+								+ " FROM storage"
+								+ " WHERE storage.storage_number='" + comboNum.getSelectedItem() + "'")) {
+									
+					while (rs.next()) {
+						storageId = Integer.valueOf(rs.getString(1));
+					}
 
 					if (comboNum.getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
 					ElectricDao daoElectric = new ElectricDao();
 					daoElectric.insert(new Electric(
-							comboNum.getSelectedIndex(),
+							storageId,
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							tariff,
 							indication,
@@ -268,8 +278,10 @@ public class ElectricFrame extends JFrame {
 			resetFrame();
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery("SELECT user.name, MAX(electric.meter_paid), electric.tariff"
-							+ " FROM electric, storage, user" + " WHERE storage.storage_number='" + comboNum.getSelectedItem()
+					ResultSet rs = st.executeQuery(
+							  "SELECT user.name, MAX(electric.meter_paid), electric.tariff"
+							+ " FROM electric, storage, user"
+							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
 							+ "' AND electric.storage_id=storage.storage_id"
 							+ " AND user.storage_id=storage.storage_id")) {
 

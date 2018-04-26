@@ -237,9 +237,12 @@ class RentFrame extends JFrame {
 			resetFrame();
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery("SELECT user.name, MAX(rent.quarter_paid) FROM rent, storage, user"
+					ResultSet rs = st.executeQuery(
+							"SELECT user.name, MAX(rent.quarter_paid)"
+							+ " FROM rent, storage, user"
 							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
-							+ "' AND rent.storage_id=storage.storage_id" + " AND user.storage_id=storage.storage_id")) {
+							+ "' AND rent.storage_id=storage.storage_id"
+							+ " AND user.storage_id=storage.storage_id")) {
 
 				while (rs.next()) {
 
