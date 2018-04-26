@@ -251,7 +251,7 @@ public class AdminFrame extends JFrame {
 							"SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
 							+ " FROM storage, rent"
 							+ " WHERE storage.storage_id=rent.storage_id "
-							+ " AND rent.date!=0 ORDER BY rent.date ASC");
+							+ " AND rent.date!=0 ORDER BY rent.rent_id ASC");
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
@@ -260,7 +260,7 @@ public class AdminFrame extends JFrame {
 							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
 							+ " FROM storage, electric"
 							+ " WHERE storage.storage_id=electric.storage_id"
-							+ " AND electric.date!=0 ORDER BY electric.date ASC");
+							+ " AND electric.date!=0 ORDER BY electric.electric_id ASC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
 
