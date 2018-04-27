@@ -345,7 +345,6 @@ public class AdminFrame extends JFrame {
     					+ " GROUP BY storage.storage_id"
     					+ " ORDER BY rent.quarter_paid ASC");
 
-
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "specify quarter", "", JOptionPane.ERROR_MESSAGE);
 				}
