@@ -29,15 +29,21 @@ class TableStorage extends JTable {
 			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 	
-				dtm.addColumn(rsmd.getColumnName(i));
-				
-				if (rsmd.getColumnName(i).equals("date")) {
-					dateColumnNumber = i;
-				}
-				if (rsmd.getColumnName(i).equals("quarter_paid")) {
+				if (rsmd.getColumnName(i).equals("quarter_paid") 
+					| rsmd.getColumnName(i).equals("MAX(rent.quarter_paid)")) {
+					
+					dtm.addColumn("quarter_paid");
 					quarterColumnNumber = i;
-				}
+				
+				}else if (rsmd.getColumnName(i).equals("date")) {
+					
+					dtm.addColumn("date");
+					dateColumnNumber = i;
+				
+				}else dtm.addColumn(rsmd.getColumnName(i));
+			
 			}
+			
 			while (rs.next()) {
 				Vector<String> v = new Vector<String>();
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {

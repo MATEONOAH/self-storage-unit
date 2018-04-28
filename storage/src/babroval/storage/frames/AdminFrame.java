@@ -319,24 +319,18 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 
 				editPrihodOrder.setEnabled(false);
-
 				panel.remove(scroll);
 
 				try {
 					String quarter = ""; // first month of year quarter
-					if (quart1.isSelected())
-						quarter = "01";
-					else if (quart2.isSelected())
-						quarter = "04";
-					else if (quart3.isSelected())
-						quarter = "07";
-					else if (quart4.isSelected())
-						quarter = "10";
-					else
-						throw new NumberFormatException();
+					if (quart1.isSelected()) quarter = "01";
+					else if (quart2.isSelected()) quarter = "04";
+					else if (quart3.isSelected()) quarter = "07";
+					else if (quart4.isSelected()) quarter = "10";
+					else throw new NumberFormatException();
 
 					refreshTableReadOnly(
-						"SELECT storage.storage_number, user.name, user.info"
+						"SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
 						+ " FROM storage, user, rent"
 						+ " WHERE rent.quarter_paid<'"+ comboYear.getSelectedItem() +"-"+ quarter +"-01"+"'"
 						+ " AND rent.storage_id=storage.storage_id"
