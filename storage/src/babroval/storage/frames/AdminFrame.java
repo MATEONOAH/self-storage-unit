@@ -39,7 +39,7 @@ public class AdminFrame extends JFrame {
 	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear;
 	private JLabel labelComboNum, labelQuarts;
 	private JScrollPane scroll;
-	private JButton add, delete, edit, editPrihodOrder, sortFamily, notPaid;
+	private JButton add, delete, edit, editPrihodOrder, sortFamily, debtors;
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private ButtonGroup group;
 	private TableStorage tableUsers;
@@ -131,7 +131,7 @@ public class AdminFrame extends JFrame {
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
 
-		notPaid = new JButton("Debtors");
+		debtors = new JButton("Debtors");
 
 		sortFamily.setVisible(false);
 
@@ -144,7 +144,7 @@ public class AdminFrame extends JFrame {
 		quart3.setBounds(660, 10, 35, 20);
 		quart4.setBounds(692, 10, 40, 20);
 		comboYear.setBounds(732, 10, 60, 20);
-		notPaid.setBounds(800, 10, 95, 20);
+		debtors.setBounds(800, 10, 95, 20);
 		scroll.setBounds(20, 40, 950, 390);
 		comboEdit.setBounds(30, 450, 160, 20);
 		add.setBounds(205, 450, 110, 20);
@@ -168,7 +168,7 @@ public class AdminFrame extends JFrame {
 		panel.add(quart3);
 		panel.add(quart4);
 		panel.add(comboYear);
-		panel.add(notPaid);
+		panel.add(debtors);
 		panel.add(comboEdit);
 		panel.add(add);
 		panel.add(edit);
@@ -314,7 +314,7 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
-		notPaid.addActionListener(new ActionListener() {
+		debtors.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
