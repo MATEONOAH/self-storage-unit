@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -27,8 +28,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.ElectricDao;
 import babroval.storage.dao.RentDao;
 import babroval.storage.dao.UserDao;
+import babroval.storage.entity.Electric;
+import babroval.storage.entity.Rent;
 import babroval.storage.entity.User;
 import babroval.storage.mysql.ConnectionPool;
 import babroval.storage.mysql.InitDB;
@@ -250,7 +254,7 @@ public class AdminFrame extends JFrame {
 					showTable(
 							"SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
 									+ " FROM storage, rent" + " WHERE storage.storage_id=rent.storage_id "
-									+ " AND rent.date!=0 ORDER BY rent.rent_id ASC");
+									+ " AND rent.date!=0 ORDER BY rent.rent_id DESC");
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
@@ -258,7 +262,7 @@ public class AdminFrame extends JFrame {
 					showTable(
 							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
 									+ " FROM storage, electric" + " WHERE storage.storage_id=electric.storage_id"
-									+ " AND electric.date!=0 ORDER BY electric.electric_id ASC");
+									+ " AND electric.date!=0 ORDER BY electric.electric_id DESC");
 				}
 				if (comboRead.getSelectedIndex() == 3) {
 
@@ -267,7 +271,7 @@ public class AdminFrame extends JFrame {
 
 					showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
 							+ " WHERE storage.storage_id=user.storage_id"
-							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number ASC");
+							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number");
 				}
 			}
 		});
@@ -293,7 +297,7 @@ public class AdminFrame extends JFrame {
 								+ " WHERE storage.storage_id=rent.storage_id"
 								+ " AND storage.storage_number='" + comboNum.getSelectedItem() + "'"
 								+ " AND rent.date!=0"
-								+ " ORDER BY rent.date ASC")) {
+								+ " ORDER BY rent.date DESC")) {
 
 					tableUsers = new TableStorage(rs);
 					scroll = new JScrollPane(tableUsers);
@@ -314,7 +318,7 @@ public class AdminFrame extends JFrame {
 				itemWrite.setEnabled(true);
 				showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
 						+ " WHERE storage.storage_id=user.storage_id" + " AND storage.storage_number!=0"
-						+ " ORDER BY user.name ASC");
+						+ " ORDER BY user.name");
 			}
 		});
 
@@ -371,32 +375,21 @@ public class AdminFrame extends JFrame {
 					edit.setEnabled(false);
 					delete.setEnabled(true);
 					editPrihodOrder.setEnabled(false);
-					showTable("SELECT rent.rent_id, storage.storage_number, rent.date,"
-							+ " rent.quarter_paid, rent.sum, rent.info"
-							+ " FROM storage, rent"
-							+ " WHERE storage.storage_id=rent.storage_id"
-							+ " ORDER BY rent.rent_id ASC");
+					showRentTable();
 				}
 				if (comboEdit.getSelectedIndex() == 2) {
 					add.setEnabled(false);
 					edit.setEnabled(false);
 					delete.setEnabled(true);
 					editPrihodOrder.setEnabled(false);
-					showTable("SELECT electric.electric_id, storage.storage_number, electric.date,"
-							+ " electric.tariff, electric.meter_paid, electric.sum, electric.info"
-							+ " FROM electric, storage"
-							+ " WHERE electric.storage_id=storage.storage_id"
-							+ " ORDER BY electric.electric_id ASC");
+					showElectricTable();
 				}
 				if (comboEdit.getSelectedIndex() == 3) {
 					add.setEnabled(true);
 					edit.setEnabled(true);
 					delete.setEnabled(false);
 					editPrihodOrder.setEnabled(false);
-					showTable("SELECT storage.storage_number, user.name, user.info"
-							+ " FROM user, storage"
-							+ " WHERE user.storage_id=storage.storage_id"
-							+ " ORDER BY storage.storage_number ASC");
+					showUserTable();
 
 				}
 
@@ -431,134 +424,66 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 
 				try {
-					String quarter1 = "";
-					String quarter2 = "";
-					String quarter3 = "";
-					String quarter4 = "";
-					String temp = "";
+					
+					if (tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString().equals("DELETED")) {
+						throw new ArrayIndexOutOfBoundsException("e");
+					}
+					
 					int result = JOptionPane.showConfirmDialog(panel, "Delete rent payment?", "Delete",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
-						String buff = "";
+						
+						String deletedInfo = "";
 
 						if (comboEdit.getSelectedIndex() == 1) {
-							if (tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString().equals("0")) {
-								throw new ArrayIndexOutOfBoundsException("ex");
-							}
-
-							try (Connection cn = ConnectionPool.getPool().getConnection();
-									Statement st = cn.createStatement();
-									ResultSet rs = st.executeQuery("SELECT MAX(orders.order_id)"
-											+ " FROM orders WHERE orders.summ!=0 AND orders.order_id!="
-											+ Integer.valueOf(
-													tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString())
-											+ " AND orders.storage_id="
-											+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString())) {
-
-								while (rs.next()) {
-									temp = rs.getString(1);
-								}
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-							}
-
-							try (Connection cn = ConnectionPool.getPool().getConnection();
-									Statement st = cn.createStatement();
-									ResultSet rs = st.executeQuery(
-											"SELECT orders.quarter1 FROM orders WHERE orders.order_id=" + temp)) {
-								while (rs.next()) {
-									String j = rs.getString(1);
-									if (j == null) {
-										j = "";
-									}
-									quarter1 = j;
-								}
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-							}
-
-							try (Connection cn = ConnectionPool.getPool().getConnection();
-									Statement st = cn.createStatement();
-									ResultSet rs = st.executeQuery(
-											"SELECT orders.quarter2" + " FROM orders WHERE orders.order_id=" + temp)) {
-
-								while (rs.next()) {
-									String j = rs.getString(1);
-									if (j == null) {
-										j = "";
-									}
-									quarter2 = j;
-								}
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-							}
-
-							try (Connection cn = ConnectionPool.getPool().getConnection();
-									Statement st = cn.createStatement();
-									ResultSet rs = st.executeQuery(
-											"SELECT orders.quarter3 FROM orders WHERE orders.order_id=" + temp)) {
-
-								while (rs.next()) {
-									String j = rs.getString(1);
-									if (j == null) {
-										j = "";
-									}
-
-									quarter3 = j;
-								}
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-							}
-
-							try (Connection cn = ConnectionPool.getPool().getConnection();
-									Statement st = cn.createStatement();
-									ResultSet rs = st.executeQuery(
-											"SELECT orders.quarter4 FROM orders WHERE orders.order_id=" + temp)) {
-								while (rs.next()) {
-									String j = rs.getString(1);
-									if (j == null) {
-										j = "";
-									}
-									quarter4 = j;
-								}
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-							}
-
-							// UserDao daoUser = new UserDao();
-							// daoUser.deleteQuarters(new User(
-							// Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(),
-							// 1).toString()),
-							// quarter1, quarter2, quarter3, quarter4));
-
-							buff = (tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
+							
+						
+							deletedInfo = (
+									  "DELETED:"
+									+  tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
-									+ Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString())
-									+ "//" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 7).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 8).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 10).toString());
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString());
 
-							RentDao daoOrder = new RentDao();
-							// daoOrder.update(new Orders(
-							// Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(),
-							// 0).toString()),
-							// Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(),
-							// 1).toString()),
-							// "0", 0, "", "", "", "", buff));
+							RentDao daoRent = new RentDao();
+							daoRent.update(new Rent(
+								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
+							    1, Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), BigDecimal.valueOf(0), deletedInfo));
 
 							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
-					//		refreshTableRent();
+							
+							showRentTable();
+						}
+						
+						if (comboEdit.getSelectedIndex() == 2) {
+							
+							
+							deletedInfo = (
+									  "DELETED:"
+									+  tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString());
+
+							ElectricDao daoElectric = new ElectricDao();
+							daoElectric.update(new Electric(
+								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
+							    1, Date.valueOf("0001-01-01"), BigDecimal.valueOf(0), 0, BigDecimal.valueOf(0), deletedInfo));
+
+							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
+							
+							showElectricTable();
 						}
 					}
-				} catch (ArrayIndexOutOfBoundsException ex) {
+				} catch (ArrayIndexOutOfBoundsException e) {
 					JOptionPane.showMessageDialog(panel,
-							"Rent payment has not been selected or payment has been already deleted", "Error",
+							"rent payment has not been selected or payment has been already deleted", "fault",
 							JOptionPane.ERROR_MESSAGE);
-				} catch (Exception ex2) {
-					throw new RuntimeException(ex2);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -642,6 +567,31 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
+	}
+
+	protected void showUserTable() {
+		showTable("SELECT storage.storage_number, user.name, user.info"
+				+ " FROM user, storage"
+				+ " WHERE user.storage_id=storage.storage_id"
+				+ " ORDER BY storage.storage_number");
+		
+	}
+	
+    protected void showRentTable() {
+		showTable("SELECT rent.rent_id, storage.storage_number, rent.date,"
+				+ " rent.quarter_paid, rent.sum, rent.info"
+				+ " FROM storage, rent"
+				+ " WHERE storage.storage_id=rent.storage_id"
+				+ " ORDER BY rent.rent_id DESC");
+	}
+	
+	protected void showElectricTable() {
+		showTable("SELECT electric.electric_id, storage.storage_number, electric.date,"
+				+ " electric.tariff, electric.meter_paid, electric.sum, electric.info"
+				+ " FROM electric, storage"
+				+ " WHERE electric.storage_id=storage.storage_id"
+				+ " ORDER BY electric.electric_id DESC");
+		
 	}
 
 	protected void showTable(String query) {

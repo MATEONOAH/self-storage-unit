@@ -48,7 +48,16 @@ class TableStorage extends JTable {
 				Vector<String> v = new Vector<String>();
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 					
-					if(i == dateColumnNumber) {
+					if(rs.getString(i).equals("0001-01-01")){
+						break;
+					}
+					if(rs.getString(i).equals("0")){
+						for(int j = 1; j<rsmd.getColumnCount()-1; j++) {
+							v.add("DELETED");
+						}
+						i=rsmd.getColumnCount()-1;
+					
+					}else if(i == dateColumnNumber) {
 						
 						Date date= InitDB.stringToDate(rs.getString(i), "yyyy-MM-dd");
 						String dateFormat = new SimpleDateFormat("dd-MM-yyyy").format(date);
@@ -71,12 +80,12 @@ class TableStorage extends JTable {
 						}
 						String year = new SimpleDateFormat("yyyy").format(date);
 						v.add(quarter + year);
-						
+					
 					}else {
 						v.add(rs.getString(i));
 					}
 				}
-				dtm.addRow(v);
+				if(!v.isEmpty()) dtm.addRow(v);
 			}
 			setModel(dtm);
 			setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);

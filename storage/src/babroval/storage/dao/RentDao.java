@@ -44,7 +44,7 @@ public class RentDao implements Dao<Rent> {
 			ps.setDate(2, ob.getDate());
 			ps.setDate(3, ob.getQuarter_paid());
 			ps.setBigDecimal(4, ob.getSum());
-			ps.setString(8, ob.getInfo());
+			ps.setString(5, ob.getInfo());
 			
 			ps.execute();
 
