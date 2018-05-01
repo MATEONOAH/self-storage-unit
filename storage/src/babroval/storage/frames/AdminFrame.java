@@ -45,7 +45,7 @@ public class AdminFrame extends JFrame {
 	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear;
 	private JLabel labelComboNum, labelQuarts;
 	private JScrollPane scroll;
-	private JButton add, delete, edit, editPrihodOrder, sortFamily, debtors;
+	private JButton add, delete, edit, editPrihodOrder, sortFamily, rentDebtors;
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private ButtonGroup group;
 	private TableStorage tableUsers;
@@ -137,7 +137,7 @@ public class AdminFrame extends JFrame {
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
 
-		debtors = new JButton("Debtors");
+		rentDebtors = new JButton("Rent debtors");
 
 		sortFamily.setVisible(false);
 
@@ -150,7 +150,7 @@ public class AdminFrame extends JFrame {
 		quart3.setBounds(660, 10, 35, 20);
 		quart4.setBounds(692, 10, 40, 20);
 		comboYear.setBounds(732, 10, 60, 20);
-		debtors.setBounds(800, 10, 95, 20);
+		rentDebtors.setBounds(800, 10, 95, 20);
 		scroll.setBounds(20, 40, 950, 390);
 		comboEdit.setBounds(30, 450, 160, 20);
 		add.setBounds(205, 450, 110, 20);
@@ -174,7 +174,7 @@ public class AdminFrame extends JFrame {
 		panel.add(quart3);
 		panel.add(quart4);
 		panel.add(comboYear);
-		panel.add(debtors);
+		panel.add(rentDebtors);
 		panel.add(comboEdit);
 		panel.add(add);
 		panel.add(edit);
@@ -322,16 +322,16 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
-		debtors.addActionListener(new ActionListener() {
+		rentDebtors.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
 				editPrihodOrder.setEnabled(false);
 				panel.remove(scroll);
-
+				
 				try {
 					String quarter = ""; // first month of year quarter
-					if (quart1.isSelected()) quarter = "01";
+					     if (quart1.isSelected()) quarter = "01";
 					else if (quart2.isSelected()) quarter = "04";
 					else if (quart3.isSelected()) quarter = "07";
 					else if (quart4.isSelected()) quarter = "10";
@@ -340,11 +340,10 @@ public class AdminFrame extends JFrame {
 					showTable(
 						"SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
 						+ " FROM storage, user, rent"
-						+ " WHERE rent.quarter_paid<'"+ comboYear.getSelectedItem() +"-"+ quarter +"-01"+"'"
-						+ " AND rent.storage_id=storage.storage_id"
+						+ " WHERE rent.storage_id=storage.storage_id"
 						+ " AND user.storage_id=storage.storage_id"
-    					+ " AND rent.date!=0"
-    					+ " GROUP BY storage.storage_id"
+    		 			+ " GROUP BY storage.storage_id"
+    					+ " HAVING MAX(rent.quarter_paid)<'"+ comboYear.getSelectedItem() +"-"+ quarter +"-01"+"'"
     					+ " ORDER BY rent.quarter_paid ASC");
 
 				} catch (NumberFormatException e) {
@@ -428,7 +427,6 @@ public class AdminFrame extends JFrame {
 					if (tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString().equals("DELETED")) {
 						throw new ArrayIndexOutOfBoundsException("e");
 					}
-					
 					int result = JOptionPane.showConfirmDialog(panel, "Delete rent payment?", "Delete",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
@@ -436,11 +434,9 @@ public class AdminFrame extends JFrame {
 						String deletedInfo = "";
 
 						if (comboEdit.getSelectedIndex() == 1) {
-							
-						
 							deletedInfo = (
 									  "DELETED:"
-									+  tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
@@ -451,17 +447,14 @@ public class AdminFrame extends JFrame {
 								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 							    1, Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), BigDecimal.valueOf(0), deletedInfo));
 
-							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
-							
 							showRentTable();
+							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
 						}
-						
+
 						if (comboEdit.getSelectedIndex() == 2) {
-							
-							
 							deletedInfo = (
 									  "DELETED:"
-									+  tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
+									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
 									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
@@ -473,9 +466,8 @@ public class AdminFrame extends JFrame {
 								Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
 							    1, Date.valueOf("0001-01-01"), BigDecimal.valueOf(0), 0, BigDecimal.valueOf(0), deletedInfo));
 
-							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
-							
 							showElectricTable();
+							JOptionPane.showMessageDialog(panel, "Rent payment has been deleted");
 						}
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
