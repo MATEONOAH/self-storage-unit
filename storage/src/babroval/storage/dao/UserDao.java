@@ -36,13 +36,25 @@ public class UserDao implements Dao<User> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
 						"update " + ob.getClass().getSimpleName() 
-						+ " set storage_id=?, name=?, info=?"
-						+ " where user_id = "
-						+ ob.getUser_id())) {
+						+ " set storage_id=?"
+						+ " where name = '"+ ob.getName() +"'")) {
 			
 			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getName());
-			ps.setString(3, ob.getInfo());
+			ps.execute();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void detachStorage(User ob) {
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
+						"update " + ob.getClass().getSimpleName() 
+						+ " set storage_id=?"
+						+ " where user_id ="+ ob.getUser_id())) {
+			
+			ps.setInt(1, ob.getStorage_id());
 			ps.execute();
 
 		} catch (SQLException e) {

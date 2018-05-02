@@ -15,6 +15,16 @@ public class User {
 		this.user_id = user_id;
 	}
 
+	public User(Integer user_id, Integer storage_id) {
+		this.user_id = user_id;
+		this.storage_id = storage_id;
+	}
+
+	public User(Integer storage_id, String name) {
+		this.storage_id = storage_id;
+		this.name = name;
+	}
+
 	public User(Integer storage_id, String name, String info) {
 		this.storage_id = storage_id;
 		this.name = name;
