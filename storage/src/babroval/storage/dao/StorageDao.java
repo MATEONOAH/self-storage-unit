@@ -18,10 +18,11 @@ public class StorageDao implements Dao<Storage> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement("insert into "
 						+ ob.getClass().getSimpleName()
-						+ " (storage_number, info) values (?,?)")) {
+						+ " (user_id, storage_number, info) values (?,?,?)")) {
 
-			ps.setString(1, ob.getStorage_number());
-			ps.setString(2, ob.getInfo());
+			ps.setInt(1, ob.getUser_id());
+			ps.setString(2, ob.getStorage_number());
+			ps.setString(3, ob.getInfo());
 			
 			ps.execute();
 
@@ -46,6 +47,22 @@ public class StorageDao implements Dao<Storage> {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void assignUser(Storage ob) {
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
+						"update " + ob.getClass().getSimpleName() 
+						+ " set user_id=?"
+						+ " where storage_id ="+ ob.getStorage_id())) {
+			
+			ps.setInt(1, ob.getUser_id());
+			ps.execute();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 	
 }

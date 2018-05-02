@@ -30,17 +30,17 @@ public class InitDB {
 
 			st.executeUpdate("USE " + ConnectionPool.NAME_DB);
 
-			st.executeUpdate("CREATE TABLE storage (" 
-							+ "storage_id INT PRIMARY KEY AUTO_INCREMENT,"
-							+ " storage_number VARCHAR(50),"
-							+ " info VARCHAR(100))");
-			
 			st.executeUpdate("CREATE TABLE user (" 
 							+ "user_id INT PRIMARY KEY AUTO_INCREMENT,"
-							+ " storage_id INT," 
 							+ " name VARCHAR(50)," 
+							+ " info VARCHAR(100))");
+			
+			st.executeUpdate("CREATE TABLE storage (" 
+							+ "storage_id INT PRIMARY KEY AUTO_INCREMENT,"
+							+ " user_id INT," 
+							+ " storage_number VARCHAR(50),"
 							+ " info VARCHAR(100),"
-							+ " FOREIGN KEY(storage_id) REFERENCES storage(storage_id))");
+							+ " FOREIGN KEY(user_id) REFERENCES user(user_id))");
 
 			st.executeUpdate("CREATE TABLE rent (" 
 							+ "rent_id INT PRIMARY KEY AUTO_INCREMENT," 
@@ -64,18 +64,19 @@ public class InitDB {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-		StorageDao daoStorage = new StorageDao();
-		daoStorage.insert(new Storage("0", "init"));
-		daoStorage.insert(new Storage("2", "double"));
-		daoStorage.insert(new Storage("1a", "standard"));
-		daoStorage.insert(new Storage("1b", "small"));
 		
 		UserDao daoUser = new UserDao();
-		daoUser.insert(new User(4, "JANE ROE", "tel. 29-78-56-546, 200 E MAIN ST PHOENIX AZ 85123"));
-		daoUser.insert(new User(3, "JOHN SMITH", "tel. 44-164-76-389, 795 E DRAGRAM TUCSON AZ 85705"));
-		daoUser.insert(new User(2, "CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102"));
+		daoUser.insert(new User("init", "init"));
+		daoUser.insert(new User("JANE ROE", "tel. 29-78-56-546, 200 E MAIN ST PHOENIX AZ 85123"));
+		daoUser.insert(new User("JOHN SMITH", "tel. 44-164-76-389, 795 E DRAGRAM TUCSON AZ 85705"));
+		daoUser.insert(new User("CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102"));
 
+		StorageDao daoStorage = new StorageDao();
+		daoStorage.insert(new Storage(1, "0", "init"));
+		daoStorage.insert(new Storage(4, "2", "double"));
+		daoStorage.insert(new Storage(3, "1a", "standard"));
+		daoStorage.insert(new Storage(2, "1b", "small"));
+		
 		RentDao daoRent = new RentDao();
 		daoRent.insert(new Rent(2, stringToDate("18-11-2017", "dd-MM-yyyy"), stringToDate("01-01-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "45325"));
 		daoRent.insert(new Rent(4, stringToDate("19-11-2017", "dd-MM-yyyy"), stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(40.00), "67567"));

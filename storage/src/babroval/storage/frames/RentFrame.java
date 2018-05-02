@@ -242,7 +242,7 @@ class RentFrame extends JFrame {
 							+ " FROM rent, storage, user"
 							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
 							+ "' AND rent.storage_id=storage.storage_id"
-							+ " AND user.storage_id=storage.storage_id")) {
+							+ " AND storage.user_id=user.user_id")) {
 
 				while (rs.next()) {
 

@@ -279,11 +279,11 @@ public class ElectricFrame extends JFrame {
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery(
-							  "SELECT user.name, MAX(electric.meter_paid), electric.tariff"
+							  "SELECT MAX(electric.meter_paid), user.name, electric.tariff"
 							+ " FROM electric, storage, user"
-							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
-							+ "' AND electric.storage_id=storage.storage_id"
-							+ " AND user.storage_id=storage.storage_id")) {
+							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()+ "'"
+							+ " AND electric.storage_id=storage.storage_id"
+							+ " AND storage.user_id=user.user_id")) {
 
 				while (rs.next()) {
 

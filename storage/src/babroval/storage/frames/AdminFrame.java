@@ -28,9 +28,11 @@ import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.ElectricDao;
 import babroval.storage.dao.RentDao;
+import babroval.storage.dao.StorageDao;
 import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Electric;
 import babroval.storage.entity.Rent;
+import babroval.storage.entity.Storage;
 import babroval.storage.entity.User;
 import babroval.storage.mysql.ConnectionPool;
 
@@ -98,8 +100,11 @@ public class AdminFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number" + " FROM storage"
-						+ " WHERE storage.storage_number!=0" + " ORDER BY storage.storage_number")) {
+				ResultSet rs = st.executeQuery(
+						"SELECT storage.storage_number"
+				     + " FROM storage"
+				     + " WHERE storage.storage_id!=1"
+				     + " ORDER BY storage.storage_number")) {
 
 			comboNum.addItem("");
 			comboNumEdit.addItem("");
@@ -113,7 +118,11 @@ public class AdminFrame extends JFrame {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT user.name" + " FROM user" + " ORDER BY user.name")) {
+				ResultSet rs = st.executeQuery(
+						   "SELECT user.name"
+						+ " FROM user"
+						+ " WHERE user.user_id!=1"
+						+ " ORDER BY user.name")) {
 
 			comboUserEdit.addItem("");
 			while (rs.next()) {
@@ -166,7 +175,7 @@ public class AdminFrame extends JFrame {
 		quart3.setBounds(660, 10, 35, 20);
 		quart4.setBounds(692, 10, 40, 20);
 		comboYear.setBounds(732, 10, 60, 20);
-		rentDebtors.setBounds(800, 10, 95, 20);
+		rentDebtors.setBounds(800, 10, 110, 20);
 		scroll.setBounds(20, 40, 950, 390);
 		comboEdit.setBounds(30, 450, 160, 20);
 		add.setBounds(205, 450, 110, 20);
@@ -293,7 +302,7 @@ public class AdminFrame extends JFrame {
 					editPrihodOrder.setEnabled(false);
 
 					showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-							+ " WHERE storage.storage_id=user.storage_id"
+							+ " WHERE storage.user_id=user.user_id"
 							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number");
 				}
 			}
@@ -313,7 +322,7 @@ public class AdminFrame extends JFrame {
 
 				showTable("SELECT rent.date, rent.quarter_paid, rent.sum, rent.info" + " FROM storage, rent"
 						+ " WHERE storage.storage_id=rent.storage_id" + " AND storage.storage_number='"
-						+ comboNum.getSelectedItem() + "'" + " AND rent.date!=0" + " ORDER BY rent.date DESC");
+						+ comboNum.getSelectedItem() + "'" + " AND rent.date!=0" + " ORDER BY rent.quarter_paid DESC");
 			}
 		});
 
@@ -323,7 +332,7 @@ public class AdminFrame extends JFrame {
 
 				itemWrite.setEnabled(true);
 				showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-						+ " WHERE storage.storage_id=user.storage_id" + " AND storage.storage_number!=0"
+						+ " WHERE storage.user_id=user.user_id" + " AND storage.storage_number!=0"
 						+ " ORDER BY user.name");
 			}
 		});
@@ -349,8 +358,10 @@ public class AdminFrame extends JFrame {
 						throw new NumberFormatException();
 
 					showTable("SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
-							+ " FROM storage, user, rent" + " WHERE rent.storage_id=storage.storage_id"
-							+ " AND user.storage_id=storage.storage_id" + " GROUP BY storage.storage_id"
+							+ " FROM storage, user, rent" 
+							+ " WHERE rent.storage_id=storage.storage_id"
+							+ " AND storage.user_id=user.user_id" 
+							+ " GROUP BY storage.storage_id"
 							+ " HAVING MAX(rent.quarter_paid)<'" + comboYear.getSelectedItem() + "-" + quarter + "-01"
 							+ "'" + " ORDER BY rent.quarter_paid ASC");
 
@@ -402,8 +413,6 @@ public class AdminFrame extends JFrame {
 					comboUserEdit.setVisible(true);
 					editPrihodOrder.setEnabled(false);
 					panel.updateUI();
-					// showUserTable();
-
 				}
 
 			}
@@ -413,15 +422,25 @@ public class AdminFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				
+				if (comboNumEdit.getSelectedIndex() == 0) {
+					 comboUserEdit.setSelectedIndex(0);
+				}
 				try (Connection cn = ConnectionPool.getPool().getConnection();
 						Statement st = cn.createStatement();
 						ResultSet rs = st.executeQuery(
-								"SELECT user.name" + " FROM user, storage" + " WHERE user.storage_id=storage.storage_id"
-										+ " AND storage.storage_number='" + comboNumEdit.getSelectedItem() + "'")) {
-					if (rs.next()) {
-						comboUserEdit.setSelectedItem(rs.getString(1));
-					} else {
-						comboUserEdit.setSelectedIndex(0);
+								"SELECT user.user_id, user.name"
+						     + " FROM user, storage"
+							 + " WHERE storage.user_id=user.user_id"
+							 + " AND storage.storage_number='" + comboNumEdit.getSelectedItem() + "'")) {
+					
+					while (rs.next())  {
+						
+						if(rs.getString(1).equals("1")) {
+							comboUserEdit.setSelectedIndex(0);
+						}else {
+							comboUserEdit.setSelectedItem(rs.getString(2));
+						}
 					}
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
@@ -450,7 +469,7 @@ public class AdminFrame extends JFrame {
 						UserDao daoUser = new UserDao();
 						daoUser.insert(new User(1, "", ""));
 
-						showUserTable();
+					//	showUserTable();
 
 						JOptionPane.showMessageDialog(panel, "Please, enter tenant's name on the empty line");
 					}
@@ -476,13 +495,15 @@ public class AdminFrame extends JFrame {
 					String userName = "";
 					try (Connection cn = ConnectionPool.getPool().getConnection();
 							Statement st = cn.createStatement();
-							ResultSet rs = st.executeQuery("SELECT user.name, user.user_id" + " FROM storage, user"
-									+ " WHERE storage.storage_number='" + comboNumEdit.getSelectedItem() + "'"
-									+ " AND user.storage_id=storage.storage_id")) {
+							ResultSet rs = st.executeQuery(
+									"SELECT storage.storage_id, user.name"
+								 + " FROM storage, user"
+								 + " WHERE storage.storage_number='" + comboNumEdit.getSelectedItem() + "'"
+								 + " AND storage.user_id=user.user_id")) {
 
 						while (rs.next()) {
-							userName = rs.getString(1);
-							userId = Integer.valueOf(rs.getString(2));
+							storageId = Integer.valueOf(rs.getString(1));
+							userName = rs.getString(2);
 						}
 					} catch (Exception e) {
 						throw new RuntimeException(e);
@@ -492,21 +513,23 @@ public class AdminFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					UserDao daoUser = new UserDao();
-					if (userId != 0) {
-						daoUser.detachStorage(new User(userId, 1));
+					StorageDao daoStorage = new StorageDao();
+					if (storageId != 0) {
+						daoStorage.assignUser(new Storage(storageId, 1));
 					}
 
 					try (Connection cn = ConnectionPool.getPool().getConnection();
 							Statement st = cn.createStatement();
-							ResultSet rs = st.executeQuery("SELECT storage.storage_id" + " FROM storage"
-									+ " WHERE storage.storage_number='" + comboNumEdit.getSelectedItem() + "'")) {
+							ResultSet rs = st.executeQuery(
+									"SELECT user.user_id"
+								 + " FROM user"
+								 + " WHERE user.name='" + comboUserEdit.getSelectedItem() + "'")) {
 
 						while (rs.next()) {
-							storageId = Integer.valueOf(rs.getString(1));
+							userId = Integer.valueOf(rs.getString(1));
 						}
 
-						daoUser.update(new User(storageId, comboUserEdit.getSelectedItem().toString()));
+						daoStorage.assignUser(new Storage(storageId, userId));
 
 						JOptionPane.showMessageDialog(panel, "Tenant has been successfully saved");
 					}
@@ -580,29 +603,6 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
-		editPrihodOrder.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					// updating info
-					// RentDao daoOrder = new RentDao();
-					// daoOrder.updateInfo(new Rent(
-					// Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(),
-					// 0).toString()),
-					// tableUsers.getValueAt(tableUsers.getSelectedRow(), 9).toString()));
-					showTable(
-							"SELECT orders.order_id, users.number_storage, orders.date, orders.summ, orders.quarter1, orders.quarter2, orders.quarter3, orders.quarter4, orders.year, orders.info"
-									+ " FROM users, orders WHERE orders.storage_id=users.storage_id AND orders.date!=0 ORDER BY orders.date ASC");
-					JOptionPane.showMessageDialog(panel, "Receipt order has been saved");
-
-				} catch (ArrayIndexOutOfBoundsException ex) {
-					JOptionPane.showMessageDialog(panel, "select receipt order", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-		});
-
 		comboPayment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -632,11 +632,6 @@ public class AdminFrame extends JFrame {
 			}
 		});
 
-	}
-
-	protected void showUserTable() {
-		showTable("SELECT storage.storage_number, user.name, user.info" + " FROM user, storage"
-				+ " WHERE user.storage_id=storage.storage_id" + " ORDER BY user.name");
 	}
 
 	protected void showRentTable() {

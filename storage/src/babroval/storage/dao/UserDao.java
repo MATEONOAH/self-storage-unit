@@ -18,12 +18,11 @@ public class UserDao implements Dao<User> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
 						"insert into " + ob.getClass().getSimpleName() 
-						+ " (storage_id, name, info)"
-						+ " values (?,?,?)")) {
+						+ " (name, info)"
+						+ " values (?,?)")) {
 
-			ps.setInt(1, ob.getStorage_id());
-			ps.setString(2, ob.getName());
-			ps.setString(3, ob.getInfo());
+			ps.setString(1, ob.getName());
+			ps.setString(2, ob.getInfo());
 			ps.execute();
 
 		} catch (SQLException e) {
@@ -36,25 +35,11 @@ public class UserDao implements Dao<User> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
 						"update " + ob.getClass().getSimpleName() 
-						+ " set storage_id=?"
-						+ " where name = '"+ ob.getName() +"'")) {
+						+ " set name=?, info=?"
+						+ " where user_id = '"+ ob.getUser_id() +"'")) {
 			
-			ps.setInt(1, ob.getStorage_id());
-			ps.execute();
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void detachStorage(User ob) {
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				PreparedStatement ps = (PreparedStatement) cn.prepareStatement(
-						"update " + ob.getClass().getSimpleName() 
-						+ " set storage_id=?"
-						+ " where user_id ="+ ob.getUser_id())) {
-			
-			ps.setInt(1, ob.getStorage_id());
+			ps.setString(1, ob.getName());
+			ps.setString(2, ob.getInfo());
 			ps.execute();
 
 		} catch (SQLException e) {

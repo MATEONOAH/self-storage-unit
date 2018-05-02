@@ -4,6 +4,7 @@ package babroval.storage.entity;
 public class Storage {
 	
 	private Integer storage_id;
+	private Integer user_id;
 	private String storage_number;
 	private String info;
 
@@ -14,13 +15,25 @@ public class Storage {
 		this.storage_id = storage_id;
 	}
 
+	public Storage(Integer storage_id, Integer user_id) {
+		this.storage_id = storage_id;
+		this.user_id = user_id;
+	}
+
 	public Storage(String storage_number, String info) {
 		this.storage_number = storage_number;
 		this.info = info;
 	}
 
-	public Storage(Integer storage_id, String storage_number, String info) {
+	public Storage(Integer user_id, String storage_number, String info) {
+		this.user_id = user_id;
+		this.storage_number = storage_number;
+		this.info = info;
+	}
+
+	public Storage(Integer storage_id, Integer user_id, String storage_number, String info) {
 		this.storage_id = storage_id;
+		this.user_id = user_id;
 		this.storage_number = storage_number;
 		this.info = info;
 	}
@@ -31,6 +44,14 @@ public class Storage {
 
 	public void setStorage_id(Integer storage_id) {
 		this.storage_id = storage_id;
+	}
+
+	public Integer getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(Integer user_id) {
+		this.user_id = user_id;
 	}
 
 	public String getStorage_number() {
@@ -56,6 +77,7 @@ public class Storage {
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result + ((storage_id == null) ? 0 : storage_id.hashCode());
 		result = prime * result + ((storage_number == null) ? 0 : storage_number.hashCode());
+		result = prime * result + ((user_id == null) ? 0 : user_id.hashCode());
 		return result;
 	}
 
@@ -83,12 +105,18 @@ public class Storage {
 				return false;
 		} else if (!storage_number.equals(other.storage_number))
 			return false;
+		if (user_id == null) {
+			if (other.user_id != null)
+				return false;
+		} else if (!user_id.equals(other.user_id))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Storage [storage_id=" + storage_id + ", storage_number=" + storage_number + ", info=" + info + "]";
+		return "Storage [storage_id=" + storage_id + ", user_id=" + user_id + ", storage_number=" + storage_number
+				+ ", info=" + info + "]";
 	}
 
 }
