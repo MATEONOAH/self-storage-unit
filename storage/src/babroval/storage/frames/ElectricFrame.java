@@ -279,17 +279,22 @@ public class ElectricFrame extends JFrame {
 			try (Connection cn = ConnectionPool.getPool().getConnection();
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery(
-							  "SELECT MAX(electric.meter_paid), user.name, electric.tariff"
-							+ " FROM electric, storage, user"
-							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()+ "'"
-							+ " AND electric.storage_id=storage.storage_id"
-							+ " AND storage.user_id=user.user_id")) {
+						"SELECT user.name, f.storage_id, f.meter_paid, f.tariff"
+					 + " FROM storage, user, electric AS f"
+					 		+ " INNER JOIN (SELECT storage_id, MAX(meter_paid) AS maxmeter"
+					 					+ " FROM electric"
+					 					+ " GROUP BY storage_id) AS temp"
+					 		+ " ON f.storage_id=temp.storage_id"
+					 		+ " AND f.meter_paid=temp.maxmeter"
+					+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()+ "'"
+					+ " AND f.storage_id=storage.storage_id"
+					+ " AND storage.user_id=user.user_id")) {
 
+				InitDB.showResultSet(rs);
 				while (rs.next()) {
-
 					tfName.setText(rs.getString(1));
-					tfIndicationLastPaid.setText(rs.getString(2));
-					tfTariff.setText(rs.getString(3));
+					tfIndicationLastPaid.setText(rs.getString(3));
+					tfTariff.setText(rs.getString(4));
 				}
 
 				tfTariff.setEnabled(true);
