@@ -44,9 +44,9 @@ public class AdminFrame extends JFrame {
 	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear, comboNumEdit, comboUserEdit;
 	private JLabel labelComboNum, labelQuarts, labelNumber, labelName;
 	private JScrollPane scroll;
-	private JButton add, delete, save, editPrihodOrder, sortFamily, rentDebtors;
-	private JCheckBox quart1, quart2, quart3, quart4;
-	private ButtonGroup group;
+	private JButton add, delete, save, sortFamily, rentDebtors;
+	private JCheckBox quart1, quart2, quart3, quart4, editStorage, addStorage, deleteStorage, editUser, addUser;
+	private ButtonGroup groupQuarter, groupStorage;
 	private TableStorage tableUsers;
 	private JMenuBar menuBar;
 	private JMenuItem itemWrite, itemAbout, itemExit;
@@ -137,35 +137,30 @@ public class AdminFrame extends JFrame {
 		add = new JButton("Add");
 		save = new JButton("Save");
 		delete = new JButton("Delete");
-		editPrihodOrder = new JButton("Save receipt order");
-
-		sortFamily.setVisible(false);
-		add.setEnabled(false);
-		save.setEnabled(false);
-		delete.setEnabled(false);
-		editPrihodOrder.setEnabled(false);
-		itemWrite.setEnabled(false);
-		labelNumber.setVisible(false);
-		comboNumEdit.setVisible(false);
-		labelName.setVisible(false);
-		comboUserEdit.setVisible(false);
 
 		labelQuarts = new JLabel("Quarters of the year");
 		quart1 = new JCheckBox("I");
 		quart2 = new JCheckBox("II");
 		quart3 = new JCheckBox("III");
 		quart4 = new JCheckBox("IV");
-		group = new ButtonGroup();
+		groupQuarter = new ButtonGroup();
 
 		rentDebtors = new JButton("Rent debtors");
-
+		
+		editStorage = new JCheckBox("Edit storage");
+		addStorage = new JCheckBox("Add storage");
+		deleteStorage = new JCheckBox("Delete storage");
+		editUser = new JCheckBox("Edit tenant");
+		addUser = new JCheckBox("Add tenant");
+		groupStorage = new ButtonGroup();
+		
 		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 		int i = Integer.parseInt(sdf.format(today));
 		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
-
+		
 		comboRead.setBounds(30, 10, 160, 20);
 		labelComboNum.setBounds(200, 10, 150, 20);
 		comboNum.setBounds(352, 10, 70, 20);
@@ -181,17 +176,43 @@ public class AdminFrame extends JFrame {
 		add.setBounds(205, 450, 110, 20);
 		save.setBounds(325, 450, 110, 20);
 		delete.setBounds(445, 450, 110, 20);
-		editPrihodOrder.setBounds(565, 450, 110, 20);
 		comboPayment.setBounds(695, 450, 130, 20);
 		labelNumber.setBounds(30, 80, 160, 20);
 		comboNumEdit.setBounds(30, 100, 160, 20);
+		editStorage.setBounds(30, 130, 100, 20);
+		addStorage.setBounds(30, 160, 100, 20);
+		deleteStorage.setBounds(30, 190, 120, 20);
 		labelName.setBounds(200, 80, 160, 20);
 		comboUserEdit.setBounds(200, 100, 600, 20);
+		editUser.setBounds(200, 130, 100, 20);
+		addUser.setBounds(200, 160, 100, 20);
 
-		group.add(quart1);
-		group.add(quart2);
-		group.add(quart3);
-		group.add(quart4);
+		groupQuarter.add(quart1);
+		groupQuarter.add(quart2);
+		groupQuarter.add(quart3);
+		groupQuarter.add(quart4);
+		
+		groupStorage.add(editStorage);
+		groupStorage.add(addStorage);
+		groupStorage.add(deleteStorage);
+		groupStorage.add(editUser);
+		groupStorage.add(addUser);
+		
+		sortFamily.setVisible(false);
+		add.setEnabled(false);
+		save.setEnabled(false);
+		delete.setEnabled(false);
+		itemWrite.setEnabled(false);
+		labelNumber.setVisible(false);
+		comboNumEdit.setVisible(false);
+		labelName.setVisible(false);
+		comboUserEdit.setVisible(false);
+		editStorage.setVisible(false);
+		addStorage.setVisible(false);
+		deleteStorage.setVisible(false);
+		editUser.setVisible(false);
+		addUser.setVisible(false);
+		
 
 		panel.add(comboRead);
 		panel.add(labelComboNum);
@@ -208,12 +229,16 @@ public class AdminFrame extends JFrame {
 		panel.add(add);
 		panel.add(save);
 		panel.add(delete);
-		panel.add(editPrihodOrder);
 		panel.add(comboPayment);
 		panel.add(labelNumber);
 		panel.add(comboNumEdit);
 		panel.add(labelName);
 		panel.add(comboUserEdit);
+		panel.add(editStorage);
+		panel.add(addStorage);
+		panel.add(deleteStorage);
+		panel.add(editUser);
+		panel.add(addUser);
 
 		add(panel);
 	}
@@ -272,26 +297,22 @@ public class AdminFrame extends JFrame {
 				add.setEnabled(false);
 				save.setEnabled(false);
 				delete.setEnabled(false);
-				editPrihodOrder.setEnabled(false);
 
 				if (comboRead.getSelectedIndex() == 0) {
 					sortFamily.setVisible(false);
-					editPrihodOrder.setEnabled(false);
 					panel.remove(scroll);
 					panel.updateUI();
 				}
 				if (comboRead.getSelectedIndex() == 1) {
 
 					sortFamily.setVisible(false);
-					editPrihodOrder.setEnabled(true);
 					showTable("SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
 							+ " FROM storage, rent" + " WHERE storage.storage_id=rent.storage_id "
 							+ " AND rent.date!=0 ORDER BY rent.rent_id DESC");
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
-					editPrihodOrder.setEnabled(false);
-					showTable(
+				    showTable(
 							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
 									+ " FROM storage, electric" + " WHERE storage.storage_id=electric.storage_id"
 									+ " AND electric.date!=0 ORDER BY electric.electric_id DESC");
@@ -299,9 +320,7 @@ public class AdminFrame extends JFrame {
 				if (comboRead.getSelectedIndex() == 3) {
 
 					sortFamily.setVisible(true);
-					editPrihodOrder.setEnabled(false);
-
-					showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
+			    	showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
 							+ " WHERE storage.user_id=user.user_id"
 							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number");
 				}
@@ -318,8 +337,7 @@ public class AdminFrame extends JFrame {
 				add.setEnabled(false);
 				save.setEnabled(false);
 				delete.setEnabled(false);
-				editPrihodOrder.setEnabled(false);
-
+			
 				showTable("SELECT rent.date, rent.quarter_paid, rent.sum, rent.info" + " FROM storage, rent"
 						+ " WHERE storage.storage_id=rent.storage_id" + " AND storage.storage_number='"
 						+ comboNum.getSelectedItem() + "'" + " AND rent.date!=0" + " ORDER BY rent.quarter_paid DESC");
@@ -341,7 +359,6 @@ public class AdminFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
-				editPrihodOrder.setEnabled(false);
 				panel.remove(scroll);
 
 				try {
@@ -383,8 +400,7 @@ public class AdminFrame extends JFrame {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(false);
-					editPrihodOrder.setEnabled(false);
-
+			
 					panel.remove(scroll);
 					panel.updateUI();
 				}
@@ -392,14 +408,14 @@ public class AdminFrame extends JFrame {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(true);
-					editPrihodOrder.setEnabled(false);
+
 					showRentTable();
 				}
 				if (comboEdit.getSelectedIndex() == 2) {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(true);
-					editPrihodOrder.setEnabled(false);
+		
 					showElectricTable();
 				}
 				if (comboEdit.getSelectedIndex() == 3) {
@@ -411,7 +427,12 @@ public class AdminFrame extends JFrame {
 					comboNumEdit.setVisible(true);
 					labelName.setVisible(true);
 					comboUserEdit.setVisible(true);
-					editPrihodOrder.setEnabled(false);
+					editStorage.setVisible(true);
+					addStorage.setVisible(true);
+					deleteStorage.setVisible(true);
+					editUser.setVisible(true);
+					addUser.setVisible(true);
+					
 					panel.updateUI();
 				}
 
@@ -653,6 +674,11 @@ public class AdminFrame extends JFrame {
 		comboNumEdit.setVisible(false);
 		labelName.setVisible(false);
 		comboUserEdit.setVisible(false);
+		editStorage.setVisible(false);
+		addStorage.setVisible(false);
+		deleteStorage.setVisible(false);
+		editUser.setVisible(false);
+		addUser.setVisible(false);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
