@@ -290,7 +290,6 @@ public class ElectricFrame extends JFrame {
 					+ " AND f.storage_id=storage.storage_id"
 					+ " AND storage.user_id=user.user_id")) {
 
-				InitDB.showResultSet(rs);
 				while (rs.next()) {
 					tfName.setText(rs.getString(1));
 					tfIndicationLastPaid.setText(rs.getString(3));

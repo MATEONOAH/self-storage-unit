@@ -15,6 +15,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.ElectricDao;
@@ -42,7 +44,9 @@ public class AdminFrame extends JFrame {
 
 	private JPanel panel;
 	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear, comboNumEdit, comboUserEdit;
-	private JLabel labelComboNum, labelQuarts, labelNumber, labelName;
+	private JLabel labelComboNum, labelQuarts, labelNumber, labelName,
+				labelNewUserName, labelNewUserInfo, labelNewStorageNum, labelNewStorageInfo;
+	private JTextField tfUserName, tfUserInfo, tfStorageNum, tfStorageInfo;
 	private JScrollPane scroll;
 	private JButton add, delete, save, sortFamily, rentDebtors;
 	private JCheckBox quart1, quart2, quart3, quart4, editStorage, addStorage, deleteStorage, editUser, addUser;
@@ -56,6 +60,7 @@ public class AdminFrame extends JFrame {
 	private String[] selectEdit = { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
 	private String[] selectPayment = { "select payment:", "RENT", "ELECTRYCITY" };
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
+
 
 	public AdminFrame() {
 		setSize(995, 550);
@@ -80,16 +85,23 @@ public class AdminFrame extends JFrame {
 		itemWrite = new JMenuItem("Save as *.xls");
 		itemAbout = new JMenuItem("About");
 
-		file.add(itemWrite);
-		file.add(itemExit);
-		about.add(itemAbout);
-		menuBar.add(file);
-		menuBar.add(about);
-		setJMenuBar(menuBar);
-
-		comboRead = new JComboBox<String>(selectRead);
+    	comboRead = new JComboBox<String>(selectRead);
 		comboEdit = new JComboBox<String>(selectEdit);
 		comboPayment = new JComboBox<String>(selectPayment);
+		
+		sortFamily = new JButton("Sort by last name");
+		scroll = new JScrollPane(tableUsers);
+		add = new JButton("Add");
+		save = new JButton("Save");
+		delete = new JButton("Delete");
+		
+		labelQuarts = new JLabel("Quarters of the year");
+		quart1 = new JCheckBox("I");
+		quart2 = new JCheckBox("II");
+		quart3 = new JCheckBox("III");
+		quart4 = new JCheckBox("IV");
+		groupQuarter = new ButtonGroup();
+		rentDebtors = new JButton("Rent debtors");
 
 		labelComboNum = new JLabel("Rent payment for storage:");
 		comboNum = new JComboBox<String>();
@@ -97,7 +109,29 @@ public class AdminFrame extends JFrame {
 		comboNumEdit = new JComboBox<String>();
 		labelName = new JLabel("Select tenant:");
 		comboUserEdit = new JComboBox<String>();
-
+		
+		editStorage = new JCheckBox("Edit storage");
+		addStorage = new JCheckBox("Add storage");
+		deleteStorage = new JCheckBox("Delete storage");
+		editUser = new JCheckBox("Edit tenant");
+		addUser = new JCheckBox("Add tenant");
+		groupStorage = new ButtonGroup();
+		labelNewStorageNum = new JLabel("Number of storage:");
+		tfStorageNum = new JTextField(150);
+		labelNewStorageInfo = new JLabel("Additional information of storage:");
+		tfStorageInfo = new JTextField(300);
+		labelNewUserName = new JLabel("Name of tenant:");
+		tfUserName = new JTextField(150);
+		labelNewUserInfo = new JLabel("Personal information of tenant:");
+		tfUserInfo = new JTextField(300);
+		
+		Date today = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+		int i = Integer.parseInt(sdf.format(today));
+		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
+		comboYear = new JComboBox<String>(year);
+		comboYear.setSelectedIndex(1);
+		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
 				ResultSet rs = st.executeQuery(
@@ -131,35 +165,29 @@ public class AdminFrame extends JFrame {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
-
-		sortFamily = new JButton("Sort by last name");
-		scroll = new JScrollPane(tableUsers);
-		add = new JButton("Add");
-		save = new JButton("Save");
-		delete = new JButton("Delete");
-
-		labelQuarts = new JLabel("Quarters of the year");
-		quart1 = new JCheckBox("I");
-		quart2 = new JCheckBox("II");
-		quart3 = new JCheckBox("III");
-		quart4 = new JCheckBox("IV");
-		groupQuarter = new ButtonGroup();
-
-		rentDebtors = new JButton("Rent debtors");
 		
-		editStorage = new JCheckBox("Edit storage");
-		addStorage = new JCheckBox("Add storage");
-		deleteStorage = new JCheckBox("Delete storage");
-		editUser = new JCheckBox("Edit tenant");
-		addUser = new JCheckBox("Add tenant");
-		groupStorage = new ButtonGroup();
-		
-		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-		int i = Integer.parseInt(sdf.format(today));
-		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
-		comboYear = new JComboBox<String>(year);
-		comboYear.setSelectedIndex(1);
+		sortFamily.setVisible(false);
+		add.setEnabled(false);
+		save.setEnabled(false);
+		delete.setEnabled(false);
+		itemWrite.setEnabled(false);
+		labelNumber.setVisible(false);
+		comboNumEdit.setVisible(false);
+		labelName.setVisible(false);
+		comboUserEdit.setVisible(false);
+		editStorage.setVisible(false);
+		addStorage.setVisible(false);
+		deleteStorage.setVisible(false);
+		editUser.setVisible(false);
+		addUser.setVisible(false);
+		labelNewStorageNum.setVisible(false);
+		tfStorageNum.setVisible(false);
+		labelNewStorageInfo.setVisible(false);
+		tfStorageInfo.setVisible(false);
+		tfUserName.setVisible(false);
+		labelNewUserName.setVisible(false);
+		tfUserInfo.setVisible(false);
+		labelNewUserInfo.setVisible(false);
 		
 		comboRead.setBounds(30, 10, 160, 20);
 		labelComboNum.setBounds(200, 10, 150, 20);
@@ -178,14 +206,29 @@ public class AdminFrame extends JFrame {
 		delete.setBounds(445, 450, 110, 20);
 		comboPayment.setBounds(695, 450, 130, 20);
 		labelNumber.setBounds(30, 80, 160, 20);
-		comboNumEdit.setBounds(30, 100, 160, 20);
+		comboNumEdit.setBounds(30, 100, 200, 20);
 		editStorage.setBounds(30, 130, 100, 20);
 		addStorage.setBounds(30, 160, 100, 20);
-		deleteStorage.setBounds(30, 190, 120, 20);
-		labelName.setBounds(200, 80, 160, 20);
-		comboUserEdit.setBounds(200, 100, 600, 20);
-		editUser.setBounds(200, 130, 100, 20);
-		addUser.setBounds(200, 160, 100, 20);
+		labelNewStorageNum.setBounds(30, 190, 200, 20);
+		tfStorageNum.setBounds(30, 210, 200, 20);
+		labelNewStorageInfo.setBounds(30, 250, 200, 20);
+		tfStorageInfo.setBounds(30, 270, 200, 20);
+		deleteStorage.setBounds(30, 310, 120, 20);
+		labelName.setBounds(300, 80, 160, 20);
+		comboUserEdit.setBounds(300, 100, 400, 20);
+		editUser.setBounds(300, 130, 100, 20);
+		addUser.setBounds(300, 160, 100, 20);
+		labelNewUserName.setBounds(300, 190, 100, 20);
+		tfUserName.setBounds(300, 210, 300, 20);
+		labelNewUserInfo.setBounds(300, 250, 200, 20);
+		tfUserInfo.setBounds(300, 270, 400, 20);
+		
+		file.add(itemWrite);
+		file.add(itemExit);
+		about.add(itemAbout);
+		menuBar.add(file);
+		menuBar.add(about);
+		setJMenuBar(menuBar);
 
 		groupQuarter.add(quart1);
 		groupQuarter.add(quart2);
@@ -198,22 +241,6 @@ public class AdminFrame extends JFrame {
 		groupStorage.add(editUser);
 		groupStorage.add(addUser);
 		
-		sortFamily.setVisible(false);
-		add.setEnabled(false);
-		save.setEnabled(false);
-		delete.setEnabled(false);
-		itemWrite.setEnabled(false);
-		labelNumber.setVisible(false);
-		comboNumEdit.setVisible(false);
-		labelName.setVisible(false);
-		comboUserEdit.setVisible(false);
-		editStorage.setVisible(false);
-		addStorage.setVisible(false);
-		deleteStorage.setVisible(false);
-		editUser.setVisible(false);
-		addUser.setVisible(false);
-		
-
 		panel.add(comboRead);
 		panel.add(labelComboNum);
 		panel.add(comboNum);
@@ -239,6 +266,14 @@ public class AdminFrame extends JFrame {
 		panel.add(deleteStorage);
 		panel.add(editUser);
 		panel.add(addUser);
+		panel.add(labelNewStorageNum);
+		panel.add(tfStorageNum);
+		panel.add(labelNewStorageInfo);
+		panel.add(tfStorageInfo);
+		panel.add(labelNewUserName);
+		panel.add(tfUserName);
+		panel.add(labelNewUserInfo);
+		panel.add(tfUserInfo);
 
 		add(panel);
 	}
@@ -432,6 +467,14 @@ public class AdminFrame extends JFrame {
 					deleteStorage.setVisible(true);
 					editUser.setVisible(true);
 					addUser.setVisible(true);
+					labelNewStorageNum.setVisible(true);
+					tfStorageNum.setVisible(true);
+					labelNewStorageInfo.setVisible(true);
+					tfStorageInfo.setVisible(true);
+					tfUserName.setVisible(true);
+					labelNewUserName.setVisible(true);
+					tfUserInfo.setVisible(true);
+					labelNewUserInfo.setVisible(true);
 					
 					panel.updateUI();
 				}
@@ -679,6 +722,14 @@ public class AdminFrame extends JFrame {
 		deleteStorage.setVisible(false);
 		editUser.setVisible(false);
 		addUser.setVisible(false);
+		labelNewStorageNum.setVisible(false);
+		tfStorageNum.setVisible(false);
+		labelNewStorageInfo.setVisible(false);
+		tfStorageInfo.setVisible(false);
+		tfUserName.setVisible(false);
+		labelNewUserName.setVisible(false);
+		tfUserInfo.setVisible(false);
+		labelNewUserInfo.setVisible(false);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
