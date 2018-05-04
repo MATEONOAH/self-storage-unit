@@ -483,35 +483,57 @@ public class AdminFrame extends JFrame {
 		});
 
 		comboNumEdit.addActionListener(new ActionListener() {
-
+			
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				
+				groupStorage.clearSelection();
+
 				if (comboNumEdit.getSelectedIndex() == 0) {
-					 comboUserEdit.setSelectedIndex(0);
-				}
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st.executeQuery(
-								"SELECT user.user_id, user.name"
-						     + " FROM user, storage"
-							 + " WHERE storage.user_id=user.user_id"
-							 + " AND storage.storage_number='" + comboNumEdit.getSelectedItem() + "'")) {
-					
-					while (rs.next())  {
+					comboUserEdit.setSelectedIndex(0);
+				} else {
+					try {
+						UserDao daoUser = new UserDao();
+						User user = daoUser.loadUserByStorageNumber(comboNumEdit.getSelectedItem().toString());
 						
-						if(rs.getString(1).equals("1")) {
+						if(user.getUser_id().equals("1")) {
 							comboUserEdit.setSelectedIndex(0);
 						}else {
-							comboUserEdit.setSelectedItem(rs.getString(2));
+							comboUserEdit.setSelectedItem(user.getName());
+							tfUserName.setText(user.getName());
+							tfUserInfo.setText(user.getInfo());
 						}
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 					}
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
-
 			}
-
+		});
+				
+		comboUserEdit.addActionListener(new ActionListener() {
+					
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				
+				groupStorage.clearSelection();
+				try {
+				
+					UserDao daoUser = new UserDao();
+					User user = daoUser.loadUserByName(comboUserEdit.getSelectedItem().toString());
+				
+					tfUserName.setText(user.getName());
+					tfUserInfo.setText(user.getInfo());
+	
+    			} catch (NumberFormatException e) {
+    				groupStorage.clearSelection();
+     				JOptionPane.showMessageDialog(panel, "select tenant", "",
+							JOptionPane.ERROR_MESSAGE);
+  				} catch (Exception e) {
+  					groupStorage.clearSelection();
+					JOptionPane.showMessageDialog(panel, "database fault", "",
+							JOptionPane.ERROR_MESSAGE);
+				}				
+			}
 		});
 
 		add.addActionListener(new ActionListener() {
@@ -669,7 +691,7 @@ public class AdminFrame extends JFrame {
 
 		comboPayment.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent ae) {
 
 				comboRead.setSelectedIndex(0);
 				comboEdit.setSelectedIndex(0);
