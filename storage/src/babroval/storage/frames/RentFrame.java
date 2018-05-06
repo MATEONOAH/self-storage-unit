@@ -5,11 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -22,8 +21,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.RentDao;
+import babroval.storage.dao.StorageDao;
+import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Rent;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 class RentFrame extends JFrame {
@@ -37,7 +38,8 @@ class RentFrame extends JFrame {
 	private JCheckBox quart1, quart2, quart3, quart4;
 	private JButton enter, cancel;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
-
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	
 	public RentFrame() {
 		setSize(300, 327);
 		setTitle("Rent payment");
@@ -56,30 +58,24 @@ class RentFrame extends JFrame {
 		labelDate = new JLabel("Date of payment:");
 
 		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		tfDate = new JTextField(sdf.format(today));
 
 		labelNumber = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
 		comboNum.setPreferredSize(new Dimension(50, 20));
+		comboNum.addItem("");
 
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
 
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number" + " FROM storage"
-						+ " WHERE storage.storage_number!=0" + " ORDER BY storage.storage_number ASC")) {
-
-			comboNum.addItem("");
-			while (rs.next()) {
-				comboNum.addItem(rs.getString(1));
-			}
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+		List<String> allStoragesNumbers = new ArrayList<String>();
+		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
+		
+		for(String storageNum : allStoragesNumbers) {
+			comboNum.addItem(storageNum);
 		}
-
+		
 		labelQuarter = new JLabel("Select Quarter of");
 
 		quart1 = new JCheckBox("I");
@@ -140,17 +136,7 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
-				Integer storageId = 0;
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st.executeQuery("SELECT storage.storage_id"
-								+ " FROM storage"
-								+ " WHERE storage.storage_number='" + comboNum.getSelectedItem() + "'")) {
-									
-					while (rs.next()) {
-						storageId = Integer.valueOf(rs.getString(1));
-					}
-
+				try{
 					String quarter = ""; // first month of year quarter
 
 					if (quart1.isEnabled() && quart1.isSelected())
@@ -168,10 +154,9 @@ class RentFrame extends JFrame {
 					if (comboNum.getSelectedIndex() == 0 || quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
-
-					RentDao daoRent = new RentDao();
-					daoRent.insert(new Rent(
-							storageId,
+					
+					new RentDao().insert(new Rent(
+							new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
 							sum,
@@ -235,23 +220,16 @@ class RentFrame extends JFrame {
 			resetFrame();
 		} else {
 			resetFrame();
-			try (Connection cn = ConnectionPool.getPool().getConnection();
-					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery(
-							"SELECT user.name, MAX(rent.quarter_paid)"
-							+ " FROM rent, storage, user"
-							+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()
-							+ "' AND rent.storage_id=storage.storage_id"
-							+ " AND storage.user_id=user.user_id")) {
+			try {
+					Rent rent = new RentDao().loadRentWhereMaxQuarterPaidByStorageNumber((String)comboNum.getSelectedItem());
+					User user = new UserDao().loadUserByStorageNumber((String)comboNum.getSelectedItem());
+					
+					tfName.setText(user.getName());
 
-				while (rs.next()) {
-
-					tfName.setText(rs.getString(1));
-
-					String str = rs.getString(2);
-					Integer year = Integer.valueOf(str.substring(0, 4));
-					Integer quarter = Integer.valueOf(str.substring(5, 7));
-
+					String str = sdf.format(rent.getQuarter_paid());
+					Integer quarter = Integer.valueOf(str.substring(3, 5));
+					Integer year = Integer.valueOf(str.substring(6, 10));
+				
 					switch (quarter) {
 					case 1:
 						quart1.setEnabled(false);
@@ -288,7 +266,7 @@ class RentFrame extends JFrame {
 					tfInf.setEnabled(true);
 					enter.setEnabled(true);
 					cancel.setEnabled(true);
-				}
+				
 			} catch (Exception e) {
 				comboNum.setSelectedIndex(0);
 				resetFrame();

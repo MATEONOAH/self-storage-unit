@@ -3,7 +3,6 @@ package babroval.storage.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import babroval.storage.entity.User;
@@ -74,7 +73,7 @@ public class UserDao implements Dao<User> {
 			ps.setString(2, ob.getInfo());
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -91,7 +90,7 @@ public class UserDao implements Dao<User> {
 			ps.setString(2, ob.getInfo());
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

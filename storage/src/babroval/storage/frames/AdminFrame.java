@@ -15,7 +15,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -493,8 +492,7 @@ public class AdminFrame extends JFrame {
 					comboUserEdit.setSelectedIndex(0);
 				} else {
 					try {
-						UserDao daoUser = new UserDao();
-						User user = daoUser.loadUserByStorageNumber(comboNumEdit.getSelectedItem().toString());
+						User user = new UserDao().loadUserByStorageNumber(comboNumEdit.getSelectedItem().toString());
 						
 						if(user.getUser_id().equals("1")) {
 							comboUserEdit.setSelectedIndex(0);
@@ -601,7 +599,7 @@ public class AdminFrame extends JFrame {
 
 					StorageDao daoStorage = new StorageDao();
 					if (storageId != 0) {
-						daoStorage.assignUser(new Storage(storageId, 1));
+						daoStorage.assignUserToGarage(new Storage(storageId, 1));
 					}
 
 					try (Connection cn = ConnectionPool.getPool().getConnection();
@@ -615,7 +613,7 @@ public class AdminFrame extends JFrame {
 							userId = Integer.valueOf(rs.getString(1));
 						}
 
-						daoStorage.assignUser(new Storage(storageId, userId));
+						daoStorage.assignUserToGarage(new Storage(storageId, userId));
 
 						JOptionPane.showMessageDialog(panel, "Tenant has been successfully saved");
 					}

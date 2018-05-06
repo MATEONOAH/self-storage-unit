@@ -1,8 +1,12 @@
 package babroval.storage.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import babroval.storage.entity.Rent;
 import babroval.storage.mysql.ConnectionPool;
@@ -48,7 +52,7 @@ public class RentDao implements Dao<Rent> {
 			
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -62,9 +66,35 @@ public class RentDao implements Dao<Rent> {
 			
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	public Rent loadRentWhereMaxQuarterPaidByStorageNumber(String number) {
+		
+		Rent rent = new Rent();
+		
+		try(Connection cn = ConnectionPool.getPool().getConnection();
+    			Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(
+					    "SELECT rent.rent_id, rent.storage_id, rent.date,"
+					    		+ " MAX(rent.quarter_paid), rent.sum, rent.info"
+			   	   	 + " FROM rent, storage"
+					 + " WHERE storage.storage_number='" + number + "'"
+					 + " AND rent.storage_id=storage.storage_id")) {
+					 
+			while (rs.next()) {
+				rent.setRent_id(Integer.valueOf(rs.getString(1)));
+				rent.setStorage_id(Integer.valueOf(rs.getString(2)));
+				rent.setDate(Date.valueOf(rs.getString(3)));
+				rent.setQuarter_paid(Date.valueOf(rs.getString(4)));
+				rent.setSum(new BigDecimal(rs.getString(5)));
+				rent.setInfo(rs.getString(6));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return rent;
+	}
 }
