@@ -39,7 +39,7 @@ class RentFrame extends JFrame {
 	private JButton enter, cancel;
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	
+
 	public RentFrame() {
 		setSize(300, 327);
 		setTitle("Rent payment");
@@ -71,11 +71,11 @@ class RentFrame extends JFrame {
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
 		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
-		
-		for(String storageNum : allStoragesNumbers) {
+
+		for (String storageNum : allStoragesNumbers) {
 			comboNum.addItem(storageNum);
 		}
-		
+
 		labelQuarter = new JLabel("Select Quarter of");
 
 		quart1 = new JCheckBox("I");
@@ -136,7 +136,7 @@ class RentFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 
-				try{
+				try {
 					String quarter = ""; // first month of year quarter
 
 					if (quart1.isEnabled() && quart1.isSelected())
@@ -154,13 +154,12 @@ class RentFrame extends JFrame {
 					if (comboNum.getSelectedIndex() == 0 || quarter.equals("")) {
 						throw new NumberFormatException("e");
 					}
-					
-					new RentDao().insert(new Rent(
-							new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
-							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
-							InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
-							sum,
-							tfInf.getText()));
+
+					new RentDao().insert(
+							new Rent(new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
+									InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
+									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"), sum,
+									tfInf.getText()));
 
 					comboNum.setSelectedIndex(0);
 					resetFrame();
@@ -221,52 +220,53 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-					Rent rent = new RentDao().loadRentWhereMaxQuarterPaidByStorageNumber((String)comboNum.getSelectedItem());
-					User user = new UserDao().loadUserByStorageNumber((String)comboNum.getSelectedItem());
-					
-					tfName.setText(user.getName());
+				Rent rent = new RentDao()
+						.loadRentWhereMaxQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
+				User user = new UserDao().loadUserByStorageNumber((String) comboNum.getSelectedItem());
 
-					String str = sdf.format(rent.getQuarter_paid());
-					Integer quarter = Integer.valueOf(str.substring(3, 5));
-					Integer year = Integer.valueOf(str.substring(6, 10));
-				
-					switch (quarter) {
-					case 1:
-						quart1.setEnabled(false);
-						quart1.setSelected(true);
-						quart2.setEnabled(true);
-						quart2.setSelected(false);
-						break;
-					case 4:
-						quart1.setEnabled(false);
-						quart1.setSelected(true);
-						quart2.setEnabled(false);
-						quart2.setSelected(true);
-						quart3.setEnabled(true);
-						quart3.setSelected(false);
-						break;
-					case 7:
-						quart1.setEnabled(false);
-						quart1.setSelected(true);
-						quart2.setEnabled(false);
-						quart2.setSelected(true);
-						quart3.setEnabled(false);
-						quart3.setSelected(true);
-						quart4.setEnabled(true);
-						quart4.setSelected(false);
-						break;
-					case 10:
-						year++;
-						quart1.setEnabled(true);
-						quart1.setSelected(false);
-						break;
-					}
-					labelYear.setText(String.valueOf(year));
-					tfSum.setEnabled(true);
-					tfInf.setEnabled(true);
-					enter.setEnabled(true);
-					cancel.setEnabled(true);
-				
+				tfName.setText(user.getName());
+
+				String str = sdf.format(rent.getQuarter_paid());
+				Integer quarter = Integer.valueOf(str.substring(3, 5));
+				Integer year = Integer.valueOf(str.substring(6, 10));
+
+				switch (quarter) {
+				case 1:
+					quart1.setEnabled(false);
+					quart1.setSelected(true);
+					quart2.setEnabled(true);
+					quart2.setSelected(false);
+					break;
+				case 4:
+					quart1.setEnabled(false);
+					quart1.setSelected(true);
+					quart2.setEnabled(false);
+					quart2.setSelected(true);
+					quart3.setEnabled(true);
+					quart3.setSelected(false);
+					break;
+				case 7:
+					quart1.setEnabled(false);
+					quart1.setSelected(true);
+					quart2.setEnabled(false);
+					quart2.setSelected(true);
+					quart3.setEnabled(false);
+					quart3.setSelected(true);
+					quart4.setEnabled(true);
+					quart4.setSelected(false);
+					break;
+				case 10:
+					year++;
+					quart1.setEnabled(true);
+					quart1.setSelected(false);
+					break;
+				}
+				labelYear.setText(String.valueOf(year));
+				tfSum.setEnabled(true);
+				tfInf.setEnabled(true);
+				enter.setEnabled(true);
+				cancel.setEnabled(true);
+
 			} catch (Exception e) {
 				comboNum.setSelectedIndex(0);
 				resetFrame();

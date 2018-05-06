@@ -92,7 +92,7 @@ public class StorageDao implements Dao<Storage> {
 
 	public Integer loadStorageIdByNumber(String storageNum) {
 		
-		Integer storageId = new Integer(0);
+		Integer storageId = Integer.valueOf(0);
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
