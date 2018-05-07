@@ -10,6 +10,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.ElectricDao;
+import babroval.storage.dao.StorageDao;
 import babroval.storage.entity.Electric;
 import babroval.storage.mysql.ConnectionPool;
 import babroval.storage.mysql.InitDB;
@@ -30,13 +33,12 @@ public class ElectricFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid, labelTariff, labelIndication, labelSum,
-			labelInf;
+	private JLabel labelNum, labelDate, labelName, labelIndicationLastPaid,
+				   labelTariff, labelIndication, labelSum,	labelInf;
 	private JComboBox<String> comboNum, comboSelect;
 	private JTextField tfDate, tfName, tfIndication, tfIndicationLastPaid, tfTariff, tfSum, tfInf;
 	private JButton calculate, enter, cancel;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
-
 	private Integer indication;
 	private BigDecimal tariff, sum;
 
@@ -64,25 +66,17 @@ public class ElectricFrame extends JFrame {
 		labelNum = new JLabel("Select Number of storage:");
 		comboNum = new JComboBox<String>();
 		comboNum.setPreferredSize(new Dimension(50, 20));
+		comboNum.addItem("");
 
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
 
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(
-						"SELECT storage.storage_number"
-						+ " FROM storage"
-						+ " WHERE storage.storage_number!=0"
-						+ " ORDER BY storage.storage_number ASC")) {
+		List<String> allStoragesNumbers = new ArrayList<String>();
+		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
 
-			comboNum.addItem("");
-			while (rs.next()) {
-				comboNum.addItem(rs.getString(1));
-			}
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+		for (String storageNum : allStoragesNumbers) {
+			comboNum.addItem(storageNum);
 		}
 
 		labelIndicationLastPaid = new JLabel("Electric power indication last paid:");
@@ -93,7 +87,8 @@ public class ElectricFrame extends JFrame {
 		tfTariff = new JTextField(20);
 
 		labelIndication = new JLabel(
-				"<html>Enter electric power indication and " + "<br>press button \"Calculate\":</html>");
+			"<html>Enter electric power indication and "
+		  + "<br>press button \"Calculate\":</html>");
 		tfIndication = new JTextField(20);
 
 		calculate = new JButton("Calculate");
@@ -221,23 +216,14 @@ public class ElectricFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				
-				Integer storageId = 0;
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st.executeQuery("SELECT storage.storage_id"
-								+ " FROM storage"
-								+ " WHERE storage.storage_number='" + comboNum.getSelectedItem() + "'")) {
-									
-					while (rs.next()) {
-						storageId = Integer.valueOf(rs.getString(1));
-					}
-
+				try {
+					
 					if (comboNum.getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
-					ElectricDao daoElectric = new ElectricDao();
-					daoElectric.insert(new Electric(
-							storageId,
+					
+					new ElectricDao().insert(new Electric(
+							new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							tariff,
 							indication,
