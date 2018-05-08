@@ -1,8 +1,11 @@
 package babroval.storage.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import babroval.storage.entity.Electric;
 import babroval.storage.mysql.ConnectionPool;
@@ -28,7 +31,7 @@ public class ElectricDao implements Dao<Electric> {
 			ps.setString(6, ob.getInfo());
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -48,9 +51,41 @@ public class ElectricDao implements Dao<Electric> {
 			ps.setString(6, ob.getInfo());
 			ps.execute();
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public Electric loadElectricLastPaidByStorageNumber(String number) {
+		
+		Electric electric = new Electric();
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery(
+						"SELECT f.electric_id, f.storage_id, f.date, f.tariff, f.meter_paid, f.sum, f.info"
+					 + " FROM storage, electric AS f"
+					 		+ " INNER JOIN (SELECT storage_id, MAX(meter_paid) AS maxmeter"
+					 				+ " FROM electric"
+					 				+ " GROUP BY storage_id) AS temp"
+					 		+ " ON f.storage_id = temp.storage_id"
+					 		+ " AND f.meter_paid = temp.maxmeter"
+					 + " WHERE storage.storage_number ='" + number + "'"
+					 + " AND f.storage_id = storage.storage_id")) {
+
+				while (rs.next()) {
+					electric.setElectric_id(Integer.valueOf(rs.getString(1)));
+					electric.setStorage_id(Integer.valueOf(rs.getString(2)));
+					electric.setDate(Date.valueOf(rs.getString(3)));
+					electric.setTariff(new BigDecimal(rs.getString(4)));
+					electric.setMeter_paid(Integer.valueOf(rs.getString(5)));
+					electric.setSum(new BigDecimal(rs.getString(6)));
+					electric.setInfo(rs.getString(7));
+				}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return electric;
 	}
 	
 }

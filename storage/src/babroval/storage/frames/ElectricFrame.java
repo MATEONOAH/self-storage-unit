@@ -5,10 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +21,9 @@ import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.ElectricDao;
 import babroval.storage.dao.StorageDao;
+import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Electric;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
@@ -262,25 +260,15 @@ public class ElectricFrame extends JFrame {
 			resetFrame();
 		} else {
 			resetFrame();
-			try (Connection cn = ConnectionPool.getPool().getConnection();
-					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery(
-						"SELECT user.name, f.storage_id, f.meter_paid, f.tariff"
-					 + " FROM storage, user, electric AS f"
-					 		+ " INNER JOIN (SELECT storage_id, MAX(meter_paid) AS maxmeter"
-					 					+ " FROM electric"
-					 					+ " GROUP BY storage_id) AS temp"
-					 		+ " ON f.storage_id=temp.storage_id"
-					 		+ " AND f.meter_paid=temp.maxmeter"
-					+ " WHERE storage.storage_number='" + comboNum.getSelectedItem()+ "'"
-					+ " AND f.storage_id=storage.storage_id"
-					+ " AND storage.user_id=user.user_id")) {
-
-				while (rs.next()) {
-					tfName.setText(rs.getString(1));
-					tfIndicationLastPaid.setText(rs.getString(3));
-					tfTariff.setText(rs.getString(4));
-				}
+			try {
+				User user = new UserDao()
+						.loadUserByStorageNumber((String) comboNum.getSelectedItem());
+				tfName.setText(user.getName());
+				
+				Electric electric = new ElectricDao()
+						.loadElectricLastPaidByStorageNumber((String) comboNum.getSelectedItem());
+				tfIndicationLastPaid.setText(Integer.toString(electric.getMeter_paid()));
+				tfTariff.setText(electric.getTariff().toString());
 
 				tfTariff.setEnabled(true);
 				tfIndication.setEnabled(true);

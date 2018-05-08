@@ -70,7 +70,7 @@ public class RentDao implements Dao<Rent> {
 		}
 	}
 
-	public Rent loadRentWhereMaxQuarterPaidByStorageNumber(String number) {
+	public Rent loadRentLastPaidByStorageNumber(String number) {
 		
 		Rent rent = new Rent();
 		

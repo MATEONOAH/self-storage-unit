@@ -158,7 +158,8 @@ class RentFrame extends JFrame {
 					new RentDao().insert(
 							new Rent(new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
 									InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
-									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"), sum,
+									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
+									sum,
 									tfInf.getText()));
 
 					comboNum.setSelectedIndex(0);
@@ -220,13 +221,14 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				Rent rent = new RentDao()
-						.loadRentWhereMaxQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
-				User user = new UserDao().loadUserByStorageNumber((String) comboNum.getSelectedItem());
-
+				User user = new UserDao()
+						.loadUserByStorageNumber((String) comboNum.getSelectedItem());
 				tfName.setText(user.getName());
-
+				
+				Rent rent = new RentDao()
+						.loadRentLastPaidByStorageNumber((String) comboNum.getSelectedItem());
 				String str = sdf.format(rent.getQuarter_paid());
+				
 				Integer quarter = Integer.valueOf(str.substring(3, 5));
 				Integer year = Integer.valueOf(str.substring(6, 10));
 
