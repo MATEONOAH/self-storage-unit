@@ -263,7 +263,7 @@ class RentFrame extends JFrame {
 					quart1.setSelected(false);
 					break;
 				}
-				labelYear.setText(Integer.toString(year));
+				labelYear.setText(String.valueOf(year));
 				tfSum.setEnabled(true);
 				tfInf.setEnabled(true);
 				enter.setEnabled(true);
