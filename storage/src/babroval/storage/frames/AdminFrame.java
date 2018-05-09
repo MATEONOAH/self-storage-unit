@@ -10,6 +10,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -43,8 +45,8 @@ public class AdminFrame extends JFrame {
 
 	private JPanel panel;
 	private JComboBox<String> comboRead, comboEdit, comboPayment, comboNum, comboYear, comboNumEdit, comboUserEdit;
-	private JLabel labelComboNum, labelQuarts, labelNumber, labelName,
-				labelNewUserName, labelNewUserInfo, labelNewStorageNum, labelNewStorageInfo;
+	private JLabel labelComboNum, labelQuarts, labelNumber, labelName, labelNewUserName, labelNewUserInfo,
+			labelNewStorageNum, labelNewStorageInfo;
 	private JTextField tfUserName, tfUserInfo, tfStorageNum, tfStorageInfo;
 	private JScrollPane scroll;
 	private JButton add, delete, save, sortFamily, rentDebtors;
@@ -59,7 +61,6 @@ public class AdminFrame extends JFrame {
 	private String[] selectEdit = { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
 	private String[] selectPayment = { "select payment:", "RENT", "ELECTRYCITY" };
 	String columnNames[] = { "Storage number", "Owner", "Private info" };
-
 
 	public AdminFrame() {
 		setSize(995, 550);
@@ -84,16 +85,16 @@ public class AdminFrame extends JFrame {
 		itemWrite = new JMenuItem("Save as *.xls");
 		itemAbout = new JMenuItem("About");
 
-    	comboRead = new JComboBox<String>(selectRead);
+		comboRead = new JComboBox<String>(selectRead);
 		comboEdit = new JComboBox<String>(selectEdit);
 		comboPayment = new JComboBox<String>(selectPayment);
-		
+
 		sortFamily = new JButton("Sort by last name");
 		scroll = new JScrollPane(tableUsers);
 		add = new JButton("Add");
 		save = new JButton("Save");
 		delete = new JButton("Delete");
-		
+
 		labelQuarts = new JLabel("Quarters of the year");
 		quart1 = new JCheckBox("I");
 		quart2 = new JCheckBox("II");
@@ -104,11 +105,14 @@ public class AdminFrame extends JFrame {
 
 		labelComboNum = new JLabel("Rent payment for storage:");
 		comboNum = new JComboBox<String>();
+		comboNum.addItem("");
 		labelNumber = new JLabel("Select number of storage:");
 		comboNumEdit = new JComboBox<String>();
+		comboNumEdit.addItem("");
 		labelName = new JLabel("Select tenant:");
 		comboUserEdit = new JComboBox<String>();
-		
+		comboUserEdit.addItem("");
+
 		editStorage = new JCheckBox("Edit storage");
 		addStorage = new JCheckBox("Add storage");
 		deleteStorage = new JCheckBox("Delete storage");
@@ -123,48 +127,27 @@ public class AdminFrame extends JFrame {
 		tfUserName = new JTextField(150);
 		labelNewUserInfo = new JLabel("Personal information of tenant:");
 		tfUserInfo = new JTextField(300);
-		
+
 		Date today = new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 		int i = Integer.parseInt(sdf.format(today));
 		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
-		
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(
-						"SELECT storage.storage_number"
-				     + " FROM storage"
-				     + " WHERE storage.storage_id!=1"
-				     + " ORDER BY storage.storage_number")) {
 
-			comboNum.addItem("");
-			comboNumEdit.addItem("");
-			while (rs.next()) {
-				comboNum.addItem(rs.getString(1));
-				comboNumEdit.addItem(rs.getString(1));
-			}
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+		List<String> allStoragesNumbers = new ArrayList<String>();
+		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
+		for (String number : allStoragesNumbers) {
+			comboNum.addItem(number);
+			comboNumEdit.addItem(number);
 		}
 
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(
-						   "SELECT user.name"
-						+ " FROM user"
-						+ " WHERE user.user_id!=1"
-						+ " ORDER BY user.name")) {
-
-			comboUserEdit.addItem("");
-			while (rs.next()) {
-				comboUserEdit.addItem(rs.getString(1));
-			}
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+		List<String> allUsersNames = new ArrayList<String>();
+		allUsersNames = new UserDao().loadAllUsersNames();
+		for (String name : allUsersNames) {
+			comboUserEdit.addItem(name);
 		}
-		
+
 		sortFamily.setVisible(false);
 		add.setEnabled(false);
 		save.setEnabled(false);
@@ -187,7 +170,7 @@ public class AdminFrame extends JFrame {
 		labelNewUserName.setVisible(false);
 		tfUserInfo.setVisible(false);
 		labelNewUserInfo.setVisible(false);
-		
+
 		comboRead.setBounds(30, 10, 160, 20);
 		labelComboNum.setBounds(200, 10, 150, 20);
 		comboNum.setBounds(352, 10, 70, 20);
@@ -221,7 +204,7 @@ public class AdminFrame extends JFrame {
 		tfUserName.setBounds(300, 210, 300, 20);
 		labelNewUserInfo.setBounds(300, 250, 200, 20);
 		tfUserInfo.setBounds(300, 270, 400, 20);
-		
+
 		file.add(itemWrite);
 		file.add(itemExit);
 		about.add(itemAbout);
@@ -233,13 +216,13 @@ public class AdminFrame extends JFrame {
 		groupQuarter.add(quart2);
 		groupQuarter.add(quart3);
 		groupQuarter.add(quart4);
-		
+
 		groupStorage.add(editStorage);
 		groupStorage.add(addStorage);
 		groupStorage.add(deleteStorage);
 		groupStorage.add(editUser);
 		groupStorage.add(addUser);
-		
+
 		panel.add(comboRead);
 		panel.add(labelComboNum);
 		panel.add(comboNum);
@@ -346,7 +329,7 @@ public class AdminFrame extends JFrame {
 				}
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
-				    showTable(
+					showTable(
 							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
 									+ " FROM storage, electric" + " WHERE storage.storage_id=electric.storage_id"
 									+ " AND electric.date!=0 ORDER BY electric.electric_id DESC");
@@ -354,7 +337,7 @@ public class AdminFrame extends JFrame {
 				if (comboRead.getSelectedIndex() == 3) {
 
 					sortFamily.setVisible(true);
-			    	showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
+					showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
 							+ " WHERE storage.user_id=user.user_id"
 							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number");
 				}
@@ -371,7 +354,7 @@ public class AdminFrame extends JFrame {
 				add.setEnabled(false);
 				save.setEnabled(false);
 				delete.setEnabled(false);
-			
+
 				showTable("SELECT rent.date, rent.quarter_paid, rent.sum, rent.info" + " FROM storage, rent"
 						+ " WHERE storage.storage_id=rent.storage_id" + " AND storage.storage_number='"
 						+ comboNum.getSelectedItem() + "'" + " AND rent.date!=0" + " ORDER BY rent.quarter_paid DESC");
@@ -409,10 +392,8 @@ public class AdminFrame extends JFrame {
 						throw new NumberFormatException();
 
 					showTable("SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
-							+ " FROM storage, user, rent" 
-							+ " WHERE rent.storage_id=storage.storage_id"
-							+ " AND storage.user_id=user.user_id" 
-							+ " GROUP BY storage.storage_id"
+							+ " FROM storage, user, rent" + " WHERE rent.storage_id=storage.storage_id"
+							+ " AND storage.user_id=user.user_id" + " GROUP BY storage.storage_id"
 							+ " HAVING MAX(rent.quarter_paid)<'" + comboYear.getSelectedItem() + "-" + quarter + "-01"
 							+ "'" + " ORDER BY rent.quarter_paid ASC");
 
@@ -434,7 +415,7 @@ public class AdminFrame extends JFrame {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(false);
-			
+
 					panel.remove(scroll);
 					panel.updateUI();
 				}
@@ -449,7 +430,7 @@ public class AdminFrame extends JFrame {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(true);
-		
+
 					showElectricTable();
 				}
 				if (comboEdit.getSelectedIndex() == 3) {
@@ -474,7 +455,7 @@ public class AdminFrame extends JFrame {
 					labelNewUserName.setVisible(true);
 					tfUserInfo.setVisible(true);
 					labelNewUserInfo.setVisible(true);
-					
+
 					panel.updateUI();
 				}
 
@@ -482,21 +463,22 @@ public class AdminFrame extends JFrame {
 		});
 
 		comboNumEdit.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				
+
 				groupStorage.clearSelection();
 
 				if (comboNumEdit.getSelectedIndex() == 0) {
 					comboUserEdit.setSelectedIndex(0);
 				} else {
 					try {
-						User user = new UserDao().loadUserByStorageNumber(comboNumEdit.getSelectedItem().toString());
-						
-						if(user.getUser_id().equals("1")) {
+						User user = new UserDao()
+								.loadUserByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
+
+						if (user.getUser_id() == 1) {
 							comboUserEdit.setSelectedIndex(0);
-						}else {
+						} else {
 							comboUserEdit.setSelectedItem(user.getName());
 							tfUserName.setText(user.getName());
 							tfUserInfo.setText(user.getInfo());
@@ -507,30 +489,27 @@ public class AdminFrame extends JFrame {
 				}
 			}
 		});
-				
+
 		comboUserEdit.addActionListener(new ActionListener() {
-					
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				
+
 				groupStorage.clearSelection();
 				try {
-				
-					UserDao daoUser = new UserDao();
-					User user = daoUser.loadUserByName(comboUserEdit.getSelectedItem().toString());
-				
+
+					User user = new UserDao().loadUserByName(String.valueOf(comboUserEdit.getSelectedItem()));
+
 					tfUserName.setText(user.getName());
 					tfUserInfo.setText(user.getInfo());
-	
-    			} catch (NumberFormatException e) {
-    				groupStorage.clearSelection();
-     				JOptionPane.showMessageDialog(panel, "select tenant", "",
-							JOptionPane.ERROR_MESSAGE);
-  				} catch (Exception e) {
-  					groupStorage.clearSelection();
-					JOptionPane.showMessageDialog(panel, "database fault", "",
-							JOptionPane.ERROR_MESSAGE);
-				}				
+
+				} catch (NumberFormatException e) {
+					groupStorage.clearSelection();
+					JOptionPane.showMessageDialog(panel, "select tenant", "", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					groupStorage.clearSelection();
+					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 
@@ -553,7 +532,7 @@ public class AdminFrame extends JFrame {
 						UserDao daoUser = new UserDao();
 						daoUser.insert(new User(1, "", ""));
 
-					//	showUserTable();
+						// showUserTable();
 
 						JOptionPane.showMessageDialog(panel, "Please, enter tenant's name on the empty line");
 					}
@@ -574,26 +553,12 @@ public class AdminFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					Integer storageId = 0;
-					Integer userId = 0;
-					String userName = "";
-					try (Connection cn = ConnectionPool.getPool().getConnection();
-							Statement st = cn.createStatement();
-							ResultSet rs = st.executeQuery(
-									"SELECT storage.storage_id, user.name"
-								 + " FROM storage, user"
-								 + " WHERE storage.storage_number='" + comboNumEdit.getSelectedItem() + "'"
-								 + " AND storage.user_id=user.user_id")) {
+					String userName = new UserDao()
+							.loadUserNameByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
+					Integer storageId = new StorageDao()
+							.loadStorageIdByNumber(String.valueOf(comboNumEdit.getSelectedItem()));
 
-						while (rs.next()) {
-							storageId = Integer.valueOf(rs.getString(1));
-							userName = rs.getString(2);
-						}
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-
-					if (userName.equals(comboUserEdit.getSelectedItem().toString())) {
+					if (userName.equals(String.valueOf(comboUserEdit.getSelectedItem()))) {
 						throw new NumberFormatException("e");
 					}
 
@@ -602,21 +567,13 @@ public class AdminFrame extends JFrame {
 						daoStorage.assignUserToGarage(new Storage(storageId, 1));
 					}
 
-					try (Connection cn = ConnectionPool.getPool().getConnection();
-							Statement st = cn.createStatement();
-							ResultSet rs = st.executeQuery(
-									"SELECT user.user_id"
-								 + " FROM user"
-								 + " WHERE user.name='" + comboUserEdit.getSelectedItem() + "'")) {
+					Integer otherUserId = new UserDao()
+							.loadUserIdByName(String.valueOf(comboUserEdit.getSelectedItem()));
 
-						while (rs.next()) {
-							userId = Integer.valueOf(rs.getString(1));
-						}
+					daoStorage.assignUserToGarage(new Storage(storageId, otherUserId));
 
-						daoStorage.assignUserToGarage(new Storage(storageId, userId));
+					JOptionPane.showMessageDialog(panel, "Tenant has been successfully saved");
 
-						JOptionPane.showMessageDialog(panel, "Tenant has been successfully saved");
-					}
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel,
 							"select storage and tenant or this tenant has already rented this storage", "",

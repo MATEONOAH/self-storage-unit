@@ -24,7 +24,6 @@ import babroval.storage.dao.RentDao;
 import babroval.storage.dao.StorageDao;
 import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Rent;
-import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 class RentFrame extends JFrame {
@@ -221,16 +220,16 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				User user = new UserDao()
-						.loadUserByStorageNumber((String) comboNum.getSelectedItem());
-				tfName.setText(user.getName());
+				String userName = new UserDao()
+						.loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
+				tfName.setText(userName);
 				
-				Rent rent = new RentDao()
-						.loadRentLastPaidByStorageNumber((String) comboNum.getSelectedItem());
-				String str = sdf.format(rent.getQuarter_paid());
+				Date quarterPaid = new RentDao()
+						.loadRentLastQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
+				String temp = sdf.format(quarterPaid);
 				
-				Integer quarter = Integer.valueOf(str.substring(3, 5));
-				Integer year = Integer.valueOf(str.substring(6, 10));
+				Integer quarter = Integer.valueOf(temp.substring(3, 5));
+				Integer year = Integer.valueOf(temp.substring(6, 10));
 
 				switch (quarter) {
 				case 1:

@@ -23,7 +23,6 @@ import babroval.storage.dao.ElectricDao;
 import babroval.storage.dao.StorageDao;
 import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Electric;
-import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
@@ -261,13 +260,13 @@ public class ElectricFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				User user = new UserDao()
-						.loadUserByStorageNumber((String) comboNum.getSelectedItem());
-				tfName.setText(user.getName());
+				String userName = new UserDao()
+						.loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
+				tfName.setText(userName);
 				
 				Electric electric = new ElectricDao()
 						.loadElectricLastPaidByStorageNumber((String) comboNum.getSelectedItem());
-				tfIndicationLastPaid.setText(Integer.toString(electric.getMeter_paid()));
+				tfIndicationLastPaid.setText(String.valueOf(electric.getMeter_paid()));
 				tfTariff.setText(electric.getTariff().toString());
 
 				tfTariff.setEnabled(true);
