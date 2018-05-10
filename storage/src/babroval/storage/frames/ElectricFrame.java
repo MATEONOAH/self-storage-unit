@@ -26,7 +26,7 @@ import babroval.storage.entity.Electric;
 import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
-
+ 
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
@@ -36,8 +36,9 @@ public class ElectricFrame extends JFrame {
 	private JTextField tfDate, tfName, tfIndication, tfIndicationLastPaid, tfTariff, tfSum, tfInf;
 	private JButton calculate, enter, cancel;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
-	private Integer indication;
-	private BigDecimal tariff, sum;
+	private Integer indication = 0 ;
+	private BigDecimal tariff = new BigDecimal("0");
+	private BigDecimal sum = new BigDecimal("0");
 
 	
 	public ElectricFrame() {
@@ -183,7 +184,7 @@ public class ElectricFrame extends JFrame {
 					sum = kWh.multiply(tariff) ;
 					sum = sum.setScale(2, RoundingMode.HALF_UP);
 
-					tfSum.setText(String.valueOf(sum));
+					tfSum.setText(sum.toString());
 					tfInf.setEnabled(true);
 					enter.setEnabled(true);
 					tfTariff.setEnabled(false);
@@ -220,7 +221,7 @@ public class ElectricFrame extends JFrame {
 					}
 					
 					new ElectricDao().insert(new Electric(
-							new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
+							new StorageDao().loadStorageIdByNumber(String.valueOf(comboNum.getSelectedItem())),
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							tariff,
 							indication,
@@ -261,11 +262,11 @@ public class ElectricFrame extends JFrame {
 			resetFrame();
 			try {
 				String userName = new UserDao()
-						.loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
+						.loadUserNameByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfName.setText(userName);
 				
 				Electric electric = new ElectricDao()
-						.loadElectricLastPaidByStorageNumber((String) comboNum.getSelectedItem());
+						.loadElectricLastPaidByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfIndicationLastPaid.setText(String.valueOf(electric.getMeter_paid()));
 				tfTariff.setText(electric.getTariff().toString());
 

@@ -591,7 +591,7 @@ public class AdminFrame extends JFrame {
 
 				try {
 
-					if (tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString().equals("DELETED")) {
+					if (String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1)).equals("DELETED")) {
 						throw new ArrayIndexOutOfBoundsException("e");
 					}
 					int result = JOptionPane.showConfirmDialog(panel, "Delete payment?", "Delete",
@@ -601,33 +601,33 @@ public class AdminFrame extends JFrame {
 						String deletedInfo = "";
 
 						if (comboEdit.getSelectedIndex() == 1) {
-							deletedInfo = ("DELETED:" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()
-									+ "//" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString());
+							deletedInfo = ("DELETED:" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1))
+									+ "//" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 2)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 3)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 4)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 5)));
 
 							RentDao daoRent = new RentDao();
 							daoRent.update(new Rent(
-									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
-									1, Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), BigDecimal.valueOf(0),
+									Integer.valueOf(String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0))),
+									1, Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), new BigDecimal("0"),
 									deletedInfo));
 
 							showRentTable();
 						}
 
 						if (comboEdit.getSelectedIndex() == 2) {
-							deletedInfo = ("DELETED:" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString()
-									+ "//" + tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 4).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 5).toString() + "//"
-									+ tableUsers.getValueAt(tableUsers.getSelectedRow(), 6).toString());
+							deletedInfo = ("DELETED:" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1))
+									+ "//" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 2)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 3)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 4)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 5)) + "//"
+									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 6)));
 
 							ElectricDao daoElectric = new ElectricDao();
 							daoElectric.update(new Electric(
-									Integer.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString()),
-									1, Date.valueOf("0001-01-01"), BigDecimal.valueOf(0), 0, BigDecimal.valueOf(0),
+									Integer.valueOf(String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0))),
+									1, Date.valueOf("0001-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
 									deletedInfo));
 
 							showElectricTable();
