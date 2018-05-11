@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import babroval.storage.entity.User;
+import babroval.storage.frames.TableStorage;
 import babroval.storage.mysql.ConnectionPool;
 
 public class UserDao implements Dao<User> {
@@ -144,6 +145,40 @@ public User loadUserByStorageNumber(String number) {
 			throw new RuntimeException(e);
 		}
 		return userId;
+	}
+
+	public TableStorage loadUserTable() {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
+						+ " WHERE storage.user_id=user.user_id"
+						+ " AND storage.storage_number!=0 ORDER BY storage.storage_number")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
+	}
+
+	public TableStorage loadSortUserTable() {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
+						+ " WHERE storage.user_id=user.user_id" + " AND storage.storage_number!=0"
+						+ " ORDER BY user.name")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
 	}
 	
 }

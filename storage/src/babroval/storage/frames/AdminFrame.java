@@ -52,7 +52,7 @@ public class AdminFrame extends JFrame {
 	private JButton add, delete, save, sortFamily, rentDebtors;
 	private JCheckBox quart1, quart2, quart3, quart4, editStorage, addStorage, deleteStorage, editUser, addUser;
 	private ButtonGroup groupQuarter, groupStorage;
-	private TableStorage tableUsers;
+	private TableStorage table;
 	private JMenuBar menuBar;
 	private JMenuItem itemWrite, itemAbout, itemExit;
 	private JMenu file, about;
@@ -90,7 +90,7 @@ public class AdminFrame extends JFrame {
 		comboPayment = new JComboBox<String>(selectPayment);
 
 		sortFamily = new JButton("Sort by last name");
-		scroll = new JScrollPane(tableUsers);
+		scroll = new JScrollPane(table);
 		add = new JButton("Add");
 		save = new JButton("Save");
 		delete = new JButton("Delete");
@@ -268,13 +268,13 @@ public class AdminFrame extends JFrame {
 				int x = chooser.showSaveDialog(panel);
 				if (x == 0) {
 					String allRow = "";
-					for (int j = 0; j < tableUsers.getColumnCount(); j++) {
-						allRow = allRow + tableUsers.getColumnName(j) + "\t";
+					for (int j = 0; j < table.getColumnCount(); j++) {
+						allRow = allRow + table.getColumnName(j) + "\t";
 					}
 					allRow = allRow + "\n";
-					for (int i = 0; i < tableUsers.getRowCount(); i++) {
-						for (int j = 0; j < tableUsers.getColumnCount(); j++) {
-							allRow = allRow + tableUsers.getValueAt(i, j) + "\t";
+					for (int i = 0; i < table.getRowCount(); i++) {
+						for (int j = 0; j < table.getColumnCount(); j++) {
+							allRow = allRow + table.getValueAt(i, j) + "\t";
 						}
 						allRow = allRow + "\n";
 					}
@@ -321,25 +321,21 @@ public class AdminFrame extends JFrame {
 					panel.updateUI();
 				}
 				if (comboRead.getSelectedIndex() == 1) {
-
 					sortFamily.setVisible(false);
-					showTable("SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
-							+ " FROM storage, rent" + " WHERE storage.storage_id=rent.storage_id "
-							+ " AND rent.date!=0 ORDER BY rent.rent_id DESC");
+
+					showTable(new RentDao().loadRentTable());
 				}
+
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
-					showTable(
-							"SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
-									+ " FROM storage, electric" + " WHERE storage.storage_id=electric.storage_id"
-									+ " AND electric.date!=0 ORDER BY electric.electric_id DESC");
-				}
-				if (comboRead.getSelectedIndex() == 3) {
 
+					showTable(new ElectricDao().loadElectricTable());
+				}
+
+				if (comboRead.getSelectedIndex() == 3) {
 					sortFamily.setVisible(true);
-					showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-							+ " WHERE storage.user_id=user.user_id"
-							+ " AND storage.storage_number!=0 ORDER BY storage.storage_number");
+
+					showTable(new UserDao().loadUserTable());
 				}
 			}
 		});
@@ -355,9 +351,7 @@ public class AdminFrame extends JFrame {
 				save.setEnabled(false);
 				delete.setEnabled(false);
 
-				showTable("SELECT rent.date, rent.quarter_paid, rent.sum, rent.info" + " FROM storage, rent"
-						+ " WHERE storage.storage_id=rent.storage_id" + " AND storage.storage_number='"
-						+ comboNum.getSelectedItem() + "'" + " AND rent.date!=0" + " ORDER BY rent.quarter_paid DESC");
+				showTable(new RentDao().loadRentTableByStorageNumber(String.valueOf(comboNum.getSelectedItem())));
 			}
 		});
 
@@ -366,9 +360,8 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 
 				itemWrite.setEnabled(true);
-				showTable("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-						+ " WHERE storage.user_id=user.user_id" + " AND storage.storage_number!=0"
-						+ " ORDER BY user.name");
+				
+				showTable(new UserDao().loadSortUserTable());
 			}
 		});
 
@@ -391,12 +384,8 @@ public class AdminFrame extends JFrame {
 					else
 						throw new NumberFormatException();
 
-					showTable("SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
-							+ " FROM storage, user, rent" + " WHERE rent.storage_id=storage.storage_id"
-							+ " AND storage.user_id=user.user_id" + " GROUP BY storage.storage_id"
-							+ " HAVING MAX(rent.quarter_paid)<'" + comboYear.getSelectedItem() + "-" + quarter + "-01"
-							+ "'" + " ORDER BY rent.quarter_paid ASC");
-
+					showTable(new RentDao().loadRentDebtorsByYearQuarter(String.valueOf(comboYear.getSelectedItem()), quarter));
+					
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "specify quarter", "", JOptionPane.ERROR_MESSAGE);
 				}
@@ -424,14 +413,14 @@ public class AdminFrame extends JFrame {
 					save.setEnabled(false);
 					delete.setEnabled(true);
 
-					showRentTable();
+					showTable(new RentDao().loadRentEditTable());
 				}
 				if (comboEdit.getSelectedIndex() == 2) {
 					add.setEnabled(false);
 					save.setEnabled(false);
 					delete.setEnabled(true);
 
-					showElectricTable();
+					showTable(new ElectricDao().loadElectricEditTable());
 				}
 				if (comboEdit.getSelectedIndex() == 3) {
 					add.setEnabled(true);
@@ -591,7 +580,7 @@ public class AdminFrame extends JFrame {
 
 				try {
 
-					if (String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1)).equals("DELETED")) {
+					if (String.valueOf(table.getValueAt(table.getSelectedRow(), 1)).equals("DELETED")) {
 						throw new ArrayIndexOutOfBoundsException("e");
 					}
 					int result = JOptionPane.showConfirmDialog(panel, "Delete payment?", "Delete",
@@ -601,36 +590,36 @@ public class AdminFrame extends JFrame {
 						String deletedInfo = "";
 
 						if (comboEdit.getSelectedIndex() == 1) {
-							deletedInfo = ("DELETED:" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1))
-									+ "//" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 2)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 3)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 4)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 5)));
+							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
+									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)));
 
 							RentDao daoRent = new RentDao();
 							daoRent.update(new Rent(
-									Integer.valueOf(String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0))),
-									1, Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), new BigDecimal("0"),
+									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
+									Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), new BigDecimal("0"),
 									deletedInfo));
 
-							showRentTable();
+							showTable(new RentDao().loadRentEditTable());
 						}
 
 						if (comboEdit.getSelectedIndex() == 2) {
-							deletedInfo = ("DELETED:" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1))
-									+ "//" + String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 2)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 3)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 4)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 5)) + "//"
-									+ String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 6)));
+							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
+									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)) + "//"
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 6)));
 
 							ElectricDao daoElectric = new ElectricDao();
 							daoElectric.update(new Electric(
-									Integer.valueOf(String.valueOf(tableUsers.getValueAt(tableUsers.getSelectedRow(), 0))),
-									1, Date.valueOf("0001-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
+									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
+									Date.valueOf("0001-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
 									deletedInfo));
 
-							showElectricTable();
+							showTable(new ElectricDao().loadElectricEditTable());
 						}
 						JOptionPane.showMessageDialog(panel, "Payment has been deleted");
 					}
@@ -675,19 +664,7 @@ public class AdminFrame extends JFrame {
 
 	}
 
-	protected void showRentTable() {
-		showTable("SELECT rent.rent_id, storage.storage_number, rent.date," + " rent.quarter_paid, rent.sum, rent.info"
-				+ " FROM storage, rent" + " WHERE rent.storage_id=storage.storage_id" + " ORDER BY rent.rent_id DESC");
-	}
-
-	protected void showElectricTable() {
-		showTable("SELECT electric.electric_id, storage.storage_number, electric.date,"
-				+ " electric.tariff, electric.meter_paid, electric.sum, electric.info" + " FROM electric, storage"
-				+ " WHERE electric.storage_id=storage.storage_id" + " ORDER BY electric.electric_id DESC");
-
-	}
-
-	protected void showTable(String query) {
+	protected void showTable(TableStorage table) {
 
 		panel.remove(scroll);
 		labelNumber.setVisible(false);
@@ -708,13 +685,8 @@ public class AdminFrame extends JFrame {
 		tfUserInfo.setVisible(false);
 		labelNewUserInfo.setVisible(false);
 
-		try (Connection cn = ConnectionPool.getPool().getConnection();
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(query)) {
-
-			tableUsers = new TableStorage(rs);
-
-			scroll = new JScrollPane(tableUsers);
+		try {
+			scroll = new JScrollPane(table);
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
 			panel.updateUI();

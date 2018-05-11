@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import babroval.storage.entity.Electric;
+import babroval.storage.frames.TableStorage;
 import babroval.storage.mysql.ConnectionPool;
 
 
@@ -86,6 +87,40 @@ public class ElectricDao implements Dao<Electric> {
 			throw new RuntimeException(e);
 		}
 		return electric;
+	}
+
+	public TableStorage loadElectricTable() {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT electric.date, storage.storage_number, electric.tariff, electric.meter_paid, electric.sum, electric.info"
+						+ " FROM storage, electric" + " WHERE storage.storage_id=electric.storage_id"
+						+ " AND electric.date!=0 ORDER BY electric.electric_id DESC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
+	}
+
+	public TableStorage loadElectricEditTable() {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT electric.electric_id, storage.storage_number, electric.date,"
+						+ " electric.tariff, electric.meter_paid, electric.sum, electric.info" + " FROM electric, storage"
+						+ " WHERE electric.storage_id=storage.storage_id" + " ORDER BY electric.electric_id DESC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;		
 	}
 	
 }

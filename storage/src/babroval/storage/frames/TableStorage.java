@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 import babroval.storage.mysql.InitDB;
 
-class TableStorage extends JTable {
+public class TableStorage extends JTable {
 
 	private static final long serialVersionUID = 1L;
 	private Component panel;

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import babroval.storage.entity.Rent;
+import babroval.storage.frames.TableStorage;
 import babroval.storage.mysql.ConnectionPool;
 
 public class RentDao implements Dao<Rent> {
@@ -85,5 +86,74 @@ public class RentDao implements Dao<Rent> {
 			throw new RuntimeException(e);
 		}
 		return date;
+	}
+
+	public TableStorage loadRentTable() {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT rent.date, storage.storage_number, rent.quarter_paid, rent.sum, rent.info"
+						+ " FROM storage, rent" + " WHERE storage.storage_id=rent.storage_id "
+						+ " AND rent.date!=0 ORDER BY rent.rent_id DESC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
+	}
+
+	public TableStorage loadRentTableByStorageNumber(String storageNum) {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT rent.date, rent.quarter_paid, rent.sum, rent.info" + " FROM storage, rent"
+						+ " WHERE storage.storage_id=rent.storage_id" + " AND storage.storage_number='"
+						+ storageNum + "'" + " AND rent.date!=0" + " ORDER BY rent.quarter_paid DESC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
+	}
+
+	public TableStorage loadRentDebtorsByYearQuarter(String year, String quarter) {
+		
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT MAX(rent.quarter_paid), storage.storage_number, user.name, user.info"
+						+ " FROM storage, user, rent" + " WHERE rent.storage_id=storage.storage_id"
+						+ " AND storage.user_id=user.user_id" + " GROUP BY storage.storage_id"
+						+ " HAVING MAX(rent.quarter_paid)<'" + year + "-" + quarter + "-01"
+						+ "'" + " ORDER BY rent.quarter_paid ASC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
+	}
+
+	public TableStorage loadRentEditTable() {
+
+		TableStorage table;
+		
+		try (Connection cn = ConnectionPool.getPool().getConnection();
+				Statement st = cn.createStatement();
+				ResultSet rs = st.executeQuery("SELECT rent.rent_id, storage.storage_number, rent.date," + " rent.quarter_paid, rent.sum, rent.info"
+						+ " FROM storage, rent" + " WHERE rent.storage_id=storage.storage_id" + " ORDER BY rent.rent_id DESC")) {
+
+			table = new TableStorage(rs);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return table;
 	}
 }
