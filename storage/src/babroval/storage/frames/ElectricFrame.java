@@ -40,20 +40,7 @@ public class ElectricFrame extends JFrame {
 	private BigDecimal tariff = new BigDecimal("0");
 	private BigDecimal sum = new BigDecimal("0");
 
-	
-	public ElectricFrame() {
-		setSize(270, 460);
-		setTitle("Electricity payment");
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		initComponents();
-		action();
-		setVisible(true);
-		setResizable(false);
-	}
-
-	private void initComponents() {
-
+	{
 		panel = new JPanel();
 
 		labelDate = new JLabel("Date of payment:");
@@ -104,8 +91,6 @@ public class ElectricFrame extends JFrame {
 		comboSelect = new JComboBox<String>(select);
 		comboSelect.setPreferredSize(new Dimension(115, 20));
 
-		resetFrame();
-
 		panel.add(labelDate);
 		panel.add(tfDate);
 		panel.add(labelNum);
@@ -128,9 +113,36 @@ public class ElectricFrame extends JFrame {
 		panel.add(comboSelect);
 
 		add(panel);
-
 	}
+	
+	public ElectricFrame() {
+		setSize(270, 460);
+		setTitle("Electricity payment");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		resetFrame();
+		action();
+		setVisible(true);
+	}
+	
+	private void resetFrame() {
 
+		tfName.setText("");
+		tfIndicationLastPaid.setText("");
+		tfTariff.setText("");
+		tfTariff.setEnabled(false);
+		tfIndication.setText("");
+		tfIndication.setEnabled(false);
+		calculate.setEnabled(false);
+		tfSum.setText("");
+		tfSum.setEnabled(false);
+		tfInf.setText("");
+		tfInf.setEnabled(false);
+		enter.setEnabled(false);
+		cancel.setEnabled(false);
+	}
+	
 	private void action() {
 
 		comboSelect.addActionListener(new ActionListener() {
@@ -280,23 +292,6 @@ public class ElectricFrame extends JFrame {
 			}
 		}
 		panel.updateUI();
-	}
-
-	private void resetFrame() {
-
-		tfName.setText("");
-		tfIndicationLastPaid.setText("");
-		tfTariff.setText("");
-		tfTariff.setEnabled(false);
-		tfIndication.setText("");
-		tfIndication.setEnabled(false);
-		calculate.setEnabled(false);
-		tfSum.setText("");
-		tfSum.setEnabled(false);
-		tfInf.setText("");
-		tfInf.setEnabled(false);
-		enter.setEnabled(false);
-		cancel.setEnabled(false);
 	}
 
 }

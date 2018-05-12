@@ -90,7 +90,7 @@ public class RentDao implements Dao<Rent> {
 
 	public TableStorage loadRentTable() {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -107,7 +107,7 @@ public class RentDao implements Dao<Rent> {
 
 	public TableStorage loadRentTableByStorageNumber(String storageNum) {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -124,7 +124,7 @@ public class RentDao implements Dao<Rent> {
 
 	public TableStorage loadRentDebtorsByYearQuarter(String year, String quarter) {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -143,7 +143,7 @@ public class RentDao implements Dao<Rent> {
 
 	public TableStorage loadRentEditTable() {
 
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();

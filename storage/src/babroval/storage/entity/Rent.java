@@ -5,12 +5,12 @@ import java.sql.Date;
 
 
 public class Rent {
-	private Integer rent_id;
-	private Integer storage_id;
-	private Date date;
-	private Date quarter_paid;
-	private BigDecimal sum;
-	private String info;
+	private Integer rent_id = 0;
+	private Integer storage_id = 0;
+	private Date date = new Date(0);
+	private Date quarter_paid = new Date(0);
+	private BigDecimal sum = new BigDecimal("0");
+	private String info = "";
 
 	public Rent() {
 	}

@@ -6,13 +6,13 @@ import java.sql.Date;
 
 public class Electric {
 
-	private Integer electric_id;
-	private Integer storage_id;
-	private Date date;
-	private BigDecimal tariff;
-	private Integer meter_paid;
-	private BigDecimal sum;
-	private String info;
+	private Integer electric_id = 0;
+	private Integer storage_id = 0;
+	private Date date = new Date(0);
+	private BigDecimal tariff = new BigDecimal("0");
+	private Integer meter_paid = 0;
+	private BigDecimal sum = new BigDecimal("0");
+	private String info = "";
 
 	public Electric() {
 	}

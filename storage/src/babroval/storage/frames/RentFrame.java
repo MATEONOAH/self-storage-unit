@@ -39,19 +39,7 @@ class RentFrame extends JFrame {
 	private String[] select = { "select:", "ELECTRICITY PAYMENT", "MAIN VIEW" };
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-	public RentFrame() {
-		setSize(300, 327);
-		setTitle("Rent payment");
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		initComponents();
-		action();
-		setVisible(true);
-		setResizable(false);
-	}
-
-	private void initComponents() {
-
+	{
 		panel = new JPanel();
 
 		labelDate = new JLabel("Date of payment:");
@@ -96,8 +84,6 @@ class RentFrame extends JFrame {
 		comboSelect = new JComboBox<String>(select);
 		comboSelect.setPreferredSize(new Dimension(180, 20));
 
-		resetFrame();
-
 		panel.add(labelDate);
 		panel.add(tfDate);
 		panel.add(labelNumber);
@@ -121,6 +107,36 @@ class RentFrame extends JFrame {
 		add(panel);
 	}
 
+	public RentFrame() {
+		setSize(300, 327);
+		setTitle("Rent payment");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		resetFrame();
+		action();
+		setVisible(true);
+	}
+
+	private void resetFrame() {
+		tfName.setText("");
+		quart1.setEnabled(false);
+		quart1.setSelected(false);
+		quart2.setEnabled(false);
+		quart2.setSelected(false);
+		quart3.setEnabled(false);
+		quart3.setSelected(false);
+		quart4.setEnabled(false);
+		quart4.setSelected(false);
+		labelYear.setText("");
+		tfSum.setText("");
+		tfSum.setEnabled(false);
+		tfInf.setText("");
+		tfInf.setEnabled(false);
+		enter.setEnabled(false);
+		cancel.setEnabled(false);
+	}
+	
 	private void action() {
 		comboNum.addActionListener(new ActionListener() {
 
@@ -157,8 +173,7 @@ class RentFrame extends JFrame {
 					new RentDao().insert(
 							new Rent(new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
 									InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
-									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"),
-									sum,
+									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"), sum,
 									tfInf.getText()));
 
 					comboNum.setSelectedIndex(0);
@@ -220,14 +235,13 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				String userName = new UserDao()
-						.loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
+				String userName = new UserDao().loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
 				tfName.setText(userName);
-				
+
 				Date quarterPaid = new RentDao()
 						.loadRentLastQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
 				String temp = sdf.format(quarterPaid);
-				
+
 				Integer quarter = Integer.valueOf(temp.substring(3, 5));
 				Integer year = Integer.valueOf(temp.substring(6, 10));
 
@@ -276,25 +290,4 @@ class RentFrame extends JFrame {
 		}
 		panel.updateUI();
 	}
-
-	private void resetFrame() {
-
-		tfName.setText("");
-		quart1.setEnabled(false);
-		quart1.setSelected(false);
-		quart2.setEnabled(false);
-		quart2.setSelected(false);
-		quart3.setEnabled(false);
-		quart3.setSelected(false);
-		quart4.setEnabled(false);
-		quart4.setSelected(false);
-		labelYear.setText("");
-		tfSum.setText("");
-		tfSum.setEnabled(false);
-		tfInf.setText("");
-		tfInf.setEnabled(false);
-		enter.setEnabled(false);
-		cancel.setEnabled(false);
-	}
-
 }

@@ -3,9 +3,9 @@ package babroval.storage.entity;
 
 public class User {
 	
-	private Integer user_id;
-	private String name;
-	private String info;
+	private Integer user_id = 0;
+	private String name = "";
+	private String info = "";
 
 	public User() {
 	}

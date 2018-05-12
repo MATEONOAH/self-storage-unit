@@ -91,7 +91,7 @@ public class ElectricDao implements Dao<Electric> {
 
 	public TableStorage loadElectricTable() {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -108,7 +108,7 @@ public class ElectricDao implements Dao<Electric> {
 
 	public TableStorage loadElectricEditTable() {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();

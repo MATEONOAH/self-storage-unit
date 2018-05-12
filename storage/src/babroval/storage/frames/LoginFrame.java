@@ -30,14 +30,12 @@ public class LoginFrame extends JFrame {
 		setTitle("Login");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		initComponents();
+		setResizable(false);
 		action();
 		setVisible(true);
-		setResizable(false);
 	}
 
-	private void initComponents() {
-
+	{
 		panel = new JPanel();
 		labelLogin = new JLabel("Login");
 		labelPassword = new JLabel("Password");

@@ -149,7 +149,7 @@ public User loadUserByStorageNumber(String number) {
 
 	public TableStorage loadUserTable() {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
@@ -166,7 +166,7 @@ public User loadUserByStorageNumber(String number) {
 
 	public TableStorage loadSortUserTable() {
 		
-		TableStorage table;
+		TableStorage table = new TableStorage();
 		
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();

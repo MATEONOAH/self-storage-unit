@@ -25,18 +25,7 @@ public class StartFrame extends JFrame {
 	private JTextField tfUrl, tfLogin, tfPassword;
 	private JButton create, delete, connect;
 
-	public StartFrame() {
-		setSize(260, 220);
-		setTitle("Storage");
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		initComponents();
-		action();
-		setVisible(true);
-		setResizable(false);
-	}
-
-	private void initComponents() {
+	{
 		panel = new JPanel();
 		labelUrl = new JLabel("URL");
 		labelLogin = new JLabel("Login");
@@ -60,7 +49,17 @@ public class StartFrame extends JFrame {
 
 		add(panel);
 	}
-
+	
+	public StartFrame() {
+		setSize(260, 220);
+		setTitle("Storage");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		action();
+		setVisible(true);
+	}
+	
 	private void action() {
 		create.addActionListener(new ActionListener() {
 			@Override

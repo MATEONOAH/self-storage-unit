@@ -3,10 +3,10 @@ package babroval.storage.entity;
 
 public class Storage {
 	
-	private Integer storage_id;
-	private Integer user_id;
-	private String storage_number;
-	private String info;
+	private Integer storage_id = 0;
+	private Integer user_id = 0;
+	private String storage_number = "";
+	private String info = "";
 
 	public Storage() {
 	}

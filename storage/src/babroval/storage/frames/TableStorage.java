@@ -19,6 +19,9 @@ public class TableStorage extends JTable {
 	private static final long serialVersionUID = 1L;
 	private Component panel;
 
+	public TableStorage() {
+	}
+
 	public TableStorage(ResultSet rs) {
 		
 		DefaultTableModel dtm = new DefaultTableModel();
@@ -48,7 +51,7 @@ public class TableStorage extends JTable {
 				Vector<String> v = new Vector<String>();
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 					
-					if(rs.getString(i).equals("0001-01-01")){
+					if(rs.getString(i).equals("1970-01-01")){
 						break;
 					}
 					if(rs.getString(i).equals("0")){

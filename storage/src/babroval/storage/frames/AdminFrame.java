@@ -60,21 +60,8 @@ public class AdminFrame extends JFrame {
 	private String[] selectRead = { "select:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
 	private String[] selectEdit = { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
 	private String[] selectPayment = { "select payment:", "RENT", "ELECTRYCITY" };
-	String columnNames[] = { "Storage number", "Owner", "Private info" };
 
-	public AdminFrame() {
-		setSize(995, 550);
-		setTitle("AdminFrame");
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		initComponents();
-		action();
-		setVisible(true);
-		setResizable(false);
-	}
-
-	private void initComponents() {
-
+	{
 		panel = new JPanel(null);
 
 		chooser = new JFileChooser();
@@ -260,6 +247,16 @@ public class AdminFrame extends JFrame {
 		add(panel);
 	}
 
+	public AdminFrame() {
+		setSize(995, 550);
+		setTitle("AdminFrame");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		action();
+		setVisible(true);
+	}
+
 	private void action() {
 
 		itemWrite.addActionListener(new ActionListener() {
@@ -360,7 +357,7 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 
 				itemWrite.setEnabled(true);
-				
+
 				showTable(new UserDao().loadSortUserTable());
 			}
 		});
@@ -384,8 +381,9 @@ public class AdminFrame extends JFrame {
 					else
 						throw new NumberFormatException();
 
-					showTable(new RentDao().loadRentDebtorsByYearQuarter(String.valueOf(comboYear.getSelectedItem()), quarter));
-					
+					showTable(new RentDao().loadRentDebtorsByYearQuarter(String.valueOf(comboYear.getSelectedItem()),
+							quarter));
+
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(panel, "specify quarter", "", JOptionPane.ERROR_MESSAGE);
 				}
@@ -580,7 +578,7 @@ public class AdminFrame extends JFrame {
 
 				try {
 
-					if (String.valueOf(table.getValueAt(table.getSelectedRow(), 1)).equals("DELETED")) {
+					if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 1)))) {
 						throw new ArrayIndexOutOfBoundsException("e");
 					}
 					int result = JOptionPane.showConfirmDialog(panel, "Delete payment?", "Delete",
@@ -599,7 +597,7 @@ public class AdminFrame extends JFrame {
 							RentDao daoRent = new RentDao();
 							daoRent.update(new Rent(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
-									Date.valueOf("0001-01-01"), Date.valueOf("0001-01-01"), new BigDecimal("0"),
+									Date.valueOf("1970-01-01"), Date.valueOf("1970-01-01"), new BigDecimal("0"),
 									deletedInfo));
 
 							showTable(new RentDao().loadRentEditTable());
@@ -616,7 +614,7 @@ public class AdminFrame extends JFrame {
 							ElectricDao daoElectric = new ElectricDao();
 							daoElectric.update(new Electric(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
-									Date.valueOf("0001-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
+									Date.valueOf("1970-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
 									deletedInfo));
 
 							showTable(new ElectricDao().loadElectricEditTable());
