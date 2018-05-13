@@ -57,11 +57,15 @@ public class AdminFrame extends JFrame {
 	private JMenuItem itemWrite, itemAbout, itemExit;
 	private JMenu file, about;
 	private JFileChooser chooser;
-	private String[] selectRead = { "select:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
-	private String[] selectEdit = { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
-	private String[] selectPayment = { "select payment:", "RENT", "ELECTRYCITY" };
+	private String[] selectRead;
+	private String[] selectEdit;
+	private String[] selectPayment ;
 
 	{
+		selectRead = new String[] {"select:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
+		selectEdit = new String[] { "edit:", "RENT PAYMENT", "ELECTRYCITY PAYMENT", "TENANTS" };
+		selectPayment = new String[] { "select payment:", "RENT", "ELECTRYCITY" };
+		
 		panel = new JPanel(null);
 
 		chooser = new JFileChooser();
@@ -77,6 +81,7 @@ public class AdminFrame extends JFrame {
 		comboPayment = new JComboBox<String>(selectPayment);
 
 		sortFamily = new JButton("Sort by last name");
+		table = new TableStorage();
 		scroll = new JScrollPane(table);
 		add = new JButton("Add");
 		save = new JButton("Save");
@@ -261,7 +266,7 @@ public class AdminFrame extends JFrame {
 
 		itemWrite.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent ae) {
 				int x = chooser.showSaveDialog(panel);
 				if (x == 0) {
 					String allRow = "";
@@ -574,10 +579,9 @@ public class AdminFrame extends JFrame {
 
 		delete.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent ae) {
 
 				try {
-
 					if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 1)))) {
 						throw new ArrayIndexOutOfBoundsException("e");
 					}
@@ -661,8 +665,8 @@ public class AdminFrame extends JFrame {
 		});
 
 	}
-
-	protected void showTable(TableStorage table) {
+	
+	private void showTable(TableStorage table) {
 
 		panel.remove(scroll);
 		labelNumber.setVisible(false);
@@ -684,6 +688,7 @@ public class AdminFrame extends JFrame {
 		labelNewUserInfo.setVisible(false);
 
 		try {
+			this.table = table;
 			scroll = new JScrollPane(table);
 			scroll.setBounds(20, 40, 950, 390);
 			panel.add(scroll);
