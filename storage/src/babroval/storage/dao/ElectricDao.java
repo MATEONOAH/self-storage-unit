@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
 import babroval.storage.entity.Electric;
 import babroval.storage.frames.TableStorage;
@@ -57,7 +58,7 @@ public class ElectricDao implements Dao<Electric> {
 		}
 	}
 
-	public Electric loadElectricLastPaidByStorageNumber(String number) {
+	public Electric loadLastPaidByStorageNumber(String number) {
 		
 		Electric electric = new Electric();
 		
@@ -89,7 +90,7 @@ public class ElectricDao implements Dao<Electric> {
 		return electric;
 	}
 
-	public TableStorage loadElectricTable() {
+	public TableStorage loadReadOnlyTable() {
 		
 		TableStorage table = new TableStorage();
 		
@@ -106,7 +107,7 @@ public class ElectricDao implements Dao<Electric> {
 		return table;
 	}
 
-	public TableStorage loadElectricEditTable() {
+	public TableStorage loadEditTable() {
 		
 		TableStorage table = new TableStorage();
 		
@@ -122,5 +123,77 @@ public class ElectricDao implements Dao<Electric> {
 		}
 		return table;		
 	}
-	
+
+	@Override
+	public void assignTo(Electric ob) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> loadAllNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> loadAllNumbers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Electric loadByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Electric loadByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadTableByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadDebtorsByYearQuarter(String year, String quarter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer loadIdByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String loadNameByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date loadLastQuarterPaidByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadSortTable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer loadIdByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

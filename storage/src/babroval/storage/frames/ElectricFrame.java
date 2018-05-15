@@ -19,10 +19,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.Dao;
 import babroval.storage.dao.ElectricDao;
 import babroval.storage.dao.StorageDao;
 import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Electric;
+import babroval.storage.entity.Storage;
+import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 public class ElectricFrame extends JFrame {
@@ -58,7 +61,9 @@ public class ElectricFrame extends JFrame {
 		tfName.setEnabled(false);
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
-		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
+		
+		Dao<Storage> daoStorage = new StorageDao();
+		allStoragesNumbers = daoStorage.loadAllNames();
 
 		for (String storageNum : allStoragesNumbers) {
 			comboNum.addItem(storageNum);
@@ -232,8 +237,11 @@ public class ElectricFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 					
-					new ElectricDao().insert(new Electric(
-							new StorageDao().loadStorageIdByNumber(String.valueOf(comboNum.getSelectedItem())),
+					Dao<Electric> daoElectric = new ElectricDao();
+					Dao<Storage> daoStorage = new StorageDao();
+					
+					daoElectric.insert(new Electric(
+							daoStorage.loadIdByStorageNumber(String.valueOf(comboNum.getSelectedItem())),
 							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 							tariff,
 							indication,
@@ -273,12 +281,14 @@ public class ElectricFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				String userName = new UserDao()
-						.loadUserNameByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
+				Dao<User> daoUser = new UserDao();
+				String userName = daoUser
+						.loadNameByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfName.setText(userName);
 				
-				Electric electric = new ElectricDao()
-						.loadElectricLastPaidByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
+				Dao<Electric> daoElectric = new ElectricDao();
+				Electric electric = daoElectric
+						.loadLastPaidByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfIndicationLastPaid.setText(String.valueOf(electric.getMeter_paid()));
 				tfTariff.setText(electric.getTariff().toString());
 

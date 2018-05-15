@@ -20,10 +20,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import babroval.storage.dao.Dao;
 import babroval.storage.dao.RentDao;
 import babroval.storage.dao.StorageDao;
 import babroval.storage.dao.UserDao;
 import babroval.storage.entity.Rent;
+import babroval.storage.entity.Storage;
+import babroval.storage.entity.User;
 import babroval.storage.mysql.InitDB;
 
 class RentFrame extends JFrame {
@@ -57,7 +60,9 @@ class RentFrame extends JFrame {
 		tfName.setEnabled(false);
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
-		allStoragesNumbers = new StorageDao().loadAllStoragesNumbers();
+		
+		Dao<Storage> daoStorage = new StorageDao();
+		allStoragesNumbers = daoStorage.loadAllNames();
 
 		for (String storageNum : allStoragesNumbers) {
 			comboNum.addItem(storageNum);
@@ -170,8 +175,10 @@ class RentFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					new RentDao().insert(
-							new Rent(new StorageDao().loadStorageIdByNumber((String) comboNum.getSelectedItem()),
+					Dao<Rent> daoRent = new RentDao();
+					Dao<Storage> daoStorage = new StorageDao();
+					daoRent.insert(
+							new Rent(daoStorage.loadIdByStorageNumber((String) comboNum.getSelectedItem()),
 									InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
 									InitDB.stringToDate("01-" + quarter + "-" + labelYear.getText(), "dd-MM-yyyy"), sum,
 									tfInf.getText()));
@@ -235,11 +242,13 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				String userName = new UserDao().loadUserNameByStorageNumber((String) comboNum.getSelectedItem());
+				Dao<User> daoUser = new UserDao();
+				String userName = daoUser.loadNameByStorageNumber((String) comboNum.getSelectedItem());
 				tfName.setText(userName);
 
-				Date quarterPaid = new RentDao()
-						.loadRentLastQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
+				Dao<Rent> daoRent = new RentDao();
+				Date quarterPaid = daoRent
+						.loadLastQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
 				String temp = sdf.format(quarterPaid);
 
 				Integer quarter = Integer.valueOf(temp.substring(3, 5));

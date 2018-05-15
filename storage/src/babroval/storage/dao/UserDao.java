@@ -1,6 +1,7 @@
 package babroval.storage.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -46,7 +47,7 @@ public class UserDao implements Dao<User> {
 		}
 	}
 
-	public User loadUserByName(String name) {
+	public User loadByName(String name) {
 
 		User user = new User();
 
@@ -66,35 +67,32 @@ public class UserDao implements Dao<User> {
 		}
 		return user;
 	}
-	
-public User loadUserByStorageNumber(String number) {
-		
+
+	public User loadByStorageNumber(String number) {
+
 		User user = new User();
-		
+
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(
-					"SELECT user.user_id, user.name, user.info"
-				 + " FROM user, storage"
-				 + " WHERE storage.user_id = user.user_id"
-				 + " AND storage.storage_number = '" + number + "'")) {
+				ResultSet rs = st.executeQuery("SELECT user.user_id, user.name, user.info" + " FROM user, storage"
+						+ " WHERE storage.user_id = user.user_id" + " AND storage.storage_number = '" + number + "'")) {
 
 			while (rs.next()) {
 				user.setUser_id(Integer.valueOf(rs.getString(1)));
 				user.setName(rs.getString(2));
 				user.setInfo(rs.getString(3));
 			}
-	
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		return user;
 	}
 
-	public String loadUserNameByStorageNumber(String number) {
+	public String loadNameByStorageNumber(String number) {
 
 		String userName = "";
-		
+
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
 				ResultSet rs = st.executeQuery("SELECT user.name" + " FROM user, storage"
@@ -110,7 +108,7 @@ public User loadUserByStorageNumber(String number) {
 		return userName;
 	}
 
-	public List<String> loadAllUsersNames() {
+	public List<String> loadAllNames() {
 
 		List<String> allUsersNames = new ArrayList<String>();
 
@@ -128,14 +126,14 @@ public User loadUserByStorageNumber(String number) {
 		return allUsersNames;
 	}
 
-	public Integer loadUserIdByName(String name) {
-		
+	public Integer loadIdByName(String name) {
+
 		Integer userId = new Integer(0);
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT user.user_id" + " FROM user"
-						+ " WHERE user.name = '" + name + "'")) {
+				ResultSet rs = st
+						.executeQuery("SELECT user.user_id" + " FROM user" + " WHERE user.name = '" + name + "'")) {
 
 			while (rs.next()) {
 				userId = Integer.valueOf(rs.getString(1));
@@ -147,14 +145,14 @@ public User loadUserByStorageNumber(String number) {
 		return userId;
 	}
 
-	public TableStorage loadUserTable() {
-		
+	public TableStorage loadReadOnlyTable() {
+
 		TableStorage table = new TableStorage();
-		
+
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-						+ " WHERE storage.user_id=user.user_id"
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info"
+						+ " FROM storage, user" + " WHERE storage.user_id=user.user_id"
 						+ " AND storage.storage_number!=0 ORDER BY storage.storage_number")) {
 
 			table = new TableStorage(rs);
@@ -164,15 +162,15 @@ public User loadUserByStorageNumber(String number) {
 		return table;
 	}
 
-	public TableStorage loadSortUserTable() {
-		
+	public TableStorage loadSortTable() {
+
 		TableStorage table = new TableStorage();
-		
+
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info" + " FROM storage, user"
-						+ " WHERE storage.user_id=user.user_id" + " AND storage.storage_number!=0"
-						+ " ORDER BY user.name")) {
+				ResultSet rs = st.executeQuery("SELECT storage.storage_number, user.name, user.info"
+						+ " FROM storage, user" + " WHERE storage.user_id=user.user_id"
+						+ " AND storage.storage_number!=0" + " ORDER BY user.name")) {
 
 			table = new TableStorage(rs);
 		} catch (Exception e) {
@@ -181,4 +179,52 @@ public User loadUserByStorageNumber(String number) {
 		return table;
 	}
 	
+	@Override
+	public List<String> loadAllNumbers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User loadLastPaidByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadEditTable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadTableByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableStorage loadDebtorsByYearQuarter(String year, String quarter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer loadIdByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date loadLastQuarterPaidByStorageNumber(String number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void assignTo(User ob) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
