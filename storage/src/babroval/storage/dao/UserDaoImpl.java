@@ -12,9 +12,9 @@ import babroval.storage.entity.User;
 import babroval.storage.frames.TableStorage;
 import babroval.storage.mysql.ConnectionPool;
 
-public class UserDao implements Dao<User> {
+public class UserDaoImpl implements Dao<User> {
 
-	public UserDao() {
+	public UserDaoImpl() {
 	}
 
 	@Override
@@ -47,6 +47,7 @@ public class UserDao implements Dao<User> {
 		}
 	}
 
+	@Override
 	public User loadByName(String name) {
 
 		User user = new User();
@@ -68,6 +69,7 @@ public class UserDao implements Dao<User> {
 		return user;
 	}
 
+	@Override
 	public User loadByStorageNumber(String number) {
 
 		User user = new User();
@@ -89,6 +91,7 @@ public class UserDao implements Dao<User> {
 		return user;
 	}
 
+	@Override
 	public String loadNameByStorageNumber(String number) {
 
 		String userName = "";
@@ -108,6 +111,7 @@ public class UserDao implements Dao<User> {
 		return userName;
 	}
 
+	@Override
 	public List<String> loadAllNames() {
 
 		List<String> allUsersNames = new ArrayList<String>();
@@ -126,6 +130,7 @@ public class UserDao implements Dao<User> {
 		return allUsersNames;
 	}
 
+	@Override
 	public Integer loadIdByName(String name) {
 
 		Integer userId = new Integer(0);
@@ -145,6 +150,7 @@ public class UserDao implements Dao<User> {
 		return userId;
 	}
 
+	@Override
 	public TableStorage loadReadOnlyTable() {
 
 		TableStorage table = new TableStorage();
@@ -162,6 +168,7 @@ public class UserDao implements Dao<User> {
 		return table;
 	}
 
+	@Override
 	public TableStorage loadSortTable() {
 
 		TableStorage table = new TableStorage();
@@ -181,50 +188,42 @@ public class UserDao implements Dao<User> {
 	
 	@Override
 	public List<String> loadAllNumbers() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public User loadLastPaidByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public TableStorage loadEditTable() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public TableStorage loadTableByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public TableStorage loadDebtorsByYearQuarter(String year, String quarter) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Integer loadIdByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Date loadLastQuarterPaidByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public void assignTo(User ob) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 }

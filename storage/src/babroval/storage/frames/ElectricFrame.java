@@ -20,9 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.Dao;
-import babroval.storage.dao.ElectricDao;
-import babroval.storage.dao.StorageDao;
-import babroval.storage.dao.UserDao;
+import babroval.storage.dao.ElectricDaoImpl;
+import babroval.storage.dao.StorageDaoImpl;
+import babroval.storage.dao.UserDaoImpl;
 import babroval.storage.entity.Electric;
 import babroval.storage.entity.Storage;
 import babroval.storage.entity.User;
@@ -62,7 +62,7 @@ public class ElectricFrame extends JFrame {
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
 		
-		Dao<Storage> daoStorage = new StorageDao();
+		Dao<Storage> daoStorage = new StorageDaoImpl();
 		allStoragesNumbers = daoStorage.loadAllNumbers();
 
 		for (String storageNum : allStoragesNumbers) {
@@ -237,8 +237,8 @@ public class ElectricFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 					
-					Dao<Electric> daoElectric = new ElectricDao();
-					Dao<Storage> daoStorage = new StorageDao();
+					Dao<Electric> daoElectric = new ElectricDaoImpl();
+					Dao<Storage> daoStorage = new StorageDaoImpl();
 					
 					daoElectric.insert(new Electric(
 							daoStorage.loadIdByStorageNumber(String.valueOf(comboNum.getSelectedItem())),
@@ -281,12 +281,12 @@ public class ElectricFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				Dao<User> daoUser = new UserDao();
+				Dao<User> daoUser = new UserDaoImpl();
 				String userName = daoUser
 						.loadNameByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfName.setText(userName);
 				
-				Dao<Electric> daoElectric = new ElectricDao();
+				Dao<Electric> daoElectric = new ElectricDaoImpl();
 				Electric electric = daoElectric
 						.loadLastPaidByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
 				tfIndicationLastPaid.setText(String.valueOf(electric.getMeter_paid()));

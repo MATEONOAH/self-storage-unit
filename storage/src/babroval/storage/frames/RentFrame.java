@@ -21,9 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.Dao;
-import babroval.storage.dao.RentDao;
-import babroval.storage.dao.StorageDao;
-import babroval.storage.dao.UserDao;
+import babroval.storage.dao.RentDaoImpl;
+import babroval.storage.dao.StorageDaoImpl;
+import babroval.storage.dao.UserDaoImpl;
 import babroval.storage.entity.Rent;
 import babroval.storage.entity.Storage;
 import babroval.storage.entity.User;
@@ -61,7 +61,7 @@ class RentFrame extends JFrame {
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
 		
-		Dao<Storage> daoStorage = new StorageDao();
+		Dao<Storage> daoStorage = new StorageDaoImpl();
 		allStoragesNumbers = daoStorage.loadAllNumbers();
 
 		for (String storageNum : allStoragesNumbers) {
@@ -175,8 +175,8 @@ class RentFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					Dao<Rent> daoRent = new RentDao();
-					Dao<Storage> daoStorage = new StorageDao();
+					Dao<Rent> daoRent = new RentDaoImpl();
+					Dao<Storage> daoStorage = new StorageDaoImpl();
 					daoRent.insert(
 							new Rent(daoStorage.loadIdByStorageNumber((String) comboNum.getSelectedItem()),
 									InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
@@ -242,11 +242,11 @@ class RentFrame extends JFrame {
 		} else {
 			resetFrame();
 			try {
-				Dao<User> daoUser = new UserDao();
+				Dao<User> daoUser = new UserDaoImpl();
 				String userName = daoUser.loadNameByStorageNumber((String) comboNum.getSelectedItem());
 				tfName.setText(userName);
 
-				Dao<Rent> daoRent = new RentDao();
+				Dao<Rent> daoRent = new RentDaoImpl();
 				Date quarterPaid = daoRent
 						.loadLastQuarterPaidByStorageNumber((String) comboNum.getSelectedItem());
 				String temp = sdf.format(quarterPaid);

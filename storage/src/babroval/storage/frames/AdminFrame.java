@@ -30,10 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.dao.Dao;
-import babroval.storage.dao.ElectricDao;
-import babroval.storage.dao.RentDao;
-import babroval.storage.dao.StorageDao;
-import babroval.storage.dao.UserDao;
+import babroval.storage.dao.ElectricDaoImpl;
+import babroval.storage.dao.RentDaoImpl;
+import babroval.storage.dao.StorageDaoImpl;
+import babroval.storage.dao.UserDaoImpl;
 import babroval.storage.entity.Electric;
 import babroval.storage.entity.Rent;
 import babroval.storage.entity.Storage;
@@ -129,7 +129,7 @@ public class AdminFrame extends JFrame {
 		comboYear.setSelectedIndex(1);
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
-		Dao<Storage> daoStorage = new StorageDao();
+		Dao<Storage> daoStorage = new StorageDaoImpl();
 		allStoragesNumbers = daoStorage.loadAllNumbers();
 		for (String number : allStoragesNumbers) {
 			comboNum.addItem(number);
@@ -137,7 +137,7 @@ public class AdminFrame extends JFrame {
 		}
 
 		List<String> allUsersNames = new ArrayList<String>();
-		Dao<User> daoUser = new UserDao();
+		Dao<User> daoUser = new UserDaoImpl();
 		allUsersNames = daoUser.loadAllNames();
 		for (String name : allUsersNames) {
 			comboUserEdit.addItem(name);
@@ -328,21 +328,21 @@ public class AdminFrame extends JFrame {
 				if (comboRead.getSelectedIndex() == 1) {
 					sortFamily.setVisible(false);
 
-					Dao<Rent> daoRent = new RentDao();
+					Dao<Rent> daoRent = new RentDaoImpl();
 					showTable(daoRent.loadReadOnlyTable());
 				}
 
 				if (comboRead.getSelectedIndex() == 2) {
 					sortFamily.setVisible(false);
 
-					Dao<Electric> daoElectric = new ElectricDao();
+					Dao<Electric> daoElectric = new ElectricDaoImpl();
 					showTable(daoElectric.loadReadOnlyTable());
 				}
 
 				if (comboRead.getSelectedIndex() == 3) {
 					sortFamily.setVisible(true);
 
-					showTable(new UserDao().loadReadOnlyTable());
+					showTable(new UserDaoImpl().loadReadOnlyTable());
 				}
 			}
 		});
@@ -358,7 +358,7 @@ public class AdminFrame extends JFrame {
 				save.setEnabled(false);
 				delete.setEnabled(false);
 
-				Dao<Rent> daoRent = new RentDao();
+				Dao<Rent> daoRent = new RentDaoImpl();
 				showTable(daoRent.loadTableByStorageNumber(String.valueOf(comboNum.getSelectedItem())));
 			}
 		});
@@ -369,7 +369,7 @@ public class AdminFrame extends JFrame {
 
 				itemWrite.setEnabled(true);
 
-				Dao<User> daoUser = new UserDao();
+				Dao<User> daoUser = new UserDaoImpl();
 				showTable(daoUser.loadSortTable());
 			}
 		});
@@ -393,7 +393,7 @@ public class AdminFrame extends JFrame {
 					else
 						throw new NumberFormatException();
 
-					Dao<Rent> daoRent = new RentDao();
+					Dao<Rent> daoRent = new RentDaoImpl();
 					showTable(daoRent.loadDebtorsByYearQuarter(String.valueOf(comboYear.getSelectedItem()),
 							quarter));
 
@@ -424,7 +424,7 @@ public class AdminFrame extends JFrame {
 					save.setEnabled(false);
 					delete.setEnabled(true);
 
-					Dao<Rent> daoRent = new RentDao();
+					Dao<Rent> daoRent = new RentDaoImpl();
 					showTable(daoRent.loadEditTable());
 				}
 				if (comboEdit.getSelectedIndex() == 2) {
@@ -432,7 +432,7 @@ public class AdminFrame extends JFrame {
 					save.setEnabled(false);
 					delete.setEnabled(true);
 
-					Dao<Electric> daoElectric = new ElectricDao();
+					Dao<Electric> daoElectric = new ElectricDaoImpl();
 					showTable(daoElectric.loadEditTable());
 				}
 				if (comboEdit.getSelectedIndex() == 3) {
@@ -475,7 +475,7 @@ public class AdminFrame extends JFrame {
 					comboUserEdit.setSelectedIndex(0);
 				} else {
 					try {
-						Dao<User> daoUser = new UserDao();
+						Dao<User> daoUser = new UserDaoImpl();
 						User user = daoUser
 								.loadByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
 
@@ -501,7 +501,7 @@ public class AdminFrame extends JFrame {
 				groupStorage.clearSelection();
 				try {
 
-					Dao<User> daoUser = new UserDao();
+					Dao<User> daoUser = new UserDaoImpl();
 					User user = daoUser.loadByName(String.valueOf(comboUserEdit.getSelectedItem()));
 
 					tfUserName.setText(user.getName());
@@ -533,7 +533,7 @@ public class AdminFrame extends JFrame {
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
 
-						Dao<User> daoUser = new UserDao();
+						Dao<User> daoUser = new UserDaoImpl();
 						daoUser.insert(new User(1, "", ""));
 
 						// showUserTable();
@@ -557,11 +557,11 @@ public class AdminFrame extends JFrame {
 						throw new NumberFormatException("e");
 					}
 
-					Dao<User> daoUser = new UserDao();
+					Dao<User> daoUser = new UserDaoImpl();
 					String userName = daoUser
 							.loadNameByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
 					
-					Dao<Storage> daoStorage = new StorageDao();
+					Dao<Storage> daoStorage = new StorageDaoImpl();
 					Integer storageId = daoStorage
 							.loadIdByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
 
@@ -612,7 +612,7 @@ public class AdminFrame extends JFrame {
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)));
 
-							Dao<Rent> daoRent = new RentDao();
+							Dao<Rent> daoRent = new RentDaoImpl();
 							daoRent.update(new Rent(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
 									Date.valueOf("1970-01-01"), Date.valueOf("1970-01-01"), new BigDecimal("0"),
@@ -629,7 +629,7 @@ public class AdminFrame extends JFrame {
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 6)));
 
-							Dao<Electric> daoElectric = new ElectricDao();
+							Dao<Electric> daoElectric = new ElectricDaoImpl();
 							daoElectric.update(new Electric(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
 									Date.valueOf("1970-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),

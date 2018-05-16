@@ -11,9 +11,9 @@ import babroval.storage.entity.Rent;
 import babroval.storage.frames.TableStorage;
 import babroval.storage.mysql.ConnectionPool;
 
-public class RentDao implements Dao<Rent> {
+public class RentDaoImpl implements Dao<Rent> {
 
-	public RentDao() {
+	public RentDaoImpl() {
 	}
 
 	@Override
@@ -56,6 +56,7 @@ public class RentDao implements Dao<Rent> {
 		}
 	}
 
+	@Override
 	public Date loadLastQuarterPaidByStorageNumber(String number) {
 
 		Date date = new Date(0);
@@ -75,6 +76,7 @@ public class RentDao implements Dao<Rent> {
 		return date;
 	}
 
+	@Override
 	public TableStorage loadReadOnlyTable() {
 
 		TableStorage table = new TableStorage();
@@ -93,6 +95,7 @@ public class RentDao implements Dao<Rent> {
 		return table;
 	}
 
+	@Override
 	public TableStorage loadTableByStorageNumber(String number) {
 
 		TableStorage table = new TableStorage();
@@ -111,6 +114,7 @@ public class RentDao implements Dao<Rent> {
 		return table;
 	}
 
+	@Override
 	public TableStorage loadDebtorsByYearQuarter(String year, String quarter) {
 
 		TableStorage table = new TableStorage();
@@ -131,6 +135,7 @@ public class RentDao implements Dao<Rent> {
 		return table;
 	}
 
+	@Override
 	public TableStorage loadEditTable() {
 
 		TableStorage table = new TableStorage();
@@ -150,62 +155,52 @@ public class RentDao implements Dao<Rent> {
 
 	@Override
 	public void assignTo(Rent ob) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public List<String> loadAllNames() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public List<String> loadAllNumbers() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Rent loadByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Rent loadByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Rent loadLastPaidByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Integer loadIdByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public String loadNameByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public TableStorage loadSortTable() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 	@Override
 	public Integer loadIdByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 }

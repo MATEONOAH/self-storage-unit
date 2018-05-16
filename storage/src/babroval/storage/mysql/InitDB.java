@@ -10,10 +10,10 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import babroval.storage.dao.ElectricDao;
-import babroval.storage.dao.RentDao;
-import babroval.storage.dao.StorageDao;
-import babroval.storage.dao.UserDao;
+import babroval.storage.dao.ElectricDaoImpl;
+import babroval.storage.dao.RentDaoImpl;
+import babroval.storage.dao.StorageDaoImpl;
+import babroval.storage.dao.UserDaoImpl;
 import babroval.storage.entity.Electric;
 import babroval.storage.entity.Rent;
 import babroval.storage.entity.Storage;
@@ -65,26 +65,26 @@ public class InitDB {
 			throw new RuntimeException(e);
 		}
 		
-		UserDao daoUser = new UserDao();
+		UserDaoImpl daoUser = new UserDaoImpl();
 		daoUser.insert(new User("init", "init"));
 		daoUser.insert(new User("JANE ROE", "tel. 29-78-56-546, 200 E MAIN ST PHOENIX AZ 85123"));
 		daoUser.insert(new User("JOHN SMITH", "tel. 44-164-76-389, 795 E DRAGRAM TUCSON AZ 85705"));
 		daoUser.insert(new User("CHRIS NISWANDEE", "tel. 25-797-35-91, 300 BOYLSTON AVE E SEATTLE WA 98102"));
 
-		StorageDao daoStorage = new StorageDao();
+		StorageDaoImpl daoStorage = new StorageDaoImpl();
 		daoStorage.insert(new Storage(1, "0", "init"));
 		daoStorage.insert(new Storage(4, "2", "double"));
 		daoStorage.insert(new Storage(3, "1a", "standard"));
 		daoStorage.insert(new Storage(2, "1b", "small"));
 		
-		RentDao daoRent = new RentDao();
+		RentDaoImpl daoRent = new RentDaoImpl();
 		daoRent.insert(new Rent(2, stringToDate("18-11-2017", "dd-MM-yyyy"), stringToDate("01-01-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "45325"));
 		daoRent.insert(new Rent(4, stringToDate("19-11-2017", "dd-MM-yyyy"), stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(40.00), "67567"));
 		daoRent.insert(new Rent(2, stringToDate("20-11-2017", "dd-MM-yyyy"), stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "34556"));
 		daoRent.insert(new Rent(4, stringToDate("29-11-2017", "dd-MM-yyyy"), stringToDate("01-07-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "78574"));
 		daoRent.insert(new Rent(3, stringToDate("30-11-2017", "dd-MM-yyyy"), stringToDate("01-10-2018", "dd-MM-yyyy"), BigDecimal.valueOf(60.00), "353465"));
 
-		ElectricDao daoElectric = new ElectricDao();
+		ElectricDaoImpl daoElectric = new ElectricDaoImpl();
 		daoElectric.insert(new Electric(2, stringToDate("18-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45700, BigDecimal.valueOf(17.80), "56456"));
 		daoElectric.insert(new Electric(4, stringToDate("19-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 34500, BigDecimal.valueOf(26.70), "45763"));
 		daoElectric.insert(new Electric(2, stringToDate("20-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45800, BigDecimal.valueOf(17.80), "74535"));
