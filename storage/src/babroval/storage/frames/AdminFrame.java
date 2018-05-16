@@ -130,7 +130,7 @@ public class AdminFrame extends JFrame {
 
 		List<String> allStoragesNumbers = new ArrayList<String>();
 		Dao<Storage> daoStorage = new StorageDao();
-		allStoragesNumbers = daoStorage.loadAllNames();
+		allStoragesNumbers = daoStorage.loadAllNumbers();
 		for (String number : allStoragesNumbers) {
 			comboNum.addItem(number);
 			comboNumEdit.addItem(number);

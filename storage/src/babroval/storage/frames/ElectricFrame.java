@@ -63,7 +63,7 @@ public class ElectricFrame extends JFrame {
 		List<String> allStoragesNumbers = new ArrayList<String>();
 		
 		Dao<Storage> daoStorage = new StorageDao();
-		allStoragesNumbers = daoStorage.loadAllNames();
+		allStoragesNumbers = daoStorage.loadAllNumbers();
 
 		for (String storageNum : allStoragesNumbers) {
 			comboNum.addItem(storageNum);
