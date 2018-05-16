@@ -75,7 +75,7 @@ public class RentDao implements Dao<Rent> {
 		return date;
 	}
 
-	public TableStorage loadTable() {
+	public TableStorage loadReadOnlyTable() {
 
 		TableStorage table = new TableStorage();
 
@@ -180,12 +180,6 @@ public class RentDao implements Dao<Rent> {
 
 	@Override
 	public Rent loadLastPaidByStorageNumber(String number) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TableStorage loadReadOnlyTable() {
 		// TODO Auto-generated method stub
 		return null;
 	}
