@@ -1,4 +1,4 @@
-package babroval.storage.mysql;
+package babroval.storage.dao.resources;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -14,10 +14,10 @@ import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.RentDaoImpl;
 import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.entity.Electric;
-import babroval.storage.entity.Rent;
-import babroval.storage.entity.Storage;
-import babroval.storage.entity.User;
+import babroval.storage.model.Electric;
+import babroval.storage.model.Rent;
+import babroval.storage.model.Storage;
+import babroval.storage.model.User;
 
 public class InitDB {
 

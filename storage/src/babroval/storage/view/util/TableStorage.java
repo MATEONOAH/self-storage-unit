@@ -1,4 +1,4 @@
-package babroval.storage.frames;
+package babroval.storage.view.util;
 
 import java.awt.Component;
 import java.sql.Date;
@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import babroval.storage.mysql.InitDB;
+import babroval.storage.dao.resources.InitDB;
 
 public class TableStorage extends JTable {
 

@@ -1,4 +1,4 @@
-package babroval.storage.mysql;
+package babroval.storage.dao.resources;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package babroval.storage.entity;
+package babroval.storage.model;
 
 
 public class Storage {

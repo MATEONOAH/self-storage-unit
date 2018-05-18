@@ -3,7 +3,7 @@ package babroval.storage.dao;
 import java.sql.Date;
 import java.util.List;
 
-import babroval.storage.frames.TableStorage;
+import babroval.storage.view.util.TableStorage;
 
 public interface Dao <T>{
 	

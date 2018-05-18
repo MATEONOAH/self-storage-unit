@@ -1,4 +1,4 @@
-package babroval.storage.frames;
+package babroval.storage.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,13 +34,14 @@ import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.RentDaoImpl;
 import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.entity.Electric;
-import babroval.storage.entity.Rent;
-import babroval.storage.entity.Storage;
-import babroval.storage.entity.User;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.dao.resources.ConnectionPool;
+import babroval.storage.model.Electric;
+import babroval.storage.model.Rent;
+import babroval.storage.model.Storage;
+import babroval.storage.model.User;
+import babroval.storage.view.util.TableStorage;
 
-public class AdminFrame extends JFrame {
+public class AdminView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -255,7 +256,7 @@ public class AdminFrame extends JFrame {
 		add(panel);
 	}
 
-	public AdminFrame() {
+	public AdminView() {
 		setSize(995, 550);
 		setTitle("AdminFrame");
 		setLocationRelativeTo(null);
@@ -660,7 +661,7 @@ public class AdminFrame extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new RentFrame();
+							new RentView();
 						}
 					});
 					dispose();
@@ -670,7 +671,7 @@ public class AdminFrame extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ElectricFrame();
+							new ElectricView();
 						}
 					});
 					dispose();

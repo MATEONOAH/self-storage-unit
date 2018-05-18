@@ -1,4 +1,4 @@
-package babroval.storage.frames;
+package babroval.storage.view;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -23,12 +23,12 @@ import babroval.storage.dao.Dao;
 import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.entity.Electric;
-import babroval.storage.entity.Storage;
-import babroval.storage.entity.User;
-import babroval.storage.mysql.InitDB;
+import babroval.storage.dao.resources.InitDB;
+import babroval.storage.model.Electric;
+import babroval.storage.model.Storage;
+import babroval.storage.model.User;
 
-public class ElectricFrame extends JFrame {
+public class ElectricView extends JFrame {
  
 	private static final long serialVersionUID = 1L;
 
@@ -120,7 +120,7 @@ public class ElectricFrame extends JFrame {
 		add(panel);
 	}
 	
-	public ElectricFrame() {
+	public ElectricView() {
 		setSize(270, 460);
 		setTitle("Electricity payment");
 		setLocationRelativeTo(null);
@@ -157,7 +157,7 @@ public class ElectricFrame extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new RentFrame();
+							new RentView();
 						}
 					});
 					dispose();
@@ -167,7 +167,7 @@ public class ElectricFrame extends JFrame {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginFrame();
+							new LoginView();
 						}
 					});
 					dispose();

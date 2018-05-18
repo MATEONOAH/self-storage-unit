@@ -7,9 +7,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
 
-import babroval.storage.entity.Rent;
-import babroval.storage.frames.TableStorage;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.dao.resources.ConnectionPool;
+import babroval.storage.model.Rent;
+import babroval.storage.view.util.TableStorage;
 
 public class RentDaoImpl implements Dao<Rent> {
 

@@ -1,4 +1,4 @@
-package babroval.storage.frames;
+package babroval.storage.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +13,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class LoginFrame extends JFrame {
+import babroval.storage.controller.RentController;
+import babroval.storage.dao.Dao;
+import babroval.storage.dao.RentDaoImpl;
+import babroval.storage.dao.StorageDaoImpl;
+import babroval.storage.model.Rent;
+import babroval.storage.model.Storage;
+
+public class LoginView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +32,7 @@ public class LoginFrame extends JFrame {
 	private JComboBox<String> comboOrder;
 	private String[] select = { "select payment:", "RENT", "ELECTRICITY" };
 
-	public LoginFrame() {
+	public LoginView() {
 		setSize(260, 175);
 		setTitle("Login");
 		setLocationRelativeTo(null);
@@ -64,7 +71,12 @@ public class LoginFrame extends JFrame {
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new RentFrame();
+	
+								RentView view = new RentView();
+								Dao<Rent> daoRent = new RentDaoImpl();
+								Dao<Storage> daoStorage = new StorageDaoImpl();
+								RentController controller = new RentController(view, daoRent, daoStorage);
+								controller.initController();
 							}
 						});
 						dispose();
@@ -73,7 +85,7 @@ public class LoginFrame extends JFrame {
 						
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new ElectricFrame();
+								new ElectricView();
 							}
 						});
 						dispose();
@@ -98,7 +110,7 @@ public class LoginFrame extends JFrame {
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								new AdminFrame();
+								new AdminView();
 							}
 						});
 

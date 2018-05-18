@@ -8,9 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import babroval.storage.entity.Storage;
-import babroval.storage.frames.TableStorage;
-import babroval.storage.mysql.ConnectionPool;
+import babroval.storage.dao.resources.ConnectionPool;
+import babroval.storage.model.Storage;
+import babroval.storage.view.util.TableStorage;
 
 public class StorageDaoImpl implements Dao<Storage> {
 
