@@ -1,4 +1,4 @@
-package babroval.storage.view.util;
+package babroval.storage.util;
 
 import java.awt.Component;
 import java.sql.Date;
@@ -11,8 +11,6 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
-import babroval.storage.dao.resources.InitDB;
 
 public class TableStorage extends JTable {
 

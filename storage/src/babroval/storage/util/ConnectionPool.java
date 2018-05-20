@@ -1,4 +1,4 @@
-package babroval.storage.dao.resources;
+package babroval.storage.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

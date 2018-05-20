@@ -3,8 +3,6 @@ package babroval.storage.view;
 import java.awt.Dimension;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -13,10 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import babroval.storage.dao.Dao;
-import babroval.storage.dao.StorageDaoImpl;
-import babroval.storage.model.Storage;
 
 public class RentView extends JFrame {
 
@@ -47,15 +41,6 @@ public class RentView extends JFrame {
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
-
-		List<String> allStoragesNumbers = new ArrayList<String>();
-		
-		Dao<Storage> daoStorage = new StorageDaoImpl();
-		allStoragesNumbers = daoStorage.loadAllNumbers();
-
-		for (String storageNum : allStoragesNumbers) {
-			comboNum.addItem(storageNum);
-		}
 
 		labelQuarter = new JLabel("Select Quarter of");
 

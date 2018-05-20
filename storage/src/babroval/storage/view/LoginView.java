@@ -1,24 +1,12 @@
 package babroval.storage.view;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import babroval.storage.controller.RentController;
-import babroval.storage.dao.Dao;
-import babroval.storage.dao.RentDaoImpl;
-import babroval.storage.dao.StorageDaoImpl;
-import babroval.storage.model.Rent;
-import babroval.storage.model.Storage;
 
 public class LoginView extends JFrame {
 
@@ -31,16 +19,6 @@ public class LoginView extends JFrame {
 	private JButton mainView;
 	private JComboBox<String> comboOrder;
 	private String[] select = { "select payment:", "RENT", "ELECTRICITY" };
-
-	public LoginView() {
-		setSize(260, 175);
-		setTitle("Login");
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
-		action();
-		setVisible(true);
-	}
 
 	{
 		panel = new JPanel();
@@ -61,68 +39,77 @@ public class LoginView extends JFrame {
 		add(panel);
 	}
 
-	private void action() {
-
-		comboOrder.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (!tfLogin.getText().equals(" ")) {
-					if (comboOrder.getSelectedIndex() == 1) {
-
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-	
-								RentView view = new RentView();
-								Dao<Rent> daoRent = new RentDaoImpl();
-								Dao<Storage> daoStorage = new StorageDaoImpl();
-								RentController controller = new RentController(view, daoRent, daoStorage);
-								controller.initController();
-							}
-						});
-						dispose();
-					}
-					if (comboOrder.getSelectedIndex() == 2) {
-						
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								new ElectricView();
-							}
-						});
-						dispose();
-					}
-				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		mainView.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				if (("").equals(tfLogin.getText())) {
-					char[] pass = tfPassword.getPassword();
-					String res = "";
-					for (int i = 0; i < pass.length; i++) {
-						res += pass[i];
-					}
-					if (res.equals("")) {
-
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								new AdminView();
-							}
-						});
-
-						dispose();
-					} else {
-						JOptionPane.showMessageDialog(panel, "incorrect password", "", JOptionPane.ERROR_MESSAGE);
-					}
-				} else {
-					JOptionPane.showMessageDialog(panel, "incorrect login", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
+	public LoginView() {
+		setSize(260, 175);
+		setTitle("Login");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setVisible(true);
 	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
+
+	public JLabel getLabelLogin() {
+		return labelLogin;
+	}
+
+	public void setLabelLogin(JLabel labelLogin) {
+		this.labelLogin = labelLogin;
+	}
+
+	public JLabel getLabelPassword() {
+		return labelPassword;
+	}
+
+	public void setLabelPassword(JLabel labelPassword) {
+		this.labelPassword = labelPassword;
+	}
+
+	public JTextField getTfLogin() {
+		return tfLogin;
+	}
+
+	public void setTfLogin(JTextField tfLogin) {
+		this.tfLogin = tfLogin;
+	}
+
+	public JPasswordField getTfPassword() {
+		return tfPassword;
+	}
+
+	public void setTfPassword(JPasswordField tfPassword) {
+		this.tfPassword = tfPassword;
+	}
+
+	public JButton getMainView() {
+		return mainView;
+	}
+
+	public void setMainView(JButton mainView) {
+		this.mainView = mainView;
+	}
+
+	public JComboBox<String> getComboOrder() {
+		return comboOrder;
+	}
+
+	public void setComboOrder(JComboBox<String> comboOrder) {
+		this.comboOrder = comboOrder;
+	}
+
+	public String[] getSelect() {
+		return select;
+	}
+
+	public void setSelect(String[] select) {
+		this.select = select;
+	}
+
 }

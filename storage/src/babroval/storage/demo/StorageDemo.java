@@ -11,8 +11,8 @@ public class StorageDemo {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				StartView view = new StartView();
-				StartController controller = new StartController(view);
+
+				StartController controller = new StartController();
 				controller.initController();
 			}
 		});

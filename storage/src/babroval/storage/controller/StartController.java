@@ -8,17 +8,15 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.resources.ConnectionPool;
-import babroval.storage.dao.resources.InitDB;
-import babroval.storage.view.LoginView;
+import babroval.storage.util.ConnectionPool;
+import babroval.storage.util.InitDB;
 import babroval.storage.view.StartView;
 
 public class StartController {
 
-	private StartView view;
+	private StartView view = new StartView();
 
-	public StartController(StartView view) {
-		this.view = view;
+	public StartController() {
 	}
 
 	public void initController() {
@@ -60,7 +58,7 @@ public class StartController {
 		view.getConnect().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-
+				
 				try (Connection cn = ConnectionPool.getPool().getConnection(view.getTfUrl().getText(),
 						view.getTfLogin().getText(), view.getTfPassword().getText());
 						Statement st = cn.createStatement()) {
@@ -69,7 +67,9 @@ public class StartController {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginView();
+
+							LoginController controller = new LoginController();
+							controller.initController();
 						}
 					});
 

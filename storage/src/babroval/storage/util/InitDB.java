@@ -1,4 +1,4 @@
-package babroval.storage.dao.resources;
+package babroval.storage.util;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

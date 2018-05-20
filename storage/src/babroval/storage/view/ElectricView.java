@@ -23,10 +23,10 @@ import babroval.storage.dao.Dao;
 import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.dao.resources.InitDB;
 import babroval.storage.model.Electric;
 import babroval.storage.model.Storage;
 import babroval.storage.model.User;
+import babroval.storage.util.InitDB;
 
 public class ElectricView extends JFrame {
  
@@ -39,9 +39,6 @@ public class ElectricView extends JFrame {
 	private JTextField tfDate, tfName, tfIndication, tfIndicationLastPaid, tfTariff, tfSum, tfInf;
 	private JButton calculate, enter, cancel;
 	private String[] select = { "select:", "RENT PAYMENT", "MAIN VIEW" };
-	private Integer indication = 0 ;
-	private BigDecimal tariff = new BigDecimal("0");
-	private BigDecimal sum = new BigDecimal("0");
 
 	{
 		panel = new JPanel();
@@ -59,15 +56,6 @@ public class ElectricView extends JFrame {
 		labelName = new JLabel("Name of tenant:");
 		tfName = new JTextField(20);
 		tfName.setEnabled(false);
-
-		List<String> allStoragesNumbers = new ArrayList<String>();
-		
-		Dao<Storage> daoStorage = new StorageDaoImpl();
-		allStoragesNumbers = daoStorage.loadAllNumbers();
-
-		for (String storageNum : allStoragesNumbers) {
-			comboNum.addItem(storageNum);
-		}
 
 		labelIndicationLastPaid = new JLabel("Electric power indication last paid:");
 		tfIndicationLastPaid = new JTextField(20);
@@ -126,182 +114,183 @@ public class ElectricView extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-		resetFrame();
-		action();
 		setVisible(true);
 	}
-	
-	private void resetFrame() {
 
-		tfName.setText("");
-		tfIndicationLastPaid.setText("");
-		tfTariff.setText("");
-		tfTariff.setEnabled(false);
-		tfIndication.setText("");
-		tfIndication.setEnabled(false);
-		calculate.setEnabled(false);
-		tfSum.setText("");
-		tfSum.setEnabled(false);
-		tfInf.setText("");
-		tfInf.setEnabled(false);
-		enter.setEnabled(false);
-		cancel.setEnabled(false);
-	}
-	
-	private void action() {
-
-		comboSelect.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				if (comboSelect.getSelectedIndex() == 1) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new RentView();
-						}
-					});
-					dispose();
-				}
-
-				if (comboSelect.getSelectedIndex() == 2) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new LoginView();
-						}
-					});
-					dispose();
-				}
-			}
-		});
-
-		comboNum.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				updateFrame();
-			}
-		});
-
-		calculate.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				try {
-					Integer indicationLastPaid = new Integer(tfIndicationLastPaid.getText());
-					indication = new Integer(tfIndication.getText());
-					tariff = new BigDecimal(tfTariff.getText());
-					BigDecimal kWh = new BigDecimal(String.valueOf(indication - indicationLastPaid));
-
-					if (tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
-						throw new NumberFormatException("e");
-					}
-
-					sum = kWh.multiply(tariff) ;
-					sum = sum.setScale(2, RoundingMode.HALF_UP);
-
-					tfSum.setText(sum.toString());
-					tfInf.setEnabled(true);
-					enter.setEnabled(true);
-					tfTariff.setEnabled(false);
-					tfTariff.setEnabled(false);
-					tfIndication.setEnabled(false);
-					calculate.setEnabled(false);
-					cancel.setEnabled(true);
-
-					panel.updateUI();
-
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel,
-							"enter the right price per kilowatt-hour and the right indication", "",
-							JOptionPane.ERROR_MESSAGE);
-					updateFrame();
-
-				} catch (Exception e) {
-					comboNum.setSelectedIndex(0);
-					resetFrame();
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		enter.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				
-				try {
-					
-					if (comboNum.getSelectedIndex() == 0) {
-						throw new NumberFormatException("e");
-					}
-					
-					Dao<Electric> daoElectric = new ElectricDaoImpl();
-					Dao<Storage> daoStorage = new StorageDaoImpl();
-					
-					daoElectric.insert(new Electric(
-							daoStorage.loadIdByStorageNumber(String.valueOf(comboNum.getSelectedItem())),
-							InitDB.stringToDate(tfDate.getText(), "dd-MM-yyyy"),
-							tariff,
-							indication,
-							sum,
-							tfInf.getText()));
-					
-					comboNum.setSelectedIndex(0);
-					resetFrame();
-					JOptionPane.showMessageDialog(panel, "The payment has been successfully included", "Message",
-							JOptionPane.INFORMATION_MESSAGE);
-
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "Select storage and electric power indication", "",
-							JOptionPane.ERROR_MESSAGE);
-
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		cancel.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				updateFrame();
-			}
-		});
-
+	public JPanel getPanel() {
+		return panel;
 	}
 
-	private void updateFrame() {
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
 
-		if (comboNum.getSelectedIndex() == 0) {
-			resetFrame();
-		} else {
-			resetFrame();
-			try {
-				Dao<User> daoUser = new UserDaoImpl();
-				String userName = daoUser
-						.loadNameByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
-				tfName.setText(userName);
-				
-				Dao<Electric> daoElectric = new ElectricDaoImpl();
-				Electric electric = daoElectric
-						.loadLastPaidByStorageNumber(String.valueOf(comboNum.getSelectedItem()));
-				tfIndicationLastPaid.setText(String.valueOf(electric.getMeter_paid()));
-				tfTariff.setText(electric.getTariff().toString());
+	public JLabel getLabelNum() {
+		return labelNum;
+	}
 
-				tfTariff.setEnabled(true);
-				tfIndication.setEnabled(true);
-				calculate.setEnabled(true);
-			} catch (Exception e) {
-				comboNum.setSelectedIndex(0);
-				resetFrame();
-				JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		panel.updateUI();
+	public void setLabelNum(JLabel labelNum) {
+		this.labelNum = labelNum;
+	}
+
+	public JLabel getLabelDate() {
+		return labelDate;
+	}
+
+	public void setLabelDate(JLabel labelDate) {
+		this.labelDate = labelDate;
+	}
+
+	public JLabel getLabelName() {
+		return labelName;
+	}
+
+	public void setLabelName(JLabel labelName) {
+		this.labelName = labelName;
+	}
+
+	public JLabel getLabelIndicationLastPaid() {
+		return labelIndicationLastPaid;
+	}
+
+	public void setLabelIndicationLastPaid(JLabel labelIndicationLastPaid) {
+		this.labelIndicationLastPaid = labelIndicationLastPaid;
+	}
+
+	public JLabel getLabelTariff() {
+		return labelTariff;
+	}
+
+	public void setLabelTariff(JLabel labelTariff) {
+		this.labelTariff = labelTariff;
+	}
+
+	public JLabel getLabelIndication() {
+		return labelIndication;
+	}
+
+	public void setLabelIndication(JLabel labelIndication) {
+		this.labelIndication = labelIndication;
+	}
+
+	public JLabel getLabelSum() {
+		return labelSum;
+	}
+
+	public void setLabelSum(JLabel labelSum) {
+		this.labelSum = labelSum;
+	}
+
+	public JLabel getLabelInf() {
+		return labelInf;
+	}
+
+	public void setLabelInf(JLabel labelInf) {
+		this.labelInf = labelInf;
+	}
+
+	public JComboBox<String> getComboNum() {
+		return comboNum;
+	}
+
+	public void setComboNum(JComboBox<String> comboNum) {
+		this.comboNum = comboNum;
+	}
+
+	public JComboBox<String> getComboSelect() {
+		return comboSelect;
+	}
+
+	public void setComboSelect(JComboBox<String> comboSelect) {
+		this.comboSelect = comboSelect;
+	}
+
+	public JTextField getTfDate() {
+		return tfDate;
+	}
+
+	public void setTfDate(JTextField tfDate) {
+		this.tfDate = tfDate;
+	}
+
+	public JTextField getTfName() {
+		return tfName;
+	}
+
+	public void setTfName(JTextField tfName) {
+		this.tfName = tfName;
+	}
+
+	public JTextField getTfIndication() {
+		return tfIndication;
+	}
+
+	public void setTfIndication(JTextField tfIndication) {
+		this.tfIndication = tfIndication;
+	}
+
+	public JTextField getTfIndicationLastPaid() {
+		return tfIndicationLastPaid;
+	}
+
+	public void setTfIndicationLastPaid(JTextField tfIndicationLastPaid) {
+		this.tfIndicationLastPaid = tfIndicationLastPaid;
+	}
+
+	public JTextField getTfTariff() {
+		return tfTariff;
+	}
+
+	public void setTfTariff(JTextField tfTariff) {
+		this.tfTariff = tfTariff;
+	}
+
+	public JTextField getTfSum() {
+		return tfSum;
+	}
+
+	public void setTfSum(JTextField tfSum) {
+		this.tfSum = tfSum;
+	}
+
+	public JTextField getTfInf() {
+		return tfInf;
+	}
+
+	public void setTfInf(JTextField tfInf) {
+		this.tfInf = tfInf;
+	}
+
+	public JButton getCalculate() {
+		return calculate;
+	}
+
+	public void setCalculate(JButton calculate) {
+		this.calculate = calculate;
+	}
+
+	public JButton getEnter() {
+		return enter;
+	}
+
+	public void setEnter(JButton enter) {
+		this.enter = enter;
+	}
+
+	public JButton getCancel() {
+		return cancel;
+	}
+
+	public void setCancel(JButton cancel) {
+		this.cancel = cancel;
+	}
+
+	public String[] getSelect() {
+		return select;
+	}
+
+	public void setSelect(String[] select) {
+		this.select = select;
 	}
 
 }

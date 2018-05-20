@@ -34,12 +34,12 @@ import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.RentDaoImpl;
 import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.dao.resources.ConnectionPool;
 import babroval.storage.model.Electric;
 import babroval.storage.model.Rent;
 import babroval.storage.model.Storage;
 import babroval.storage.model.User;
-import babroval.storage.view.util.TableStorage;
+import babroval.storage.util.ConnectionPool;
+import babroval.storage.util.TableStorage;
 
 public class AdminView extends JFrame {
 
