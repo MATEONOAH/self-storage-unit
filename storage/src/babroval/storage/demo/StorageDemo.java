@@ -3,7 +3,6 @@ package babroval.storage.demo;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.controller.StartController;
-import babroval.storage.view.StartView;
 
 public class StorageDemo {
 

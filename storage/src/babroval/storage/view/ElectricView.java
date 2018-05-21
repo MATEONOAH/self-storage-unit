@@ -1,32 +1,15 @@
 package babroval.storage.view;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import babroval.storage.dao.Dao;
-import babroval.storage.dao.ElectricDaoImpl;
-import babroval.storage.dao.StorageDaoImpl;
-import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.model.Electric;
-import babroval.storage.model.Storage;
-import babroval.storage.model.User;
-import babroval.storage.util.InitDB;
 
 public class ElectricView extends JFrame {
  
