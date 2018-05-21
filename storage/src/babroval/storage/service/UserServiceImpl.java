@@ -1,5 +1,6 @@
 package babroval.storage.service;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -95,6 +96,11 @@ public class UserServiceImpl<T> implements Service<T> {
 	@Override
 	public Date getLastQuarterPaidByStorageNumber(String number) {
 		return dao.loadLastQuarterPaidByStorageNumber(number);
+	}
+
+	@Override
+	public BigDecimal getSum(Integer indicationLastPaid, Integer indication, BigDecimal tariff) {
+		throw new UnsupportedOperationException("Method has not implemented yet");
 	}
 
 }

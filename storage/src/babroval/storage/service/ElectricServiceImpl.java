@@ -1,6 +1,7 @@
 package babroval.storage.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.List;
 
@@ -9,10 +10,10 @@ import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.util.TableStorage;
 
 public class ElectricServiceImpl<T> implements Service<T> {
-	
-		@SuppressWarnings("unchecked")
+
+	@SuppressWarnings("unchecked")
 	private Dao<T> dao = (Dao<T>) new ElectricDaoImpl();
-	
+
 	@Override
 	public void insert(T ob) {
 		dao.insert(ob);
@@ -96,6 +97,21 @@ public class ElectricServiceImpl<T> implements Service<T> {
 	@Override
 	public Date getLastQuarterPaidByStorageNumber(String number) {
 		return dao.loadLastQuarterPaidByStorageNumber(number);
+	}
+
+	@Override
+	public BigDecimal getSum(Integer indicationLastPaid, Integer indication, BigDecimal tariff) {
+
+		BigDecimal kWh = new BigDecimal(String.valueOf(indication - indicationLastPaid));
+
+		if (tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
+			throw new NumberFormatException("e");
+		}
+
+		BigDecimal sum = kWh.multiply(tariff);
+		sum = sum.setScale(2, RoundingMode.HALF_UP);
+
+		return sum;
 	}
 
 }

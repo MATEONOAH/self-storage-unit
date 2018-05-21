@@ -3,15 +3,12 @@ package babroval.storage.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.Dao;
-import babroval.storage.dao.StorageDaoImpl;
 import babroval.storage.model.Electric;
 import babroval.storage.model.Storage;
 import babroval.storage.model.User;
@@ -25,14 +22,10 @@ import babroval.storage.view.ElectricView;
 public class ElectricController {
 
 	private ElectricView view = new ElectricView();
-
+	private Electric electric = new Electric();
 	private Service<Electric> electricService = new ElectricServiceImpl<>();
 	private Service<Storage> storageService = new StorageServiceImpl<>();
 	private Service<User> userService = new UserServiceImpl<>();
-
-	private Integer indication = 0;
-	private BigDecimal tariff = new BigDecimal("0");
-	private BigDecimal sum = new BigDecimal("0");
 
 	public ElectricController() {
 		initView();
@@ -42,8 +35,7 @@ public class ElectricController {
 		try {
 			List<String> allStoragesNumbers = new ArrayList<String>();
 
-			Dao<Storage> daoStorage = new StorageDaoImpl();
-			allStoragesNumbers = daoStorage.loadAllNumbers();
+			allStoragesNumbers = storageService.getAllNumbers();
 
 			for (String storageNum : allStoragesNumbers) {
 				view.getComboNum().addItem(storageNum);
@@ -100,17 +92,14 @@ public class ElectricController {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					Integer indicationLastPaid = new Integer(view.getTfIndicationLastPaid().getText());
-					indication = new Integer(view.getTfIndication().getText());
-					tariff = new BigDecimal(view.getTfTariff().getText());
-					BigDecimal kWh = new BigDecimal(String.valueOf(indication - indicationLastPaid));
+					Integer indicationLastPaid = electric.getMeter_paid();
+					Integer indication = new Integer(view.getTfIndication().getText());
+					BigDecimal tariff = new BigDecimal(view.getTfTariff().getText());
 
-					if (tariff.compareTo(new BigDecimal("0")) <= 0 || kWh.compareTo(new BigDecimal("0")) <= 0) {
-						throw new NumberFormatException("e");
-					}
-
-					sum = kWh.multiply(tariff);
-					sum = sum.setScale(2, RoundingMode.HALF_UP);
+					BigDecimal sum = electricService.getSum(indicationLastPaid, indication, tariff);
+					electric.setTariff(tariff);
+					electric.setMeter_paid(indication);
+					electric.setSum(sum);
 
 					view.getTfSum().setText(sum.toString());
 					view.getTfInf().setEnabled(true);
@@ -150,8 +139,8 @@ public class ElectricController {
 
 					electricService.insert(new Electric(
 							storageService.getIdByStorageNumber(String.valueOf(view.getComboNum().getSelectedItem())),
-							InitDB.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"), tariff, indication, sum,
-							view.getTfInf().getText()));
+							InitDB.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"), electric.getTariff(),
+							electric.getMeter_paid(), electric.getSum(), view.getTfInf().getText()));
 
 					view.getComboNum().setSelectedIndex(0);
 					resetFrame();
@@ -190,7 +179,7 @@ public class ElectricController {
 						.getNameByStorageNumber(String.valueOf(view.getComboNum().getSelectedItem()));
 				view.getTfName().setText(userName);
 
-				Electric electric = electricService
+				electric = electricService
 						.getLastPaidByStorageNumber(String.valueOf(view.getComboNum().getSelectedItem()));
 				view.getTfIndicationLastPaid().setText(String.valueOf(electric.getMeter_paid()));
 				view.getTfTariff().setText(electric.getTariff().toString());

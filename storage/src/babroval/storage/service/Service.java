@@ -1,5 +1,6 @@
 package babroval.storage.service;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -40,4 +41,6 @@ public interface Service <T>{
     String getNameByStorageNumber(String number);
     
     Date getLastQuarterPaidByStorageNumber(String number);
+
+	BigDecimal getSum(Integer indicationLastPaid, Integer indication, BigDecimal tariff);
 }
