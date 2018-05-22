@@ -1,18 +1,5 @@
 package babroval.storage.view;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -23,22 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
-import babroval.storage.dao.Dao;
-import babroval.storage.dao.ElectricDaoImpl;
-import babroval.storage.dao.RentDaoImpl;
-import babroval.storage.dao.StorageDaoImpl;
-import babroval.storage.dao.UserDaoImpl;
-import babroval.storage.model.Electric;
-import babroval.storage.model.Rent;
-import babroval.storage.model.Storage;
-import babroval.storage.model.User;
-import babroval.storage.util.ConnectionPool;
+import babroval.storage.util.DateUtil;
 import babroval.storage.util.TableStorage;
 
 public class AdminView extends JFrame {
@@ -122,27 +98,10 @@ public class AdminView extends JFrame {
 		labelNewUserInfo = new JLabel("Personal information of tenant:");
 		tfUserInfo = new JTextField(300);
 
-		Date today = new Date(System.currentTimeMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-		int i = Integer.parseInt(sdf.format(today));
+		int i = DateUtil.getTodayYear();
 		String[] year = { String.valueOf(i - 1), String.valueOf(i), String.valueOf(i + 1) };
 		comboYear = new JComboBox<String>(year);
 		comboYear.setSelectedIndex(1);
-
-		List<String> allStoragesNumbers = new ArrayList<String>();
-		Dao<Storage> daoStorage = new StorageDaoImpl();
-		allStoragesNumbers = daoStorage.loadAllNumbers();
-		for (String number : allStoragesNumbers) {
-			comboNum.addItem(number);
-			comboNumEdit.addItem(number);
-		}
-
-		List<String> allUsersNames = new ArrayList<String>();
-		Dao<User> daoUser = new UserDaoImpl();
-		allUsersNames = daoUser.loadAllNames();
-		for (String name : allUsersNames) {
-			comboUserEdit.addItem(name);
-		}
 
 		sortFamily.setVisible(false);
 		add.setEnabled(false);
@@ -262,455 +221,391 @@ public class AdminView extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-		action();
 		setVisible(true);
 	}
 
-	private void action() {
-
-		itemWrite.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				int x = chooser.showSaveDialog(panel);
-				if (x == 0) {
-					String allRow = "";
-					for (int j = 0; j < table.getColumnCount(); j++) {
-						allRow = allRow + table.getColumnName(j) + "\t";
-					}
-					allRow = allRow + "\n";
-					for (int i = 0; i < table.getRowCount(); i++) {
-						for (int j = 0; j < table.getColumnCount(); j++) {
-							allRow = allRow + table.getValueAt(i, j) + "\t";
-						}
-						allRow = allRow + "\n";
-					}
-
-					try (FileWriter fw = new FileWriter(chooser.getSelectedFile())) {
-
-						fw.write(allRow);
-						JOptionPane.showMessageDialog(panel, "Saved");
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(panel, "save error");
-					}
-				}
-			}
-		});
-
-		itemAbout.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(panel, "Storage");
-			}
-		});
-
-		itemExit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-
-		comboRead.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				itemWrite.setEnabled(true);
-				add.setEnabled(false);
-				save.setEnabled(false);
-				delete.setEnabled(false);
-
-				if (comboRead.getSelectedIndex() == 0) {
-					sortFamily.setVisible(false);
-					panel.remove(scroll);
-					panel.updateUI();
-				}
-				if (comboRead.getSelectedIndex() == 1) {
-					sortFamily.setVisible(false);
-
-					Dao<Rent> daoRent = new RentDaoImpl();
-					showTable(daoRent.loadReadOnlyTable());
-				}
-
-				if (comboRead.getSelectedIndex() == 2) {
-					sortFamily.setVisible(false);
-
-					Dao<Electric> daoElectric = new ElectricDaoImpl();
-					showTable(daoElectric.loadReadOnlyTable());
-				}
-
-				if (comboRead.getSelectedIndex() == 3) {
-					sortFamily.setVisible(true);
-
-					showTable(new UserDaoImpl().loadReadOnlyTable());
-				}
-			}
-		});
-
-		comboNum.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				sortFamily.setVisible(false);
-
-				itemWrite.setEnabled(true);
-				add.setEnabled(false);
-				save.setEnabled(false);
-				delete.setEnabled(false);
-
-				Dao<Rent> daoRent = new RentDaoImpl();
-				showTable(daoRent.loadTableByStorageNumber(String.valueOf(comboNum.getSelectedItem())));
-			}
-		});
-
-		sortFamily.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				itemWrite.setEnabled(true);
-
-				Dao<User> daoUser = new UserDaoImpl();
-				showTable(daoUser.loadSortTable());
-			}
-		});
-
-		rentDebtors.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				panel.remove(scroll);
-
-				try {
-					String quarter = ""; // first month of year quarter
-					if (quart1.isSelected())
-						quarter = "01";
-					else if (quart2.isSelected())
-						quarter = "04";
-					else if (quart3.isSelected())
-						quarter = "07";
-					else if (quart4.isSelected())
-						quarter = "10";
-					else
-						throw new NumberFormatException();
-
-					Dao<Rent> daoRent = new RentDaoImpl();
-					showTable(daoRent.loadDebtorsByYearQuarter(String.valueOf(comboYear.getSelectedItem()),
-							quarter));
-
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel, "specify quarter", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		comboEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				sortFamily.setVisible(false);
-				itemWrite.setEnabled(false);
-				panel.remove(scroll);
-
-				if (comboEdit.getSelectedIndex() == 0) {
-					add.setEnabled(false);
-					save.setEnabled(false);
-					delete.setEnabled(false);
-
-					panel.remove(scroll);
-					panel.updateUI();
-				}
-				if (comboEdit.getSelectedIndex() == 1) {
-					add.setEnabled(false);
-					save.setEnabled(false);
-					delete.setEnabled(true);
-
-					Dao<Rent> daoRent = new RentDaoImpl();
-					showTable(daoRent.loadEditTable());
-				}
-				if (comboEdit.getSelectedIndex() == 2) {
-					add.setEnabled(false);
-					save.setEnabled(false);
-					delete.setEnabled(true);
-
-					Dao<Electric> daoElectric = new ElectricDaoImpl();
-					showTable(daoElectric.loadEditTable());
-				}
-				if (comboEdit.getSelectedIndex() == 3) {
-					add.setEnabled(true);
-					save.setEnabled(true);
-					delete.setEnabled(false);
-					panel.remove(scroll);
-					labelNumber.setVisible(true);
-					comboNumEdit.setVisible(true);
-					labelName.setVisible(true);
-					comboUserEdit.setVisible(true);
-					editStorage.setVisible(true);
-					addStorage.setVisible(true);
-					deleteStorage.setVisible(true);
-					editUser.setVisible(true);
-					addUser.setVisible(true);
-					labelNewStorageNum.setVisible(true);
-					tfStorageNum.setVisible(true);
-					labelNewStorageInfo.setVisible(true);
-					tfStorageInfo.setVisible(true);
-					tfUserName.setVisible(true);
-					labelNewUserName.setVisible(true);
-					tfUserInfo.setVisible(true);
-					labelNewUserInfo.setVisible(true);
-
-					panel.updateUI();
-				}
-
-			}
-		});
-
-		comboNumEdit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				groupStorage.clearSelection();
-
-				if (comboNumEdit.getSelectedIndex() == 0) {
-					comboUserEdit.setSelectedIndex(0);
-				} else {
-					try {
-						Dao<User> daoUser = new UserDaoImpl();
-						User user = daoUser
-								.loadByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
-
-						if (user.getUser_id() == 1) {
-							comboUserEdit.setSelectedIndex(0);
-						} else {
-							comboUserEdit.setSelectedItem(user.getName());
-							tfUserName.setText(user.getName());
-							tfUserInfo.setText(user.getInfo());
-						}
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-
-		comboUserEdit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				groupStorage.clearSelection();
-				try {
-
-					Dao<User> daoUser = new UserDaoImpl();
-					User user = daoUser.loadByName(String.valueOf(comboUserEdit.getSelectedItem()));
-
-					tfUserName.setText(user.getName());
-					tfUserInfo.setText(user.getInfo());
-
-				} catch (NumberFormatException e) {
-					groupStorage.clearSelection();
-					JOptionPane.showMessageDialog(panel, "select tenant", "", JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					groupStorage.clearSelection();
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		add.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st
-								.executeQuery("SELECT user.user_id" + " FROM user" + " WHERE user.storage_id=1")) {
-					if (rs.next()) {
-						throw new ArrayIndexOutOfBoundsException("e");
-					}
-
-					int result = JOptionPane.showConfirmDialog(panel, "Add tenant?", "Add",
-							JOptionPane.OK_CANCEL_OPTION);
-					if (result == JOptionPane.OK_OPTION) {
-
-						Dao<User> daoUser = new UserDaoImpl();
-						daoUser.insert(new User(1, "", ""));
-
-						// showUserTable();
-
-						JOptionPane.showMessageDialog(panel, "Please, enter tenant's name on the empty line");
-					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(panel, "enter tenant's name on the empty line", "fault",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				try {
-					if (comboNumEdit.getSelectedIndex() == 0 || comboUserEdit.getSelectedIndex() == 0) {
-						throw new NumberFormatException("e");
-					}
-
-					Dao<User> daoUser = new UserDaoImpl();
-					String userName = daoUser
-							.loadNameByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
-					
-					Dao<Storage> daoStorage = new StorageDaoImpl();
-					Integer storageId = daoStorage
-							.loadIdByStorageNumber(String.valueOf(comboNumEdit.getSelectedItem()));
-
-					if (userName.equals(String.valueOf(comboUserEdit.getSelectedItem()))) {
-						throw new NumberFormatException("e");
-					}
-
-					if (storageId != 0) {
-						daoStorage.assignTo(new Storage(storageId, 1));
-					}
-
-					Integer otherUserId = daoUser
-							.loadIdByName(String.valueOf(comboUserEdit.getSelectedItem()));
-
-					daoStorage.assignTo(new Storage(storageId, otherUserId));
-
-					JOptionPane.showMessageDialog(panel, "Tenant has been successfully saved");
-
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(panel,
-							"select storage and tenant or this tenant has already rented this storage", "",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-		});
-
-		delete.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				try {
-					if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 1)))) {
-						throw new ArrayIndexOutOfBoundsException("e");
-					}
-					int result = JOptionPane.showConfirmDialog(panel, "Delete payment?", "Delete",
-							JOptionPane.OK_CANCEL_OPTION);
-					if (result == JOptionPane.OK_OPTION) {
-
-						String deletedInfo = "";
-
-						if (comboEdit.getSelectedIndex() == 1) {
-							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
-									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)));
-
-							Dao<Rent> daoRent = new RentDaoImpl();
-							daoRent.update(new Rent(
-									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
-									Date.valueOf("1970-01-01"), Date.valueOf("1970-01-01"), new BigDecimal("0"),
-									deletedInfo));
-
-							showTable(daoRent.loadEditTable());
-						}
-
-						if (comboEdit.getSelectedIndex() == 2) {
-							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
-									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 6)));
-
-							Dao<Electric> daoElectric = new ElectricDaoImpl();
-							daoElectric.update(new Electric(
-									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
-									Date.valueOf("1970-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
-									deletedInfo));
-
-							showTable(daoElectric.loadEditTable());
-						}
-						JOptionPane.showMessageDialog(panel, "Payment has been deleted");
-					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(panel,
-							"Payment has not been selected or payment has been already deleted", "fault",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		comboPayment.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-
-				comboRead.setSelectedIndex(0);
-				comboEdit.setSelectedIndex(0);
-
-				if (comboPayment.getSelectedIndex() == 1) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new RentView();
-						}
-					});
-					dispose();
-				}
-
-				if (comboPayment.getSelectedIndex() == 2) {
-
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							new ElectricView();
-						}
-					});
-					dispose();
-				}
-			}
-		});
-
+	public JPanel getPanel() {
+		return panel;
 	}
-	
-	private void showTable(TableStorage table) {
 
-		panel.remove(scroll);
-		labelNumber.setVisible(false);
-		comboNumEdit.setVisible(false);
-		labelName.setVisible(false);
-		comboUserEdit.setVisible(false);
-		editStorage.setVisible(false);
-		addStorage.setVisible(false);
-		deleteStorage.setVisible(false);
-		editUser.setVisible(false);
-		addUser.setVisible(false);
-		labelNewStorageNum.setVisible(false);
-		tfStorageNum.setVisible(false);
-		labelNewStorageInfo.setVisible(false);
-		tfStorageInfo.setVisible(false);
-		tfUserName.setVisible(false);
-		labelNewUserName.setVisible(false);
-		tfUserInfo.setVisible(false);
-		labelNewUserInfo.setVisible(false);
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
 
-		try {
-			this.table = table;
-			scroll = new JScrollPane(table);
-			scroll.setBounds(20, 40, 950, 390);
-			panel.add(scroll);
-			panel.updateUI();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(panel, "database fault", "", JOptionPane.ERROR_MESSAGE);
-		}
+	public JComboBox<String> getComboRead() {
+		return comboRead;
+	}
+
+	public void setComboRead(JComboBox<String> comboRead) {
+		this.comboRead = comboRead;
+	}
+
+	public JComboBox<String> getComboEdit() {
+		return comboEdit;
+	}
+
+	public void setComboEdit(JComboBox<String> comboEdit) {
+		this.comboEdit = comboEdit;
+	}
+
+	public JComboBox<String> getComboPayment() {
+		return comboPayment;
+	}
+
+	public void setComboPayment(JComboBox<String> comboPayment) {
+		this.comboPayment = comboPayment;
+	}
+
+	public JComboBox<String> getComboNum() {
+		return comboNum;
+	}
+
+	public void setComboNum(JComboBox<String> comboNum) {
+		this.comboNum = comboNum;
+	}
+
+	public JComboBox<String> getComboYear() {
+		return comboYear;
+	}
+
+	public void setComboYear(JComboBox<String> comboYear) {
+		this.comboYear = comboYear;
+	}
+
+	public JComboBox<String> getComboNumEdit() {
+		return comboNumEdit;
+	}
+
+	public void setComboNumEdit(JComboBox<String> comboNumEdit) {
+		this.comboNumEdit = comboNumEdit;
+	}
+
+	public JComboBox<String> getComboUserEdit() {
+		return comboUserEdit;
+	}
+
+	public void setComboUserEdit(JComboBox<String> comboUserEdit) {
+		this.comboUserEdit = comboUserEdit;
+	}
+
+	public JLabel getLabelComboNum() {
+		return labelComboNum;
+	}
+
+	public void setLabelComboNum(JLabel labelComboNum) {
+		this.labelComboNum = labelComboNum;
+	}
+
+	public JLabel getLabelQuarts() {
+		return labelQuarts;
+	}
+
+	public void setLabelQuarts(JLabel labelQuarts) {
+		this.labelQuarts = labelQuarts;
+	}
+
+	public JLabel getLabelNumber() {
+		return labelNumber;
+	}
+
+	public void setLabelNumber(JLabel labelNumber) {
+		this.labelNumber = labelNumber;
+	}
+
+	public JLabel getLabelName() {
+		return labelName;
+	}
+
+	public void setLabelName(JLabel labelName) {
+		this.labelName = labelName;
+	}
+
+	public JLabel getLabelNewUserName() {
+		return labelNewUserName;
+	}
+
+	public void setLabelNewUserName(JLabel labelNewUserName) {
+		this.labelNewUserName = labelNewUserName;
+	}
+
+	public JLabel getLabelNewUserInfo() {
+		return labelNewUserInfo;
+	}
+
+	public void setLabelNewUserInfo(JLabel labelNewUserInfo) {
+		this.labelNewUserInfo = labelNewUserInfo;
+	}
+
+	public JLabel getLabelNewStorageNum() {
+		return labelNewStorageNum;
+	}
+
+	public void setLabelNewStorageNum(JLabel labelNewStorageNum) {
+		this.labelNewStorageNum = labelNewStorageNum;
+	}
+
+	public JLabel getLabelNewStorageInfo() {
+		return labelNewStorageInfo;
+	}
+
+	public void setLabelNewStorageInfo(JLabel labelNewStorageInfo) {
+		this.labelNewStorageInfo = labelNewStorageInfo;
+	}
+
+	public JTextField getTfUserName() {
+		return tfUserName;
+	}
+
+	public void setTfUserName(JTextField tfUserName) {
+		this.tfUserName = tfUserName;
+	}
+
+	public JTextField getTfUserInfo() {
+		return tfUserInfo;
+	}
+
+	public void setTfUserInfo(JTextField tfUserInfo) {
+		this.tfUserInfo = tfUserInfo;
+	}
+
+	public JTextField getTfStorageNum() {
+		return tfStorageNum;
+	}
+
+	public void setTfStorageNum(JTextField tfStorageNum) {
+		this.tfStorageNum = tfStorageNum;
+	}
+
+	public JTextField getTfStorageInfo() {
+		return tfStorageInfo;
+	}
+
+	public void setTfStorageInfo(JTextField tfStorageInfo) {
+		this.tfStorageInfo = tfStorageInfo;
+	}
+
+	public JScrollPane getScroll() {
+		return scroll;
+	}
+
+	public void setScroll(JScrollPane scroll) {
+		this.scroll = scroll;
+	}
+
+	public JButton getAdd() {
+		return add;
+	}
+
+	public void setAdd(JButton add) {
+		this.add = add;
+	}
+
+	public JButton getDelete() {
+		return delete;
+	}
+
+	public void setDelete(JButton delete) {
+		this.delete = delete;
+	}
+
+	public JButton getSave() {
+		return save;
+	}
+
+	public void setSave(JButton save) {
+		this.save = save;
+	}
+
+	public JButton getSortFamily() {
+		return sortFamily;
+	}
+
+	public void setSortFamily(JButton sortFamily) {
+		this.sortFamily = sortFamily;
+	}
+
+	public JButton getRentDebtors() {
+		return rentDebtors;
+	}
+
+	public void setRentDebtors(JButton rentDebtors) {
+		this.rentDebtors = rentDebtors;
+	}
+
+	public JCheckBox getQuart1() {
+		return quart1;
+	}
+
+	public void setQuart1(JCheckBox quart1) {
+		this.quart1 = quart1;
+	}
+
+	public JCheckBox getQuart2() {
+		return quart2;
+	}
+
+	public void setQuart2(JCheckBox quart2) {
+		this.quart2 = quart2;
+	}
+
+	public JCheckBox getQuart3() {
+		return quart3;
+	}
+
+	public void setQuart3(JCheckBox quart3) {
+		this.quart3 = quart3;
+	}
+
+	public JCheckBox getQuart4() {
+		return quart4;
+	}
+
+	public void setQuart4(JCheckBox quart4) {
+		this.quart4 = quart4;
+	}
+
+	public JCheckBox getEditStorage() {
+		return editStorage;
+	}
+
+	public void setEditStorage(JCheckBox editStorage) {
+		this.editStorage = editStorage;
+	}
+
+	public JCheckBox getAddStorage() {
+		return addStorage;
+	}
+
+	public void setAddStorage(JCheckBox addStorage) {
+		this.addStorage = addStorage;
+	}
+
+	public JCheckBox getDeleteStorage() {
+		return deleteStorage;
+	}
+
+	public void setDeleteStorage(JCheckBox deleteStorage) {
+		this.deleteStorage = deleteStorage;
+	}
+
+	public JCheckBox getEditUser() {
+		return editUser;
+	}
+
+	public void setEditUser(JCheckBox editUser) {
+		this.editUser = editUser;
+	}
+
+	public JCheckBox getAddUser() {
+		return addUser;
+	}
+
+	public void setAddUser(JCheckBox addUser) {
+		this.addUser = addUser;
+	}
+
+	public ButtonGroup getGroupQuarter() {
+		return groupQuarter;
+	}
+
+	public void setGroupQuarter(ButtonGroup groupQuarter) {
+		this.groupQuarter = groupQuarter;
+	}
+
+	public ButtonGroup getGroupStorage() {
+		return groupStorage;
+	}
+
+	public void setGroupStorage(ButtonGroup groupStorage) {
+		this.groupStorage = groupStorage;
+	}
+
+	public TableStorage getTable() {
+		return table;
+	}
+
+	public void setTable(TableStorage table) {
+		this.table = table;
+	}
+
+	public JMenuBar getMenu() {
+		return menuBar;
+	}
+
+	public void setMenu(JMenuBar menuBar) {
+		this.menuBar = menuBar;
+	}
+
+	public JMenuItem getItemWrite() {
+		return itemWrite;
+	}
+
+	public void setItemWrite(JMenuItem itemWrite) {
+		this.itemWrite = itemWrite;
+	}
+
+	public JMenuItem getItemAbout() {
+		return itemAbout;
+	}
+
+	public void setItemAbout(JMenuItem itemAbout) {
+		this.itemAbout = itemAbout;
+	}
+
+	public JMenuItem getItemExit() {
+		return itemExit;
+	}
+
+	public void setItemExit(JMenuItem itemExit) {
+		this.itemExit = itemExit;
+	}
+
+	public JMenu getFile() {
+		return file;
+	}
+
+	public void setFile(JMenu file) {
+		this.file = file;
+	}
+
+	public JMenu getAbout() {
+		return about;
+	}
+
+	public void setAbout(JMenu about) {
+		this.about = about;
+	}
+
+	public JFileChooser getChooser() {
+		return chooser;
+	}
+
+	public void setChooser(JFileChooser chooser) {
+		this.chooser = chooser;
+	}
+
+	public String[] getSelectRead() {
+		return selectRead;
+	}
+
+	public void setSelectRead(String[] selectRead) {
+		this.selectRead = selectRead;
+	}
+
+	public String[] getSelectEdit() {
+		return selectEdit;
+	}
+
+	public void setSelectEdit(String[] selectEdit) {
+		this.selectEdit = selectEdit;
+	}
+
+	public String[] getSelectPayment() {
+		return selectPayment;
+	}
+
+	public void setSelectPayment(String[] selectPayment) {
+		this.selectPayment = selectPayment;
 	}
 
 }

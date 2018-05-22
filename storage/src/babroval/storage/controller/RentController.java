@@ -18,7 +18,7 @@ import babroval.storage.service.RentServiceImpl;
 import babroval.storage.service.Service;
 import babroval.storage.service.StorageServiceImpl;
 import babroval.storage.service.UserServiceImpl;
-import babroval.storage.util.InitDB;
+import babroval.storage.util.DateUtil;
 import babroval.storage.view.ElectricView;
 import babroval.storage.view.LoginView;
 import babroval.storage.view.RentView;
@@ -86,8 +86,8 @@ public class RentController {
 
 					rentService.insert(new Rent(
 							storageService.getIdByStorageNumber((String) view.getComboNum().getSelectedItem()),
-							InitDB.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"),
-							InitDB.stringToDate("01-" + quarter + "-" + view.getLabelYear().getText(), "dd-MM-yyyy"),
+							DateUtil.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"),
+							DateUtil.stringToDate("01-" + quarter + "-" + view.getLabelYear().getText(), "dd-MM-yyyy"),
 							sum, view.getTfInf().getText()));
 
 					view.getComboNum().setSelectedIndex(0);

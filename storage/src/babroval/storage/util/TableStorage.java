@@ -60,13 +60,13 @@ public class TableStorage extends JTable {
 					
 					}else if(i == dateColumnNumber) {
 						
-						Date date= InitDB.stringToDate(rs.getString(i), "yyyy-MM-dd");
+						Date date= DateUtil.stringToDate(rs.getString(i), "yyyy-MM-dd");
 						String dateFormat = new SimpleDateFormat("dd-MM-yyyy").format(date);
 						v.add(dateFormat);
 						
 					}else if(i == quarterColumnNumber){
 						
-						Date date= InitDB.stringToDate(rs.getString(i), "yyyy-MM-dd");
+						Date date= DateUtil.stringToDate(rs.getString(i), "yyyy-MM-dd");
 						String quarter = new SimpleDateFormat("MM").format(date);
 						
 						switch(quarter) {

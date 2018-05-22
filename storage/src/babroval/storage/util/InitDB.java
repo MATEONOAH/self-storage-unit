@@ -2,13 +2,10 @@ package babroval.storage.util;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import babroval.storage.dao.ElectricDaoImpl;
 import babroval.storage.dao.RentDaoImpl;
@@ -19,7 +16,7 @@ import babroval.storage.model.Rent;
 import babroval.storage.model.Storage;
 import babroval.storage.model.User;
 
-public class InitDB {
+public final class InitDB {
 
 	public static void createDB(String url, String user, String password) {
 
@@ -78,18 +75,18 @@ public class InitDB {
 		daoStorage.insert(new Storage(2, "1b", "small"));
 		
 		RentDaoImpl daoRent = new RentDaoImpl();
-		daoRent.insert(new Rent(2, stringToDate("18-11-2017", "dd-MM-yyyy"), stringToDate("01-01-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "45325"));
-		daoRent.insert(new Rent(4, stringToDate("19-11-2017", "dd-MM-yyyy"), stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(40.00), "67567"));
-		daoRent.insert(new Rent(2, stringToDate("20-11-2017", "dd-MM-yyyy"), stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "34556"));
-		daoRent.insert(new Rent(4, stringToDate("29-11-2017", "dd-MM-yyyy"), stringToDate("01-07-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "78574"));
-		daoRent.insert(new Rent(3, stringToDate("30-11-2017", "dd-MM-yyyy"), stringToDate("01-10-2018", "dd-MM-yyyy"), BigDecimal.valueOf(60.00), "353465"));
+		daoRent.insert(new Rent(2, DateUtil.stringToDate("18-11-2017", "dd-MM-yyyy"), DateUtil.stringToDate("01-01-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "45325"));
+		daoRent.insert(new Rent(4, DateUtil.stringToDate("19-11-2017", "dd-MM-yyyy"), DateUtil.stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(40.00), "67567"));
+		daoRent.insert(new Rent(2, DateUtil.stringToDate("20-11-2017", "dd-MM-yyyy"), DateUtil.stringToDate("01-04-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "34556"));
+		daoRent.insert(new Rent(4, DateUtil.stringToDate("29-11-2017", "dd-MM-yyyy"), DateUtil.stringToDate("01-07-2018", "dd-MM-yyyy"), BigDecimal.valueOf(20.00), "78574"));
+		daoRent.insert(new Rent(3, DateUtil.stringToDate("30-11-2017", "dd-MM-yyyy"), DateUtil.stringToDate("01-10-2018", "dd-MM-yyyy"), BigDecimal.valueOf(60.00), "353465"));
 
 		ElectricDaoImpl daoElectric = new ElectricDaoImpl();
-		daoElectric.insert(new Electric(2, stringToDate("18-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45700, BigDecimal.valueOf(17.80), "56456"));
-		daoElectric.insert(new Electric(4, stringToDate("19-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 34500, BigDecimal.valueOf(26.70), "45763"));
-		daoElectric.insert(new Electric(2, stringToDate("20-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45800, BigDecimal.valueOf(17.80), "74535"));
-		daoElectric.insert(new Electric(4, stringToDate("01-12-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.170), 34650, BigDecimal.valueOf(25.50), "34567"));
-		daoElectric.insert(new Electric(3, stringToDate("03-12-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.170), 44600, BigDecimal.valueOf(8.50), "73457"));
+		daoElectric.insert(new Electric(2, DateUtil.stringToDate("18-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45700, BigDecimal.valueOf(17.80), "56456"));
+		daoElectric.insert(new Electric(4, DateUtil.stringToDate("19-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 34500, BigDecimal.valueOf(26.70), "45763"));
+		daoElectric.insert(new Electric(2, DateUtil.stringToDate("20-11-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.178), 45800, BigDecimal.valueOf(17.80), "74535"));
+		daoElectric.insert(new Electric(4, DateUtil.stringToDate("01-12-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.170), 34650, BigDecimal.valueOf(25.50), "34567"));
+		daoElectric.insert(new Electric(3, DateUtil.stringToDate("03-12-2017", "dd-MM-yyyy"), BigDecimal.valueOf(0.170), 44600, BigDecimal.valueOf(8.50), "73457"));
 	}
 
 	public static void deleteDB(String url, String user, String password) {
@@ -104,21 +101,6 @@ public class InitDB {
 		}
 	}
 
-	public static Date stringToDate(String dateStr, String dateFormat) {
-
-		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-		Date sqlDate;
-
-		try {
-			sqlDate = new Date(sdf.parse(dateStr).getTime());
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-
-		return sqlDate;
-
-	}
-	
 	public static void showResultSet(ResultSet rs) {
 		ResultSetMetaData rsmd;
 		try {

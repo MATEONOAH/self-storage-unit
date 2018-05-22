@@ -16,7 +16,7 @@ import babroval.storage.service.ElectricServiceImpl;
 import babroval.storage.service.Service;
 import babroval.storage.service.StorageServiceImpl;
 import babroval.storage.service.UserServiceImpl;
-import babroval.storage.util.InitDB;
+import babroval.storage.util.DateUtil;
 import babroval.storage.view.ElectricView;
 
 public class ElectricController {
@@ -139,7 +139,7 @@ public class ElectricController {
 
 					electricService.insert(new Electric(
 							storageService.getIdByStorageNumber(String.valueOf(view.getComboNum().getSelectedItem())),
-							InitDB.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"), electric.getTariff(),
+							DateUtil.stringToDate(view.getTfDate().getText(), "dd-MM-yyyy"), electric.getTariff(),
 							electric.getMeter_paid(), electric.getSum(), view.getTfInf().getText()));
 
 					view.getComboNum().setSelectedIndex(0);
