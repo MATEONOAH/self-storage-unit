@@ -16,6 +16,38 @@ public class LoginController {
 	}
 
 	public void initController() {
+
+		view.getMainView().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+
+				if (("").equals(view.getTfLogin().getText())) {
+					char[] pass = view.getTfPassword().getPassword();
+					String res = "";
+					for (int i = 0; i < pass.length; i++) {
+						res += pass[i];
+					}
+					if (res.equals("")) {
+
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+
+								AdminController controller = new AdminController();
+								controller.initController();
+							}
+						});
+
+						view.dispose();
+					} else {
+						JOptionPane.showMessageDialog(view.getPanel(), "incorrect password", "",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(view.getPanel(), "incorrect login", "", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+
 		view.getComboOrder().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -31,7 +63,7 @@ public class LoginController {
 						});
 						view.dispose();
 					}
-					
+
 					if (view.getComboOrder().getSelectedIndex() == 2) {
 
 						SwingUtilities.invokeLater(new Runnable() {
