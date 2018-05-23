@@ -19,8 +19,6 @@ import babroval.storage.service.Service;
 import babroval.storage.service.StorageServiceImpl;
 import babroval.storage.service.UserServiceImpl;
 import babroval.storage.util.DateUtil;
-import babroval.storage.view.ElectricView;
-import babroval.storage.view.LoginView;
 import babroval.storage.view.RentView;
 
 public class RentController {
@@ -123,7 +121,9 @@ public class RentController {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ElectricView();
+
+							ElectricController controller = new ElectricController();
+							controller.initController();
 						}
 					});
 					view.dispose();
@@ -133,7 +133,9 @@ public class RentController {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new LoginView();
+
+							LoginController controller = new LoginController();
+							controller.initController();
 						}
 					});
 					view.dispose();

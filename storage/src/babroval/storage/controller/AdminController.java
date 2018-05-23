@@ -28,20 +28,18 @@ import babroval.storage.service.UserServiceImpl;
 import babroval.storage.util.ConnectionPool;
 import babroval.storage.util.TableStorage;
 import babroval.storage.view.AdminView;
-import babroval.storage.view.ElectricView;
-import babroval.storage.view.RentView;
 
 public class AdminController {
 
 	private AdminView view = new AdminView();
-	
+
 	private Service<Electric> electricService = new ElectricServiceImpl<>();
 	private Service<Storage> storageService = new StorageServiceImpl<>();
 	private Service<User> userService = new UserServiceImpl<>();
 	private Service<Rent> rentService = new RentServiceImpl<>();
-	
+
 	private TableStorage table;
-	
+
 	public AdminController() {
 		initView();
 	}
@@ -49,16 +47,16 @@ public class AdminController {
 	private void initView() {
 		try {
 			List<String> allStoragesNumbers = new ArrayList<String>();
-    		allStoragesNumbers = storageService.getAllNumbers();
+			allStoragesNumbers = storageService.getAllNumbers();
 
-    		for (String storageNum : allStoragesNumbers) {
+			for (String storageNum : allStoragesNumbers) {
 				view.getComboNum().addItem(storageNum);
 				view.getComboNumEdit().addItem(storageNum);
 			}
 
 			List<String> allUsersNames = new ArrayList<String>();
 			allUsersNames = userService.getAllNames();
-			
+
 			for (String name : allUsersNames) {
 				view.getComboUserEdit().addItem(name);
 			}
@@ -67,9 +65,9 @@ public class AdminController {
 			JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void initController() {
-		
+
 		view.getItemWrite().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -346,13 +344,14 @@ public class AdminController {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (view.getComboNumEdit().getSelectedIndex() == 0 || view.getComboUserEdit().getSelectedIndex() == 0) {
+					if (view.getComboNumEdit().getSelectedIndex() == 0
+							|| view.getComboUserEdit().getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
 
 					String userName = userService
 							.getNameByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
-					
+
 					Integer storageId = storageService
 							.getIdByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 
@@ -449,7 +448,9 @@ public class AdminController {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new RentView();
+
+							RentController controller = new RentController();
+							controller.initController();
 						}
 					});
 					view.dispose();
@@ -459,7 +460,9 @@ public class AdminController {
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							new ElectricView();
+
+							ElectricController controller = new ElectricController();
+							controller.initController();
 						}
 					});
 					view.dispose();
@@ -468,7 +471,7 @@ public class AdminController {
 		});
 
 	}
-	
+
 	private void showTable(TableStorage table) {
 
 		view.getPanel().remove(view.getScroll());
@@ -499,6 +502,5 @@ public class AdminController {
 			JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
-}
 
+}
