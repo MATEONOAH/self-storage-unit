@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import babroval.storage.model.Electric;
@@ -55,7 +56,6 @@ public class AdminController {
 				view.getComboNumEdit().addItem(storageNum);
 			}
 
-    		
 			List<String> allUsersNames = new ArrayList<String>();
 			allUsersNames = userService.getAllNames();
 			
@@ -491,6 +491,7 @@ public class AdminController {
 		view.getLabelNewUserInfo().setVisible(false);
 
 		try {
+			view.setScroll(new JScrollPane(table));
 			view.getScroll().setBounds(20, 40, 950, 390);
 			view.getPanel().add(view.getScroll());
 			view.getPanel().updateUI();
