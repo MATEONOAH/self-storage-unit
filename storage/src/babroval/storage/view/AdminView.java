@@ -27,7 +27,7 @@ public class AdminView extends JFrame {
 			labelNewStorageNum, labelNewStorageInfo;
 	private JTextField tfUserName, tfUserInfo, tfStorageNum, tfStorageInfo;
 	private JScrollPane scroll;
-	private JButton add, delete, save, sortFamily, rentDebtors;
+	private JButton cancel, delete, save, sortFamily, rentDebtors;
 	private JCheckBox quart1, quart2, quart3, quart4, editStorage, addStorage, deleteStorage, editUser, addUser;
 	private ButtonGroup groupQuarter, groupStorage;
 	private TableStorage table;
@@ -61,7 +61,7 @@ public class AdminView extends JFrame {
 		sortFamily = new JButton("Sort by last name");
 		table = new TableStorage();
 		scroll = new JScrollPane(table);
-		add = new JButton("Add");
+		cancel = new JButton("Cancel");
 		save = new JButton("Save");
 		delete = new JButton("Delete");
 
@@ -104,7 +104,7 @@ public class AdminView extends JFrame {
 		comboYear.setSelectedIndex(1);
 
 		sortFamily.setVisible(false);
-		add.setEnabled(false);
+		cancel.setEnabled(false);
 		save.setEnabled(false);
 		delete.setEnabled(false);
 		itemWrite.setEnabled(false);
@@ -138,8 +138,8 @@ public class AdminView extends JFrame {
 		rentDebtors.setBounds(800, 10, 110, 20);
 		scroll.setBounds(20, 40, 950, 390);
 		comboEdit.setBounds(30, 450, 160, 20);
-		add.setBounds(205, 450, 110, 20);
-		save.setBounds(325, 450, 110, 20);
+		save.setBounds(205, 450, 110, 20);
+		cancel.setBounds(325, 450, 110, 20);
 		delete.setBounds(445, 450, 110, 20);
 		comboPayment.setBounds(695, 450, 130, 20);
 		labelNumber.setBounds(30, 80, 160, 20);
@@ -190,7 +190,7 @@ public class AdminView extends JFrame {
 		panel.add(comboYear);
 		panel.add(rentDebtors);
 		panel.add(comboEdit);
-		panel.add(add);
+		panel.add(cancel);
 		panel.add(save);
 		panel.add(delete);
 		panel.add(comboPayment);
@@ -392,12 +392,12 @@ public class AdminView extends JFrame {
 		this.scroll = scroll;
 	}
 
-	public JButton getAdd() {
-		return add;
+	public JButton getCancel() {
+		return cancel;
 	}
 
-	public void setAdd(JButton add) {
-		this.add = add;
+	public void setCancel(JButton cancel) {
+		this.cancel = cancel;
 	}
 
 	public JButton getDelete() {
@@ -532,7 +532,7 @@ public class AdminView extends JFrame {
 		return menuBar;
 	}
 
-	public void setMenu(JMenuBar menuBar) {
+	public void setMenuBar(JMenuBar menuBar) {
 		this.menuBar = menuBar;
 	}
 

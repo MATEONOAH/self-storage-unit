@@ -5,10 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,6 @@ import babroval.storage.service.RentServiceImpl;
 import babroval.storage.service.Service;
 import babroval.storage.service.StorageServiceImpl;
 import babroval.storage.service.UserServiceImpl;
-import babroval.storage.util.ConnectionPool;
 import babroval.storage.util.TableStorage;
 import babroval.storage.view.AdminView;
 
@@ -117,7 +113,7 @@ public class AdminController {
 			public void actionPerformed(ActionEvent ae) {
 
 				view.getItemWrite().setEnabled(true);
-				view.getAdd().setEnabled(false);
+				view.getCancel().setEnabled(false);
 				view.getSave().setEnabled(false);
 				view.getDelete().setEnabled(false);
 
@@ -153,7 +149,7 @@ public class AdminController {
 				view.getSortFamily().setVisible(false);
 
 				view.getItemWrite().setEnabled(true);
-				view.getAdd().setEnabled(false);
+				view.getCancel().setEnabled(false);
 				view.getSave().setEnabled(false);
 				view.getDelete().setEnabled(false);
 
@@ -208,7 +204,7 @@ public class AdminController {
 				view.getPanel().remove(view.getScroll());
 
 				if (view.getComboEdit().getSelectedIndex() == 0) {
-					view.getAdd().setEnabled(false);
+					view.getCancel().setEnabled(false);
 					view.getSave().setEnabled(false);
 					view.getDelete().setEnabled(false);
 
@@ -216,21 +212,21 @@ public class AdminController {
 					view.getPanel().updateUI();
 				}
 				if (view.getComboEdit().getSelectedIndex() == 1) {
-					view.getAdd().setEnabled(false);
+					view.getCancel().setEnabled(false);
 					view.getSave().setEnabled(false);
 					view.getDelete().setEnabled(true);
 
 					showTable(rentService.getEditTable());
 				}
 				if (view.getComboEdit().getSelectedIndex() == 2) {
-					view.getAdd().setEnabled(false);
+					view.getCancel().setEnabled(false);
 					view.getSave().setEnabled(false);
 					view.getDelete().setEnabled(true);
 
 					showTable(electricService.getEditTable());
 				}
 				if (view.getComboEdit().getSelectedIndex() == 3) {
-					view.getAdd().setEnabled(true);
+					view.getCancel().setEnabled(true);
 					view.getSave().setEnabled(true);
 					view.getDelete().setEnabled(false);
 					view.getPanel().remove(view.getScroll());
@@ -309,34 +305,11 @@ public class AdminController {
 			}
 		});
 
-		view.getAdd().addActionListener(new ActionListener() {
+		view.getCancel().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
-				try (Connection cn = ConnectionPool.getPool().getConnection();
-						Statement st = cn.createStatement();
-						ResultSet rs = st
-								.executeQuery("SELECT user.user_id" + " FROM user" + " WHERE user.storage_id=1")) {
-					if (rs.next()) {
-						throw new ArrayIndexOutOfBoundsException("e");
-					}
-
-					int result = JOptionPane.showConfirmDialog(view.getPanel(), "Add tenant?", "Add",
-							JOptionPane.OK_CANCEL_OPTION);
-					if (result == JOptionPane.OK_OPTION) {
-
-						userService.insert(new User(1, "", ""));
-
-						// showUserTable();
-
-						JOptionPane.showMessageDialog(view.getPanel(), "Please, enter tenant's name on the empty line");
-					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(view.getPanel(), "enter tenant's name on the empty line", "fault",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
-				}
+				
+				view.getComboNumEdit().setSelectedIndex(0);
 			}
 		});
 
