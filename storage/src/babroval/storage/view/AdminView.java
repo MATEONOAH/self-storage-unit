@@ -155,7 +155,7 @@ public class AdminView extends JFrame {
 		comboUserEdit.setBounds(300, 100, 400, 20);
 		editUser.setBounds(300, 130, 100, 20);
 		addUser.setBounds(300, 160, 100, 20);
-		labelNewUserName.setBounds(300, 190, 100, 20);
+		labelNewUserName.setBounds(300, 190, 200, 20);
 		tfUserName.setBounds(300, 210, 300, 20);
 		labelNewUserInfo.setBounds(300, 250, 200, 20);
 		tfUserInfo.setBounds(300, 270, 400, 20);

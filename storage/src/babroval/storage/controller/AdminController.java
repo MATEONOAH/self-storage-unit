@@ -252,7 +252,7 @@ public class AdminController {
 					view.getLabelNewStorageInfo().setVisible(true);
 					view.getTfStorageInfo().setVisible(true);
 					view.getTfUserName().setVisible(true);
-					view.getTfUserInfo().setVisible(true);
+					view.getLabelNewUserName().setVisible(true);
 					view.getTfUserInfo().setVisible(true);
 					view.getLabelNewUserInfo().setVisible(true);
 
@@ -271,17 +271,24 @@ public class AdminController {
 
 				if (view.getComboNumEdit().getSelectedIndex() == 0) {
 					view.getComboUserEdit().setSelectedIndex(0);
+					view.getTfStorageNum().setText("");
+					view.getTfStorageInfo().setText("");
 				} else {
 					try {
+						Storage storage = storageService
+								.getByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 						User user = userService
 								.getByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 
-						if (user.getUser_id() == 1) {
-							view.getComboUserEdit().setSelectedIndex(0);
-						} else {
+						view.getTfStorageNum().setText(storage.getStorage_number());
+						view.getTfStorageInfo().setText(storage.getInfo());
+
+						if (user.getUser_id() != 1) {
 							view.getComboUserEdit().setSelectedItem(user.getName());
 							view.getTfUserName().setText(user.getName());
 							view.getTfUserInfo().setText(user.getInfo());
+						} else {
+							view.getComboUserEdit().setSelectedIndex(0);
 						}
 					} catch (Exception e) {
 						JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
@@ -326,33 +333,55 @@ public class AdminController {
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					if (view.getComboNumEdit().getSelectedIndex() == 0
-							|| view.getComboUserEdit().getSelectedIndex() == 0) {
+							& view.getComboUserEdit().getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
-
-					String userName = userService
-							.getNameByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
+					if (view.getEditUser().isSelected() & view.getComboUserEdit().getSelectedIndex() == 0) {
+						throw new NumberFormatException("e");
+					}
+					if (!view.getEditUser().isSelected() & view.getComboNumEdit().getSelectedIndex() == 0) {
+						throw new NumberFormatException("e");
+					}
 
 					Integer storageId = storageService
 							.getIdByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 
-					if (userName.equals(String.valueOf(view.getComboUserEdit().getSelectedItem()))
-							& !view.getEditUser().isSelected()) {
-						throw new NumberFormatException("e");
+					User newUser = new User();
+
+					if (view.getComboUserEdit().getSelectedIndex() != 0) {
+						newUser = new User(
+								Integer.valueOf(userService
+										.getIdByName(String.valueOf(view.getComboUserEdit().getSelectedItem()))),
+								view.getTfUserName().getText(), view.getTfUserInfo().getText());
+
+						if (view.getEditUser().isSelected()) {
+							userService.update(newUser);
+						}
+					} else {
+						newUser.setUser_id(1);
 					}
 
-					User newUser = new User(
-							Integer.valueOf(
-									userService.getIdByName(String.valueOf(view.getComboUserEdit().getSelectedItem()))),
-							view.getTfUserName().getText(), view.getTfUserInfo().getText());
-
-					userService.update(newUser);
+					for(int i = 0; i<view.getComboNumEdit().getItemCount(); i++) {
+						if(view.getTfStorageNum().getText().equals(view.getComboNumEdit().getItemAt(i))) {
+							throw new NumberFormatException("e");
+						}
+					}
+					
+					if (view.getEditStorage().isSelected()) {
+						storageService.update(new Storage(
+								storageService.getIdByStorageNumber(
+										String.valueOf(view.getComboNumEdit().getSelectedItem())),
+								newUser.getUser_id(), view.getTfStorageNum().getText(),
+								view.getTfStorageInfo().getText()));
+					}
 
 					if (storageId != 0) {
-						storageService.assignTo(new Storage(storageId, 1));
+						storageService.assignTo(new Storage(storageId, 1)); // detach garage from user
 					}
-
-					storageService.assignTo(new Storage(storageId, newUser.getUser_id()));
+					if (view.getComboUserEdit().getSelectedIndex() != 0) {
+						storageService.assignTo(new Storage(storageId, newUser.getUser_id())); // attach new user to
+																								// garage
+					}
 
 					initView();
 					view.getComboEdit().setSelectedIndex(3);
@@ -360,10 +389,9 @@ public class AdminController {
 					JOptionPane.showMessageDialog(view.getPanel(), "Tenant has been successfully saved");
 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(view.getPanel(),
-							"select storage and tenant or this tenant has already rented this storage", "",
+					JOptionPane.showMessageDialog(view.getPanel(), "select storage, tenant or element is already exists", "",
 							JOptionPane.ERROR_MESSAGE);
-					
+
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 
