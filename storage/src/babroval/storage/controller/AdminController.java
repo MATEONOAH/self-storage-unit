@@ -42,6 +42,14 @@ public class AdminController {
 
 	private void initView() {
 		try {
+
+			view.getComboNum().removeAllItems();
+			view.getComboNum().addItem("");
+			view.getComboNumEdit().removeAllItems();
+			view.getComboNumEdit().addItem("");
+			view.getComboUserEdit().removeAllItems();
+			view.getComboUserEdit().addItem("");
+
 			List<String> allStoragesNumbers = new ArrayList<String>();
 			allStoragesNumbers = storageService.getAllNumbers();
 
@@ -308,7 +316,7 @@ public class AdminController {
 		view.getCancel().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				view.getComboNumEdit().setSelectedIndex(0);
 			}
 		});
@@ -328,18 +336,26 @@ public class AdminController {
 					Integer storageId = storageService
 							.getIdByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 
-					if (userName.equals(String.valueOf(view.getComboUserEdit().getSelectedItem()))) {
+					if (userName.equals(String.valueOf(view.getComboUserEdit().getSelectedItem()))
+							& !view.getEditUser().isSelected()) {
 						throw new NumberFormatException("e");
 					}
+
+					User newUser = new User(
+							Integer.valueOf(
+									userService.getIdByName(String.valueOf(view.getComboUserEdit().getSelectedItem()))),
+							view.getTfUserName().getText(), view.getTfUserInfo().getText());
+
+					userService.update(newUser);
 
 					if (storageId != 0) {
 						storageService.assignTo(new Storage(storageId, 1));
 					}
 
-					Integer otherUserId = userService
-							.getIdByName(String.valueOf(view.getComboUserEdit().getSelectedItem()));
+					storageService.assignTo(new Storage(storageId, newUser.getUser_id()));
 
-					storageService.assignTo(new Storage(storageId, otherUserId));
+					initView();
+					view.getComboEdit().setSelectedIndex(3);
 
 					JOptionPane.showMessageDialog(view.getPanel(), "Tenant has been successfully saved");
 
@@ -347,8 +363,12 @@ public class AdminController {
 					JOptionPane.showMessageDialog(view.getPanel(),
 							"select storage and tenant or this tenant has already rented this storage", "",
 							JOptionPane.ERROR_MESSAGE);
+					
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
+
+					initView();
+					view.getComboEdit().setSelectedIndex(3);
 				}
 			}
 
