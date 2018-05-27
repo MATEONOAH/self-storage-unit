@@ -121,13 +121,14 @@ public class StorageDaoImpl implements Dao<Storage> {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_id, storage.storage_number, storage.info"
+				ResultSet rs = st.executeQuery("SELECT storage.storage_id, storage.user_id, storage.storage_number, storage.info"
 						+ " FROM user, storage" + " WHERE storage.storage_number = '" + number + "'")) {
 
 			while (rs.next()) {
-				storage.setUser_id(Integer.valueOf(rs.getString(1)));
-				storage.setStorage_number(rs.getString(2));
-				storage.setInfo(rs.getString(3));
+				storage.setStorage_id(Integer.valueOf(rs.getString(1)));
+				storage.setUser_id(Integer.valueOf(rs.getString(2)));
+				storage.setStorage_number(rs.getString(3));
+				storage.setInfo(rs.getString(4));
 			}
 
 		} catch (Exception e) {

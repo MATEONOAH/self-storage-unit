@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -234,9 +235,10 @@ public class AdminController {
 					showTable(electricService.getEditTable());
 				}
 				if (view.getComboEdit().getSelectedIndex() == 3) {
+					view.getComboNumEdit().setSelectedIndex(0);
 					view.getCancel().setEnabled(true);
 					view.getSave().setEnabled(true);
-					view.getDelete().setEnabled(false);
+					view.getDelete().setEnabled(true);
 					view.getPanel().remove(view.getScroll());
 					view.getLabelNumber().setVisible(true);
 					view.getComboNumEdit().setVisible(true);
@@ -255,6 +257,12 @@ public class AdminController {
 					view.getLabelNewUserName().setVisible(true);
 					view.getTfUserInfo().setVisible(true);
 					view.getLabelNewUserInfo().setVisible(true);
+					view.getComboNumEdit().setEnabled(true);
+					view.getComboUserEdit().setEnabled(true);
+					view.getTfUserName().setEnabled(true);
+					view.getLabelNewUserName().setEnabled(true);
+					view.getTfUserInfo().setEnabled(true);
+					view.getLabelNewUserInfo().setEnabled(true);
 
 					view.getPanel().updateUI();
 				}
@@ -320,11 +328,36 @@ public class AdminController {
 			}
 		});
 
+		view.getAddStorage().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (view.getAddStorage().isSelected()) {
+					view.getComboNumEdit().setEnabled(false);
+					view.getComboUserEdit().setEnabled(false);
+					view.getTfUserName().setEnabled(false);
+					view.getLabelNewUserName().setEnabled(false);
+					view.getTfUserInfo().setEnabled(false);
+					view.getLabelNewUserInfo().setEnabled(false);
+
+				}
+			}
+
+		});
+
 		view.getCancel().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
 				view.getComboNumEdit().setSelectedIndex(0);
+				view.getComboNumEdit().setEnabled(true);
+				view.getComboUserEdit().setEnabled(true);
+				view.getTfUserName().setEnabled(true);
+				view.getLabelNewUserName().setEnabled(true);
+				view.getTfUserInfo().setEnabled(true);
+				view.getLabelNewUserInfo().setEnabled(true);
+
 			}
 		});
 
@@ -339,35 +372,43 @@ public class AdminController {
 					if (view.getEditUser().isSelected() & view.getComboUserEdit().getSelectedIndex() == 0) {
 						throw new NumberFormatException("e");
 					}
-					if (!view.getEditUser().isSelected() & view.getComboNumEdit().getSelectedIndex() == 0) {
+					if (!view.getEditUser().isSelected() & view.getComboNumEdit().getSelectedIndex() == 0
+							& view.getComboNumEdit().isEnabled()) {
 						throw new NumberFormatException("e");
 					}
 
-					Integer storageId = storageService
-							.getIdByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
+					Storage storage = storageService
+							.getByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
 
 					User newUser = new User();
 
 					if (view.getComboUserEdit().getSelectedIndex() != 0) {
+
 						newUser = new User(
 								Integer.valueOf(userService
 										.getIdByName(String.valueOf(view.getComboUserEdit().getSelectedItem()))),
 								view.getTfUserName().getText(), view.getTfUserInfo().getText());
 
 						if (view.getEditUser().isSelected()) {
+
+							if (isElementExists(view.getComboUserEdit(), view.getTfUserName().getText())
+									& !String.valueOf(view.getComboUserEdit().getSelectedItem())
+											.equals(view.getTfUserName().getText())) {
+								throw new NumberFormatException("e");
+							}
 							userService.update(newUser);
 						}
 					} else {
 						newUser.setUser_id(1);
 					}
 
-					for(int i = 0; i<view.getComboNumEdit().getItemCount(); i++) {
-						if(view.getTfStorageNum().getText().equals(view.getComboNumEdit().getItemAt(i))) {
+					if (view.getEditStorage().isSelected()) {
+
+						if (isElementExists(view.getComboNumEdit(), view.getTfStorageNum().getText())
+								& !String.valueOf(view.getComboNumEdit().getSelectedItem())
+										.equals(view.getTfStorageNum().getText())) {
 							throw new NumberFormatException("e");
 						}
-					}
-					
-					if (view.getEditStorage().isSelected()) {
 						storageService.update(new Storage(
 								storageService.getIdByStorageNumber(
 										String.valueOf(view.getComboNumEdit().getSelectedItem())),
@@ -375,22 +416,33 @@ public class AdminController {
 								view.getTfStorageInfo().getText()));
 					}
 
-					if (storageId != 0) {
-						storageService.assignTo(new Storage(storageId, 1)); // detach garage from user
+					if (storage.getStorage_id() != 0) {
+						storageService.assignTo(new Storage(storage.getStorage_id(), 1)); // detach garage from user
+
+						if (view.getComboUserEdit().getSelectedIndex() != 0) {// attach new user to garage
+							storageService.assignTo(new Storage(storage.getStorage_id(), newUser.getUser_id()));
+						}
+
 					}
-					if (view.getComboUserEdit().getSelectedIndex() != 0) {
-						storageService.assignTo(new Storage(storageId, newUser.getUser_id())); // attach new user to
-																								// garage
+
+					if (view.getAddStorage().isSelected()) {
+						if (isElementExists(view.getComboNumEdit(), view.getTfStorageNum().getText())) {
+							throw new NumberFormatException("e");
+						}
+						storageService.insert(
+								new Storage(1, view.getTfStorageNum().getText(), view.getTfStorageInfo().getText()));// create
+																														// empty
+																														// storage
 					}
 
 					initView();
 					view.getComboEdit().setSelectedIndex(3);
 
-					JOptionPane.showMessageDialog(view.getPanel(), "Tenant has been successfully saved");
+					JOptionPane.showMessageDialog(view.getPanel(), "Storage and tenant has been successfully saved");
 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(view.getPanel(), "select storage, tenant or element is already exists", "",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(view.getPanel(),
+							"select storage, tenant or element is already exists", "", JOptionPane.ERROR_MESSAGE);
 
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
@@ -522,6 +574,16 @@ public class AdminController {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private boolean isElementExists(JComboBox<String> combo, String str) {
+		for (int i = 0; i < combo.getItemCount(); i++) {
+
+			if (str.equals(combo.getItemAt(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
