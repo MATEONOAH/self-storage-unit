@@ -73,7 +73,8 @@ public class StorageDaoImpl implements Dao<Storage> {
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
 				ResultSet rs = st.executeQuery("SELECT storage.storage_number" + " FROM storage"
-						+ " WHERE storage.storage_id!=1" + " ORDER BY storage.storage_number")) {
+						+ " WHERE storage.storage_id!=1 AND storage.storage_number!='deleted'"
+						+ " ORDER BY storage.storage_number")) {
 
 			while (rs.next()) {
 				allStoragesNumbers.add(rs.getString(1));
@@ -121,8 +122,9 @@ public class StorageDaoImpl implements Dao<Storage> {
 
 		try (Connection cn = ConnectionPool.getPool().getConnection();
 				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT storage.storage_id, storage.user_id, storage.storage_number, storage.info"
-						+ " FROM user, storage" + " WHERE storage.storage_number = '" + number + "'")) {
+				ResultSet rs = st
+						.executeQuery("SELECT storage.storage_id, storage.user_id, storage.storage_number, storage.info"
+								+ " FROM user, storage" + " WHERE storage.storage_number = '" + number + "'")) {
 
 			while (rs.next()) {
 				storage.setStorage_id(Integer.valueOf(rs.getString(1)));

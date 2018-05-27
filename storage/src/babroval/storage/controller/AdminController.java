@@ -207,63 +207,68 @@ public class AdminController {
 		view.getComboEdit().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-
-				view.getSortFamily().setVisible(false);
-				view.getItemWrite().setEnabled(false);
-				view.getPanel().remove(view.getScroll());
-
-				if (view.getComboEdit().getSelectedIndex() == 0) {
-					view.getCancel().setEnabled(false);
-					view.getSave().setEnabled(false);
-					view.getDelete().setEnabled(false);
-
+				try {
+					view.getSortFamily().setVisible(false);
+					view.getItemWrite().setEnabled(false);
 					view.getPanel().remove(view.getScroll());
-					view.getPanel().updateUI();
-				}
-				if (view.getComboEdit().getSelectedIndex() == 1) {
-					view.getCancel().setEnabled(false);
-					view.getSave().setEnabled(false);
-					view.getDelete().setEnabled(true);
 
-					showTable(rentService.getEditTable());
-				}
-				if (view.getComboEdit().getSelectedIndex() == 2) {
-					view.getCancel().setEnabled(false);
-					view.getSave().setEnabled(false);
-					view.getDelete().setEnabled(true);
+					if (view.getComboEdit().getSelectedIndex() == 0) {
+						view.getCancel().setEnabled(false);
+						view.getSave().setEnabled(false);
+						view.getDelete().setEnabled(false);
 
-					showTable(electricService.getEditTable());
-				}
-				if (view.getComboEdit().getSelectedIndex() == 3) {
-					view.getComboNumEdit().setSelectedIndex(0);
-					view.getCancel().setEnabled(true);
-					view.getSave().setEnabled(true);
-					view.getDelete().setEnabled(true);
-					view.getPanel().remove(view.getScroll());
-					view.getLabelNumber().setVisible(true);
-					view.getComboNumEdit().setVisible(true);
-					view.getLabelName().setVisible(true);
-					view.getComboUserEdit().setVisible(true);
-					view.getEditStorage().setVisible(true);
-					view.getAddStorage().setVisible(true);
-					view.getDeleteStorage().setVisible(true);
-					view.getEditUser().setVisible(true);
-					view.getAddUser().setVisible(true);
-					view.getLabelNewStorageNum().setVisible(true);
-					view.getTfStorageNum().setVisible(true);
-					view.getLabelNewStorageInfo().setVisible(true);
-					view.getTfStorageInfo().setVisible(true);
-					view.getTfUserName().setVisible(true);
-					view.getLabelNewUserName().setVisible(true);
-					view.getTfUserInfo().setVisible(true);
-					view.getLabelNewUserInfo().setVisible(true);
-					view.getComboNumEdit().setEnabled(true);
-					view.getComboUserEdit().setEnabled(true);
-					view.getTfUserName().setEnabled(true);
-					view.getTfUserInfo().setEnabled(true);
-					view.getEditStorage().setEnabled(true);
-					view.getEditUser().setEnabled(true);
-					view.getPanel().updateUI();
+						view.getPanel().remove(view.getScroll());
+						view.getPanel().updateUI();
+					}
+					if (view.getComboEdit().getSelectedIndex() == 1) {
+						view.getCancel().setEnabled(false);
+						view.getSave().setEnabled(false);
+						view.getDelete().setEnabled(true);
+
+						table = rentService.getEditTable();
+						showTable(table);
+					}
+					if (view.getComboEdit().getSelectedIndex() == 2) {
+						view.getCancel().setEnabled(false);
+						view.getSave().setEnabled(false);
+						view.getDelete().setEnabled(true);
+
+						table = electricService.getEditTable();
+						showTable(table);
+					}
+					if (view.getComboEdit().getSelectedIndex() == 3) {
+						view.getComboNumEdit().setSelectedIndex(0);
+						view.getCancel().setEnabled(true);
+						view.getSave().setEnabled(true);
+						view.getDelete().setEnabled(true);
+						view.getPanel().remove(view.getScroll());
+						view.getLabelNumber().setVisible(true);
+						view.getComboNumEdit().setVisible(true);
+						view.getLabelName().setVisible(true);
+						view.getComboUserEdit().setVisible(true);
+						view.getEditStorage().setVisible(true);
+						view.getAddStorage().setVisible(true);
+						view.getDeleteStorage().setVisible(true);
+						view.getEditUser().setVisible(true);
+						view.getAddUser().setVisible(true);
+						view.getLabelNewStorageNum().setVisible(true);
+						view.getTfStorageNum().setVisible(true);
+						view.getLabelNewStorageInfo().setVisible(true);
+						view.getTfStorageInfo().setVisible(true);
+						view.getTfUserName().setVisible(true);
+						view.getLabelNewUserName().setVisible(true);
+						view.getTfUserInfo().setVisible(true);
+						view.getLabelNewUserInfo().setVisible(true);
+						view.getComboNumEdit().setEnabled(true);
+						view.getComboUserEdit().setEnabled(true);
+						view.getTfUserName().setEnabled(true);
+						view.getTfUserInfo().setEnabled(true);
+						view.getEditStorage().setEnabled(true);
+						view.getEditUser().setEnabled(true);
+						view.getPanel().updateUI();
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
@@ -345,7 +350,7 @@ public class AdminController {
 			}
 
 		});
-		
+
 		view.getAddUser().addActionListener(new ActionListener() {
 
 			@Override
@@ -438,9 +443,9 @@ public class AdminController {
 
 					// detach garage from user
 					if (storage.getStorage_id() != 0) {
-						storageService.assignTo(new Storage(storage.getStorage_id(), 1)); 
+						storageService.assignTo(new Storage(storage.getStorage_id(), 1));
 
-						 // attach new user to garage
+						// attach new user to garage
 						if (view.getComboUserEdit().getSelectedIndex() != 0) {
 							storageService.assignTo(new Storage(storage.getStorage_id(), newUser.getUser_id()));
 						}
@@ -451,18 +456,17 @@ public class AdminController {
 						if (isElementExists(view.getComboNumEdit(), view.getTfStorageNum().getText())) {
 							throw new NumberFormatException("e");
 						}
-						//create empty storage
+						// create empty storage
 						storageService.insert(
-								new Storage(1, view.getTfStorageNum().getText(), view.getTfStorageInfo().getText())); 
+								new Storage(1, view.getTfStorageNum().getText(), view.getTfStorageInfo().getText()));
 					}
-					
+
 					if (view.getAddUser().isSelected()) {
 						if (isElementExists(view.getComboUserEdit(), view.getTfUserName().getText())) {
 							throw new NumberFormatException("e");
 						}
-						//create new user
-						userService.insert(
-								new User(view.getTfUserName().getText(), view.getTfUserInfo().getText())); 
+						// create new user
+						userService.insert(new User(view.getTfUserName().getText(), view.getTfUserInfo().getText()));
 					}
 
 					initView();
@@ -472,8 +476,7 @@ public class AdminController {
 
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(view.getPanel(),
-							"select storage, tenant or element is already exists", "", JOptionPane.ERROR_MESSAGE);
-
+							"select storage or tenant, or element is already exists", "", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
 
@@ -489,50 +492,85 @@ public class AdminController {
 			public void actionPerformed(ActionEvent ae) {
 
 				try {
-					if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 1)))) {
-						throw new ArrayIndexOutOfBoundsException("e");
-					}
-					int result = JOptionPane.showConfirmDialog(view.getPanel(), "Delete payment?", "Delete",
+					int result = JOptionPane.showConfirmDialog(view.getPanel(), "Delete?", "",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
 
 						String deletedInfo = "";
 
 						if (view.getComboEdit().getSelectedIndex() == 1) {
-							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
+
+							if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 2)))) {
+								throw new ArrayIndexOutOfBoundsException("e");
+							}
+							deletedInfo = "DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
 									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)));
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5));
 
 							rentService.update(new Rent(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
 									Date.valueOf("1970-01-01"), Date.valueOf("1970-01-01"), new BigDecimal("0"),
 									deletedInfo));
 
-							showTable(rentService.getEditTable());
+							table = rentService.getEditTable();
+							showTable(table);
+
+							JOptionPane.showMessageDialog(view.getPanel(), "Payment has been deleted");
 						}
 
 						if (view.getComboEdit().getSelectedIndex() == 2) {
-							deletedInfo = ("DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
+
+							if ("DELETED".equals(String.valueOf(table.getValueAt(table.getSelectedRow(), 2)))) {
+								throw new ArrayIndexOutOfBoundsException("e");
+							}
+							deletedInfo = "DELETED:" + String.valueOf(table.getValueAt(table.getSelectedRow(), 1))
 									+ "//" + String.valueOf(table.getValueAt(table.getSelectedRow(), 2)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 3)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 4)) + "//"
 									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 5)) + "//"
-									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 6)));
+									+ String.valueOf(table.getValueAt(table.getSelectedRow(), 6));
 
 							electricService.update(new Electric(
 									Integer.valueOf(String.valueOf(table.getValueAt(table.getSelectedRow(), 0))), 1,
 									Date.valueOf("1970-01-01"), new BigDecimal("0"), 0, new BigDecimal("0"),
 									deletedInfo));
 
-							showTable(electricService.getEditTable());
+							table = electricService.getEditTable();
+							showTable(table);
+
+							JOptionPane.showMessageDialog(view.getPanel(), "Payment has been deleted");
 						}
-						JOptionPane.showMessageDialog(view.getPanel(), "Payment has been deleted");
+
+						if (view.getComboEdit().getSelectedIndex() == 3 & !view.getDeleteStorage().isSelected()
+								| view.getComboNumEdit().getSelectedIndex() == 0) {
+							throw new ArrayIndexOutOfBoundsException("e");
+						}
+
+						if (view.getComboEdit().getSelectedIndex() == 3 & view.getDeleteStorage().isSelected()) {
+
+							Storage storage = storageService
+									.getByStorageNumber(String.valueOf(view.getComboNumEdit().getSelectedItem()));
+
+							deletedInfo = "DELETED:" + userService.getNameByStorageNumber(storage.getStorage_number())
+									+ "//" + storage.getStorage_number() + "//" + storage.getInfo();
+
+							storage.setUser_id(1);
+							storage.setStorage_number("deleted");
+							storage.setInfo(deletedInfo);
+
+							storageService.update(storage);
+
+							initView();
+							view.getComboEdit().setSelectedIndex(3);
+
+							JOptionPane.showMessageDialog(view.getPanel(), "Storage has been deleted");
+						}
 					}
+
 				} catch (ArrayIndexOutOfBoundsException e) {
-					JOptionPane.showMessageDialog(view.getPanel(),
-							"Payment has not been selected or payment has been already deleted", "fault",
+					JOptionPane.showMessageDialog(view.getPanel(), "Element has not been selected", "fault",
 							JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(view.getPanel(), "database fault", "", JOptionPane.ERROR_MESSAGE);
@@ -595,7 +633,7 @@ public class AdminController {
 		view.getLabelNewUserName().setVisible(false);
 		view.getTfUserInfo().setVisible(false);
 		view.getLabelNewUserInfo().setVisible(false);
-		
+
 		try {
 			view.setScroll(new JScrollPane(table));
 			view.getScroll().setBounds(20, 40, 950, 390);
