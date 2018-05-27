@@ -260,10 +260,9 @@ public class AdminController {
 					view.getComboNumEdit().setEnabled(true);
 					view.getComboUserEdit().setEnabled(true);
 					view.getTfUserName().setEnabled(true);
-					view.getLabelNewUserName().setEnabled(true);
 					view.getTfUserInfo().setEnabled(true);
-					view.getLabelNewUserInfo().setEnabled(true);
-
+					view.getEditStorage().setEnabled(true);
+					view.getEditUser().setEnabled(true);
 					view.getPanel().updateUI();
 				}
 
@@ -336,11 +335,31 @@ public class AdminController {
 				if (view.getAddStorage().isSelected()) {
 					view.getComboNumEdit().setEnabled(false);
 					view.getComboUserEdit().setEnabled(false);
+					view.getEditStorage().setEnabled(false);
+					view.getEditUser().setEnabled(false);
 					view.getTfUserName().setEnabled(false);
-					view.getLabelNewUserName().setEnabled(false);
 					view.getTfUserInfo().setEnabled(false);
-					view.getLabelNewUserInfo().setEnabled(false);
+					view.getTfStorageNum().setEnabled(true);
+					view.getTfStorageInfo().setEnabled(true);
+				}
+			}
 
+		});
+		
+		view.getAddUser().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (view.getAddUser().isSelected()) {
+					view.getComboNumEdit().setEnabled(false);
+					view.getComboUserEdit().setEnabled(false);
+					view.getEditStorage().setEnabled(false);
+					view.getEditUser().setEnabled(false);
+					view.getTfStorageNum().setEnabled(false);
+					view.getTfStorageInfo().setEnabled(false);
+					view.getTfUserName().setEnabled(true);
+					view.getTfUserInfo().setEnabled(true);
 				}
 			}
 
@@ -353,11 +372,12 @@ public class AdminController {
 				view.getComboNumEdit().setSelectedIndex(0);
 				view.getComboNumEdit().setEnabled(true);
 				view.getComboUserEdit().setEnabled(true);
+				view.getTfStorageNum().setEnabled(true);
+				view.getTfStorageInfo().setEnabled(true);
 				view.getTfUserName().setEnabled(true);
-				view.getLabelNewUserName().setEnabled(true);
 				view.getTfUserInfo().setEnabled(true);
-				view.getLabelNewUserInfo().setEnabled(true);
-
+				view.getEditStorage().setEnabled(true);
+				view.getEditUser().setEnabled(true);
 			}
 		});
 
@@ -365,8 +385,8 @@ public class AdminController {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (view.getComboNumEdit().getSelectedIndex() == 0
-							& view.getComboUserEdit().getSelectedIndex() == 0) {
+					if (view.getComboNumEdit().getSelectedIndex() == 0 & view.getComboUserEdit().getSelectedIndex() == 0
+							& view.getComboNumEdit().isEnabled()) {
 						throw new NumberFormatException("e");
 					}
 					if (view.getEditUser().isSelected() & view.getComboUserEdit().getSelectedIndex() == 0) {
@@ -416,10 +436,12 @@ public class AdminController {
 								view.getTfStorageInfo().getText()));
 					}
 
+					// detach garage from user
 					if (storage.getStorage_id() != 0) {
-						storageService.assignTo(new Storage(storage.getStorage_id(), 1)); // detach garage from user
+						storageService.assignTo(new Storage(storage.getStorage_id(), 1)); 
 
-						if (view.getComboUserEdit().getSelectedIndex() != 0) {// attach new user to garage
+						 // attach new user to garage
+						if (view.getComboUserEdit().getSelectedIndex() != 0) {
 							storageService.assignTo(new Storage(storage.getStorage_id(), newUser.getUser_id()));
 						}
 
@@ -429,10 +451,18 @@ public class AdminController {
 						if (isElementExists(view.getComboNumEdit(), view.getTfStorageNum().getText())) {
 							throw new NumberFormatException("e");
 						}
+						//create empty storage
 						storageService.insert(
-								new Storage(1, view.getTfStorageNum().getText(), view.getTfStorageInfo().getText()));// create
-																														// empty
-																														// storage
+								new Storage(1, view.getTfStorageNum().getText(), view.getTfStorageInfo().getText())); 
+					}
+					
+					if (view.getAddUser().isSelected()) {
+						if (isElementExists(view.getComboUserEdit(), view.getTfUserName().getText())) {
+							throw new NumberFormatException("e");
+						}
+						//create new user
+						userService.insert(
+								new User(view.getTfUserName().getText(), view.getTfUserInfo().getText())); 
 					}
 
 					initView();
@@ -565,7 +595,7 @@ public class AdminController {
 		view.getLabelNewUserName().setVisible(false);
 		view.getTfUserInfo().setVisible(false);
 		view.getLabelNewUserInfo().setVisible(false);
-
+		
 		try {
 			view.setScroll(new JScrollPane(table));
 			view.getScroll().setBounds(20, 40, 950, 390);
