@@ -7,36 +7,39 @@ A small Java desktop project for finance managing of the self-storage unit.
 [![Build Status](https://travis-ci.org/babroval/self-storage-unit.svg?branch=master)](https://travis-ci.org/babroval/self-storage-unit)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/babroval/self-storage-unit/blob/master/LICENSE)
 ```
-		view.getComboNumEdit().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				view.getGroupStorage().clearSelection();
-				if (view.getComboNumEdit().getSelectedIndex() == 0) {
-					view.getComboUserEdit().setSelectedIndex(0);
-					view.getTfStorageNum().setText("");
-					view.getTfStorageInfo().setText("");
+view.getComboNumEdit().addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		view.getGroupStorage().clearSelection();
+
+		if (view.getComboNumEdit().getSelectedIndex() == 0) {
+			view.getComboUserEdit().setSelectedIndex(0);
+			view.getTfStorageNum().setText("");
+			view.getTfStorageInfo().setText("");
+		} else {
+			try {
+				Storage storage = storageService.getByStorageNumber(
+						String.valueOf(view.getComboNumEdit().getSelectedItem()));
+				User user = userService.getByStorageNumber(
+						String.valueOf(view.getComboNumEdit().getSelectedItem()));
+
+				view.getTfStorageNum().setText(storage.getStorage_number());
+				view.getTfStorageInfo().setText(storage.getInfo());
+
+				if (user.getUser_id() != 1) {
+					view.getComboUserEdit().setSelectedItem(user.getName());
+					view.getTfUserName().setText(user.getName());
+					view.getTfUserInfo().setText(user.getInfo());
 				} else {
-					try {
-						Storage storage = storageService.getByStorageNumber(
-								String.valueOf(view.getComboNumEdit().getSelectedItem()));
-						User user = userService.getByStorageNumber(
-								String.valueOf(view.getComboNumEdit().getSelectedItem()));
-						view.getTfStorageNum().setText(storage.getStorage_number());
-						view.getTfStorageInfo().setText(storage.getInfo());
-						if (user.getUser_id() != 1) {
-							view.getComboUserEdit().setSelectedItem(user.getName());
-							view.getTfUserName().setText(user.getName());
-							view.getTfUserInfo().setText(user.getInfo());
-						} else {
-							view.getComboUserEdit().setSelectedIndex(0);
-						}
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(view.getPanel(),
-								"database fault", "", JOptionPane.ERROR_MESSAGE);
-					}
+					view.getComboUserEdit().setSelectedIndex(0);
 				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(view.getPanel(),
+						"database fault", "", JOptionPane.ERROR_MESSAGE);
 			}
-		});
+		}
+	}
+});
 ```
 
 Table of Contents
