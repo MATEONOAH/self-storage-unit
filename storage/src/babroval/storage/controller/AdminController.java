@@ -29,13 +29,11 @@ import babroval.storage.view.AdminView;
 public class AdminController {
 
 	private AdminView view = new AdminView();
-
+	private TableStorage table = new TableStorage();
 	private Service<Electric> electricService = new ElectricServiceImpl<>();
 	private Service<Storage> storageService = new StorageServiceImpl<>();
 	private Service<User> userService = new UserServiceImpl<>();
 	private Service<Rent> rentService = new RentServiceImpl<>();
-
-	private TableStorage table;
 
 	public AdminController() {
 		initView();
@@ -134,19 +132,22 @@ public class AdminController {
 				if (view.getComboRead().getSelectedIndex() == 1) {
 					view.getSortFamily().setVisible(false);
 
-					showTable(rentService.getReadOnlyTable());
+					table = rentService.getReadOnlyTable();
+					showTable(table);
 				}
 
 				if (view.getComboRead().getSelectedIndex() == 2) {
 					view.getSortFamily().setVisible(false);
 
-					showTable(electricService.getReadOnlyTable());
+					table = electricService.getReadOnlyTable();
+					showTable(table);
 				}
 
 				if (view.getComboRead().getSelectedIndex() == 3) {
 					view.getSortFamily().setVisible(true);
 
-					showTable(userService.getReadOnlyTable());
+					table = userService.getReadOnlyTable();
+					showTable(table);
 				}
 			}
 		});
